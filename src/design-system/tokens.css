@@ -1,0 +1,36 @@
+/* ============================================================
+   Monato Design System — Tokens
+
+   DO NOT edit manually. This file is generated from Figma.
+   To update: run `npm run sync-figma` when DS V2 is final.
+
+   Structure:
+     Layer 1 — Primitives: raw values (colors, spacing, radii)
+     Layer 2 — Semantic Tokens: light/dark via [data-theme]
+     Layer 3 — Typeface: typography scale
+   ============================================================ */
+
+/* Placeholder — tokens will be populated from Figma DS V2 final */
+
+:root {
+    /* Brand reference (from monato-brand skill) */
+    --primitive-skyblue-500: #0894c8;
+    --primitive-bluedark-500: #182449;
+    --primitive-white: #ffffff;
+    --primitive-black: #000000;
+}
+
+:root,
+[data-theme="light"] {
+    --color-interactive: #0894c8;
+    --color-text-primary: #18181b;
+    --color-bg-primary: #ffffff;
+    --color-focus-ring: #5ab7da;
+}
+
+[data-theme="dark"] {
+    --color-interactive: #0894c8;
+    --color-text-primary: rgba(255, 255, 255, 0.9);
+    --color-bg-primary: #030712;
+    --color-focus-ring: #5ab7da;
+}
