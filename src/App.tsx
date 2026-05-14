@@ -14,6 +14,7 @@ import {
   ColourPalette3StrokeRounded, Layout9StrokeRounded, Bolt2StrokeRounded,
   SlidersHorizontalSquare2StrokeRounded, CheckSquare2StrokeRounded,
   Comment1StrokeRounded, PaginationStrokeRounded, Diamonds1StrokeRounded,
+  Rocket5StrokeRounded,
 } from '@lineiconshq/free-icons';
 import { Button } from './components/core/button';
 import { ButtonGroup } from './components/core/button-group';
@@ -34,14 +35,14 @@ import { Pagination } from './components/core/pagination';
 import { DefaultSpinner } from './components/core/spinner/default';
 import { NativeSelect, NativeSelectOption } from './components/core/native-select';
 import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } from './components/core/table';
+import { CLP } from './CLP';
 // Logo — using PNG for correct rendering on light backgrounds
-// (SVG has white fill on wordmark which is invisible on white)
 const LogoDefault = '/src/assets/logo-default.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons';
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes';
 
 // ─── Nav structure (agrupado como Figma reference) ────────────────────────────
 const NAV_GROUPS = [
@@ -71,7 +72,13 @@ const NAV_GROUPS = [
   {
     label: 'Assets',
     items: [
-      { id: 'icons' as TabId,     label: 'Icons',      icon: ColourPalette3StrokeRounded },
+      { id: 'icons' as TabId,      label: 'Icons',      icon: ColourPalette3StrokeRounded },
+    ],
+  },
+  {
+    label: 'Prototypes',
+    items: [
+      { id: 'prototypes' as TabId, label: 'CLP v1.0',   icon: Rocket5StrokeRounded },
     ],
   },
 ];
@@ -207,7 +214,9 @@ function OverviewPage() {
           </div>
           {/* Buscador dentro de la tabla */}
           <div className="relative">
-            <Search1StrokeRounded size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 [&_svg]:fill-none [&_path]:fill-none pointer-events-none">
+              <Search1StrokeRounded size={13} strokeWidth={1.4} className="text-text-200" />
+            </span>
             <input
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
@@ -249,11 +258,13 @@ function OverviewPage() {
           </TableBody>
         </TableRoot>
 
-        <div className="border-t border-base-100 px-5 py-3 flex items-center justify-between">
-          <span className="text-text-200 text-xs">{filtered.length} componentes · página {page} de {totalPages}</span>
-          {totalPages > 1 && (
-            <Pagination totalPages={totalPages} currentPage={page} onPageChange={setPage} />
-          )}
+        <div className="border-t border-base-100 px-5 py-3 flex items-center gap-4">
+          <span className="text-text-200 text-xs shrink-0">{filtered.length} componentes · página {page} de {totalPages}</span>
+          <div className="ml-auto">
+            {totalPages > 1 && (
+              <Pagination totalPages={totalPages} currentPage={page} onPageChange={setPage} />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -297,11 +308,11 @@ function ButtonsPage() {
       </PreviewCard>
       <PreviewCard label="Con ícono">
         <Button variant="primary" size="sm">
-          <PlusStrokeRounded size={14} />
+          <span className="[&_svg]:fill-none [&_path]:fill-none"><PlusStrokeRounded size={14} strokeWidth={1.4} /></span>
           Nuevo pago
         </Button>
         <Button variant="primary" appearance="outline" size="sm">
-          <Funnel1StrokeRounded size={14} />
+          <span className="[&_svg]:fill-none [&_path]:fill-none"><Funnel1StrokeRounded size={14} strokeWidth={1.4} /></span>
           Filtrar
         </Button>
       </PreviewCard>
@@ -605,6 +616,22 @@ function IconsPage() {
   );
 }
 
+// ─── Prototypes Page ──────────────────────────────────────────────────────────
+function PrototypesPage() {
+  return (
+    <div className="space-y-4">
+      <div className="mb-8 pb-6 border-b border-base-100">
+        <div className="flex items-center gap-2 mb-1">
+          <h1 className="text-title-50 text-xl font-semibold">Prototypes</h1>
+          <Badge color="primary" size="sm">1 proto</Badge>
+        </div>
+        <p className="text-text-100 text-sm">Pantallas navegables construidas con componentes del DS.</p>
+      </div>
+      <CLP />
+    </div>
+  );
+}
+
 // ─── Page map ─────────────────────────────────────────────────────────────────
 const PAGES: Record<TabId, React.FC> = {
   overview: OverviewPage, buttons: ButtonsPage, badges: BadgesPage,
@@ -612,6 +639,7 @@ const PAGES: Record<TabId, React.FC> = {
   controls: ControlsPage, feedback: FeedbackPage, tabs: TabsPage,
   accordion: AccordionPage, toast: ToastPage, modal: ModalPage,
   pagination: PaginationPage, icons: IconsPage,
+  prototypes: PrototypesPage,
 };
 
 // ─── App ──────────────────────────────────────────────────────────────────────
