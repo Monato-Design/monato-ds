@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home2StrokeRounded, Layers1StrokeRounded,
   Code1StrokeRounded, Gear1StrokeRounded,
@@ -264,16 +265,28 @@ function ButtonsPage() {
     <div className="space-y-4">
       <PageHeader title="Buttons" sub="Acciones primarias, secundarias y de estado del sistema." />
       <PreviewCard label="Fill — todas las variantes">
-        <Button variant="primary">Primary</Button>
-        <Button variant="danger">Danger</Button>
-        <Button variant="success">Success</Button>
-        <Button variant="ghost">Ghost</Button>
+        {[
+          { variant: 'primary' as const, label: 'Primary' },
+          { variant: 'danger' as const,  label: 'Danger' },
+          { variant: 'success' as const, label: 'Success' },
+          { variant: 'ghost' as const,   label: 'Ghost' },
+        ].map(({ variant, label }) => (
+          <motion.div key={variant} whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.02 }} transition={{ type: 'spring', stiffness: 500, damping: 30 }}>
+            <Button variant={variant}>{label}</Button>
+          </motion.div>
+        ))}
         <Button variant="primary" disabled>Disabled</Button>
       </PreviewCard>
       <PreviewCard label="Outline">
-        <Button variant="primary" appearance="outline">Primary</Button>
-        <Button variant="danger" appearance="outline">Danger</Button>
-        <Button variant="success" appearance="outline">Success</Button>
+        {[
+          { variant: 'primary' as const, label: 'Primary' },
+          { variant: 'danger' as const,  label: 'Danger' },
+          { variant: 'success' as const, label: 'Success' },
+        ].map(({ variant, label }) => (
+          <motion.div key={variant} whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.02 }} transition={{ type: 'spring', stiffness: 500, damping: 30 }}>
+            <Button variant={variant} appearance="outline">{label}</Button>
+          </motion.div>
+        ))}
         <Button variant="primary" appearance="outline" disabled>Disabled</Button>
       </PreviewCard>
       <PreviewCard label="Sizes">
@@ -308,12 +321,20 @@ function ButtonsPage() {
 }
 
 function BadgesPage() {
+  const colors = ['primary','success','warning','error','gray','cyan','sky','blue','violet','purple','pink','rose','orange'] as const;
   return (
     <div className="space-y-4">
       <PageHeader title="Badges" sub="Etiquetas de estado, categoría y contexto semántico." />
       <PreviewCard label="Todos los colores">
-        {(['primary','success','warning','error','gray','cyan','sky','blue','violet','purple','pink','rose','orange'] as const).map(c => (
-          <Badge key={c} color={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</Badge>
+        {colors.map((c, i) => (
+          <motion.div
+            key={c}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.04, type: 'spring', stiffness: 400, damping: 25 }}
+          >
+            <Badge color={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</Badge>
+          </motion.div>
         ))}
       </PreviewCard>
       <PreviewCard label="Tamaños">
@@ -418,11 +439,17 @@ function FeedbackPage() {
   return (
     <div className="space-y-4">
       <PageHeader title="Feedback" sub="Spinners, skeletons y estados de carga." />
-      <PreviewCard label="Spinners">
-        <DefaultSpinner size={24} />
-        <DefaultSpinner size={36} />
-        <DefaultSpinner size={48} />
-      </PreviewCard>
+      {/* Spinner wrapper sin [&_path]:fill-none porque el spinner usa fill internamente */}
+      <div className="rounded-xl border border-base-100 bg-background-50 overflow-hidden">
+        <div className="border-b border-base-100 bg-background-soft-50 px-4 py-2.5">
+          <span className="text-text-200 text-[11px] font-medium uppercase tracking-widest">Spinners</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-6 p-5">
+          <DefaultSpinner size={32} />
+          <DefaultSpinner size={48} />
+          <DefaultSpinner size={64} />
+        </div>
+      </div>
       <PreviewCard label="Skeleton">
         <div className="w-80 space-y-2">
           <Skeleton className="h-4 w-full rounded" />
@@ -545,13 +572,21 @@ function IconsPage() {
         <span className="text-text-200 text-xs">{filtered.length} íconos</span>
       </div>
       <div className="grid grid-cols-7 gap-3">
-        {filtered.map(({ icon: Icon, name }) => (
-          <div key={name} className="group flex flex-col items-center gap-2 rounded-xl border border-base-100 bg-background-50 p-4 hover:border-primary-500/40 hover:bg-primary-500/5 transition cursor-default">
+        {filtered.map(({ icon: Icon, name }, i) => (
+          <motion.div
+            key={name}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.025, type: 'spring', stiffness: 400, damping: 28 }}
+            whileHover={{ scale: 1.06, y: -2 }}
+            whileTap={{ scale: 0.96 }}
+            className="group flex flex-col items-center gap-2 rounded-xl border border-base-100 bg-background-50 p-4 hover:border-primary-500/40 hover:bg-primary-500/5 transition-colors cursor-default"
+          >
             <span className="[&_svg]:fill-none [&_path]:fill-none">
-              <Icon size={22} strokeWidth={1.4} className="text-title-50 group-hover:text-primary-500 transition" />
+              <Icon size={22} strokeWidth={1.4} className="text-title-50 group-hover:text-primary-500 transition-colors" />
             </span>
-            <span className="text-text-200 text-[10px] text-center leading-tight truncate w-full text-center">{name}</span>
-          </div>
+            <span className="text-text-200 text-[10px] text-center leading-tight truncate w-full">{name}</span>
+          </motion.div>
         ))}
       </div>
       <div className="rounded-xl border border-base-100 bg-background-soft-50 p-4">
@@ -609,18 +644,25 @@ export function App() {
                     key={id}
                     onClick={() => setActive(id)}
                     className={[
-                      'w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition',
+                      'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors',
                       active === id
-                        ? 'bg-primary-500/10 text-primary-500 font-medium'
+                        ? 'text-primary-500 font-medium'
                         : 'text-text-50 hover:bg-background-soft-50 hover:text-title-50',
                     ].join(' ')}
                   >
-                    <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0">
+                    {active === id && (
+                      <motion.div
+                        layoutId="nav-active-bg"
+                        className="absolute inset-0 rounded-lg bg-primary-500/10"
+                        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                      />
+                    )}
+                    <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0 relative z-10">
                       <Icon size={16} strokeWidth={1.4} className={active === id ? 'text-primary-500' : 'text-text-200'} />
                     </span>
-                    {label}
+                    <span className="relative z-10">{label}</span>
                     {id === 'overview' && (
-                      <span className="ml-auto">
+                      <span className="ml-auto relative z-10">
                         <Badge color="primary" size="sm">{COMPONENTS.filter(c=>c.status==='stable').length}</Badge>
                       </span>
                     )}
@@ -664,7 +706,17 @@ export function App() {
 
         {/* Page content */}
         <div className="px-8 py-8">
-          <PageComponent />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              <PageComponent />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
     </div>
