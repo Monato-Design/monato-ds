@@ -547,7 +547,9 @@ function IconsPage() {
       <div className="grid grid-cols-7 gap-3">
         {filtered.map(({ icon: Icon, name }) => (
           <div key={name} className="group flex flex-col items-center gap-2 rounded-xl border border-base-100 bg-background-50 p-4 hover:border-primary-500/40 hover:bg-primary-500/5 transition cursor-default">
-            <Icon size={22} className="text-title-50 group-hover:text-primary-500 transition" />
+            <span className="[&_svg]:fill-none [&_path]:fill-none">
+              <Icon size={22} strokeWidth={1.4} className="text-title-50 group-hover:text-primary-500 transition" />
+            </span>
             <span className="text-text-200 text-[10px] text-center leading-tight truncate w-full text-center">{name}</span>
           </div>
         ))}
@@ -590,7 +592,7 @@ export function App() {
 
         {/* Logo */}
         <div className="flex items-center gap-3 border-b border-base-100 px-5 py-[15px]">
-          <img src={LogoDefault} alt="monato" className="h-[18px] w-auto" />
+          <img src={LogoDefault} alt="monato" className="h-6 w-auto" />
           <Badge color="primary" size="sm">DS</Badge>
         </div>
 
@@ -613,7 +615,9 @@ export function App() {
                         : 'text-text-50 hover:bg-background-soft-50 hover:text-title-50',
                     ].join(' ')}
                   >
-                    <Icon size={16} strokeWidth={1.2} className={active === id ? 'text-primary-500' : 'text-text-200'} />
+                    <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0">
+                      <Icon size={16} strokeWidth={1.4} className={active === id ? 'text-primary-500' : 'text-text-200'} />
+                    </span>
                     {label}
                     {id === 'overview' && (
                       <span className="ml-auto">
@@ -648,11 +652,11 @@ export function App() {
           </div>
           <div className="flex items-center gap-2">
             <Button size="sm" appearance="outline">
-              <Globe1StrokeRounded size={13} />
+              <span className="[&_svg]:fill-none [&_path]:fill-none"><Globe1StrokeRounded size={13} strokeWidth={1.4} /></span>
               Figma
             </Button>
             <Button size="sm">
-              <Code1StrokeRounded size={13} />
+              <span className="[&_svg]:fill-none [&_path]:fill-none"><Code1StrokeRounded size={13} strokeWidth={1.4} /></span>
               Usar componente
             </Button>
           </div>
