@@ -15,7 +15,7 @@ import {
   Gear1StrokeRounded, Bell1StrokeRounded,
   ChevronDownStrokeRounded, Download1StrokeRounded,
   CloudUploadStrokeRounded, FileMultipleStrokeRounded,
-  CheckCircle1StrokeRounded, Layers1StrokeRounded,
+  CheckCircle1StrokeRounded, Layers1StrokeRounded, Locked1StrokeRounded,
 } from '@lineiconshq/free-icons';
 // Logo — PNG para renderizado correcto sobre fondo claro
 const LogoDefault = '/src/assets/logo-default.png';
@@ -368,7 +368,11 @@ const NAV_OTHERS = [
   { label: 'Cashback',     icon: BarChart4StrokeRounded,      disabled: true },
 ];
 
-function Sidebar({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Screen) => void }) {
+function Sidebar({ screen, onNavigate, onProfileOpen }: {
+  screen: Screen;
+  onNavigate: (s: Screen) => void;
+  onProfileOpen: () => void;
+}) {
   return (
     <aside className="h-full w-60 shrink-0 flex flex-col border-r border-base-100 bg-background-50">
       {/* Logo */}
@@ -455,19 +459,229 @@ function Sidebar({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Scree
         </div>
       </nav>
 
-      {/* User footer */}
-      <div className="border-t border-base-100 px-4 py-3 flex items-center gap-2.5">
+      {/* User footer — click to open profile */}
+      <motion.button
+        whileHover={{ backgroundColor: 'var(--color-background-soft-50)' }}
+        onClick={onProfileOpen}
+        className="border-t border-base-100 px-4 py-3 flex items-center gap-2.5 w-full text-left transition-colors"
+      >
         <Avatar size="sm" fallback="KM" />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-title-50 text-xs font-medium truncate">Kathryn Murphy</p>
           <p className="text-text-200 text-[11px] truncate">murphy.mitc@example.com</p>
         </div>
-      </div>
+      </motion.button>
     </aside>
   );
 }
 
-// ─── Portafolio screen ────────────────────────────────────────────────────────
+// ─── Profile Drawer ───────────────────────────────────────────────────────────
+function ProfileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [name, setName] = useState('Kathryn Murphy');
+  const [title, setTitle] = useState('Product Manager');
+  const [twoFA, setTwoFA] = useState(false);
+  const [loginAlert, setLoginAlert] = useState(true);
+
+  const HISTORIAL = [
+    { color: 'bg-green-500',   title: 'New user registered',     desc: 'John Doe joined your platform',    time: '10 min ago' },
+    { color: 'bg-primary-500', title: 'Portafolio actualizado',   desc: '3,782 obligaciones sincronizadas', time: '1 hr ago'   },
+    { color: 'bg-orange-500',  title: 'Alerta de mora detectada', desc: 'Chance Philips — mora avanzada',   time: '3 hr ago'   },
+  ];
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/20 z-20"
+            onClick={onClose}
+          />
+
+          {/* Drawer */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 340, damping: 32 }}
+            className="absolute top-0 right-0 h-full w-[420px] bg-background-50 border-l border-base-100 z-30 flex flex-col shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-base-100 shrink-0">
+              <div>
+                <h3 className="text-title-50 text-base font-semibold">Profile</h3>
+                <p className="text-text-200 text-xs mt-0.5">Update your profile information</p>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                onClick={onClose}
+                className="size-7 rounded-lg hover:bg-background-soft-50 flex items-center justify-center text-text-200 hover:text-title-50 transition mt-0.5"
+              >
+                ✕
+              </motion.button>
+            </div>
+
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+              {/* Avatar upload */}
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="size-16 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-white text-lg font-semibold">
+                    KM
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background-50 border border-base-100 flex items-center justify-center">
+                    <span className="[&_svg]:fill-none [&_path]:fill-none">
+                      <Upload1StrokeRounded size={10} strokeWidth={1.6} className="text-text-200" />
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-title-50 text-sm font-medium">Upload Image</p>
+                  <p className="text-text-200 text-xs mt-0.5">180x180 pixels px Png or Jpeg</p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    className="mt-2 px-4 py-1.5 rounded-lg border border-base-200 text-xs text-title-50 hover:bg-background-soft-50 transition"
+                  >
+                    Upload
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Account Info */}
+              <div className="space-y-4">
+                <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Account Info</p>
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label className="text-text-100 text-xs font-medium">Name</label>
+                    <input
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      className="w-full h-9 rounded-lg border border-base-200 bg-background-50 px-3 text-sm text-title-50 focus:outline-none focus:border-primary-500 transition"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-text-100 text-xs font-medium">Title</label>
+                    <input
+                      value={title}
+                      onChange={e => setTitle(e.target.value)}
+                      className="w-full h-9 rounded-lg border border-base-200 bg-background-50 px-3 text-sm text-title-50 focus:outline-none focus:border-primary-500 transition"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Historial */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Historial</p>
+                  <button className="text-primary-500 text-xs font-medium hover:underline transition">Ver todo</button>
+                </div>
+                <div className="space-y-3">
+                  {HISTORIAL.map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.07 }}
+                      className="flex items-start gap-3"
+                    >
+                      <div className={`size-2 rounded-full ${item.color} mt-1.5 shrink-0`} />
+                      <div className="min-w-0">
+                        <p className="text-title-50 text-xs font-medium">{item.title}</p>
+                        <p className="text-text-200 text-xs">{item.desc}</p>
+                        <p className="text-text-200 text-[11px] mt-0.5">{item.time}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Security */}
+              <div className="space-y-3">
+                <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Security</p>
+                <div className="space-y-3">
+                  {/* Control 2FA */}
+                  <div className="flex items-center justify-between rounded-xl border border-base-100 px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-lg bg-background-soft-50 border border-base-100 flex items-center justify-center shrink-0">
+                        <span className="[&_svg]:fill-none [&_path]:fill-none">
+                          <Locked1StrokeRounded size={15} strokeWidth={1.4} className="text-text-100" />
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-title-50 text-xs font-medium">Control 2FA</p>
+                        <p className="text-text-200 text-[11px]">Enable two factor authentication</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setTwoFA(v => !v)}
+                      className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 ${twoFA ? 'bg-primary-500' : 'bg-base-200'}`}
+                      style={{ height: '22px', width: '40px' }}
+                    >
+                      <motion.span
+                        animate={{ x: twoFA ? 18 : 2 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        className="absolute top-0.5 size-4 rounded-full bg-white shadow-sm"
+                        style={{ top: '3px' }}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Login Alert */}
+                  <div className="flex items-center justify-between rounded-xl border border-base-100 px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-lg bg-background-soft-50 border border-base-100 flex items-center justify-center shrink-0">
+                        <span className="[&_svg]:fill-none [&_path]:fill-none">
+                          <Bell1StrokeRounded size={15} strokeWidth={1.4} className="text-text-100" />
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-title-50 text-xs font-medium">Login Alert</p>
+                        <p className="text-text-200 text-[11px]">Enable account login alert</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setLoginAlert(v => !v)}
+                      className="relative rounded-full transition-colors duration-200"
+                      style={{ height: '22px', width: '40px', backgroundColor: loginAlert ? '#0894c8' : '#e4e4e7' }}
+                    >
+                      <motion.span
+                        animate={{ x: loginAlert ? 18 : 2 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        className="absolute top-0.5 size-4 rounded-full bg-white shadow-sm"
+                        style={{ top: '3px' }}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Footer actions */}
+            <div className="border-t border-base-100 px-6 py-4 flex gap-3 shrink-0">
+              <Button appearance="outline" className="flex-1" onClick={onClose}>
+                Discard
+              </Button>
+              <motion.div className="flex-1" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                <Button className="w-full" onClick={onClose}>
+                  Apply Changes
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+
 function PortafolioScreen() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -744,6 +958,7 @@ function ClientesScreen() {
 // ─── Mac Desktop Wrapper ──────────────────────────────────────────────────────
 function MacDesktop({ onExit }: { onExit: () => void }) {
   const [screen, setScreen] = useState<Screen>('portafolio');
+  const [profileOpen, setProfileOpen] = useState(false);
 
   return (
     <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
@@ -752,7 +967,7 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
+        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10 relative"
         style={{ height: 'min(1000px, calc(100vh - 32px))' }}
       >
         {/* Mac title bar */}
@@ -772,8 +987,8 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
         </div>
 
         {/* App content */}
-        <div className="flex-1 flex overflow-hidden bg-background-50">
-          <Sidebar screen={screen} onNavigate={setScreen} />
+        <div className="flex-1 flex overflow-hidden bg-background-50 relative">
+          <Sidebar screen={screen} onNavigate={setScreen} onProfileOpen={() => setProfileOpen(true)} />
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -787,6 +1002,9 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
               {screen === 'portafolio' ? <PortafolioScreen /> : <ClientesScreen />}
             </motion.div>
           </AnimatePresence>
+
+          {/* Profile Drawer */}
+          <ProfileDrawer open={profileOpen} onClose={() => setProfileOpen(false)} />
         </div>
       </motion.div>
     </div>
