@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import Button from '../components/Button'
 import ButtonShowcase from '../showcase/ButtonShowcase'
 import InputShowcase from '../showcase/InputShowcase'
+import BadgeShowcase from '../showcase/BadgeShowcase'
 
 type Theme = 'light' | 'dark'
-type ComponentId = 'button' | 'input'
+type ComponentId = 'button' | 'input' | 'badge'
 
 const NAV: { id: ComponentId; label: string }[] = [
   { id: 'button', label: 'Button' },
   { id: 'input', label: 'Input' },
+  { id: 'badge', label: 'Badge' },
 ]
 
 export default function Showcase() {
@@ -79,6 +81,7 @@ export default function Showcase() {
 
           {active === 'button' && <ButtonShowcase />}
           {active === 'input' && <InputShowcase />}
+          {active === 'badge' && <BadgeShowcase />}
         </div>
       </div>
     </div>

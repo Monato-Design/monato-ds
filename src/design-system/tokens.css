@@ -751,6 +751,9 @@
   --color-badges-success-background: var(--primitive-green-50);
   --color-badges-success-text: var(--primitive-green-700);
   --color-badges-success-icon: var(--primitive-green-500);
+  --color-badges-info-background: var(--primitive-bluelight-50);
+  --color-badges-info-text: var(--primitive-bluelight-500);
+  --color-badges-info-icon: var(--primitive-bluelight-500);
   --color-badges-cyan-background: var(--primitive-cyan-50);
   --color-badges-cyan-text: var(--primitive-cyan-700);
   --color-badges-cyan-icon: var(--primitive-cyan-500);
@@ -1165,6 +1168,9 @@
   --color-badges-success-background: var(--primitive-green-a15);
   --color-badges-success-text: var(--primitive-green-500);
   --color-badges-success-icon: var(--primitive-green-400);
+  --color-badges-info-background: rgba(11, 165, 236, 0.15);
+  --color-badges-info-text: var(--primitive-bluelight-500);
+  --color-badges-info-icon: var(--primitive-bluelight-500);
   --color-badges-cyan-background: var(--primitive-cyan-a15);
   --color-badges-cyan-text: var(--primitive-cyan-500);
   --color-badges-cyan-icon: var(--primitive-cyan-400);
