@@ -88,10 +88,13 @@ function KpiCard({
 }
 
 // ─── File Uploader ────────────────────────────────────────────────────────────
+type UploadState = 'idle' | 'uploading' | 'completed' | 'error';
+
 function FileUploader({ onClose }: { onClose: () => void }) {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [uploaded, setUploaded] = useState(false);
+  const [uploadState, setUploadState] = useState<UploadState>('idle');
+  const [progress, setProgress] = useState(0);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -107,9 +110,28 @@ function FileUploader({ onClose }: { onClose: () => void }) {
 
   const handleUpload = () => {
     if (!file) return;
-    setUploaded(true);
-    setTimeout(onClose, 1400);
+    setUploadState('uploading');
+    setProgress(0);
+
+    // Simular progreso
+    let p = 0;
+    const interval = setInterval(() => {
+      p += Math.random() * 18 + 4;
+      if (p >= 100) {
+        p = 100;
+        clearInterval(interval);
+        setProgress(100);
+        // 50/50 completed vs error para demo
+        setTimeout(() => {
+          setUploadState(Math.random() > 0.4 ? 'completed' : 'error');
+        }, 400);
+      } else {
+        setProgress(Math.round(p));
+      }
+    }, 180);
   };
+
+  const fileSize = file ? `${(file.size / 1024).toFixed(0)} KB` : '';
 
   return (
     <motion.div
@@ -121,7 +143,7 @@ function FileUploader({ onClose }: { onClose: () => void }) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-base-100">
-        <h3 className="text-title-50 text-base font-semibold">Cargar clientes</h3>
+        <h3 className="text-title-50 text-base font-semibold">Upload Files</h3>
         <button
           onClick={onClose}
           className="size-7 rounded-lg hover:bg-background-soft-50 flex items-center justify-center transition text-text-200 hover:text-title-50"
@@ -131,93 +153,198 @@ function FileUploader({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="px-6 py-5 space-y-4">
-        {/* Drop zone */}
-        <motion.div
-          onDragOver={e => { e.preventDefault(); setDragging(true); }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={handleDrop}
-          animate={{ borderColor: dragging ? '#0894c8' : file ? '#22c55e' : '#e4e4e7', backgroundColor: dragging ? 'rgba(8,148,200,0.04)' : 'transparent' }}
-          transition={{ duration: 0.15 }}
-          className="rounded-xl border-2 border-dashed p-8 flex flex-col items-center gap-3 cursor-pointer"
-          onClick={() => document.getElementById('file-input')?.click()}
-        >
-          <input id="file-input" type="file" accept=".csv" className="hidden" onChange={handleFile} />
-          <motion.div
-            animate={{ scale: dragging ? 1.1 : 1 }}
-            transition={{ type: 'spring', stiffness: 400 }}
-            className={`size-12 rounded-full flex items-center justify-center ${file ? 'bg-green-50' : 'bg-background-soft-50'}`}
-          >
-            <span className="[&_svg]:fill-none [&_path]:fill-none">
-              {file
-                ? <CheckCircle1StrokeRounded size={24} strokeWidth={1.4} className="text-green-500" />
-                : <CloudUploadStrokeRounded  size={24} strokeWidth={1.4} className="text-text-200" />
-              }
-            </span>
-          </motion.div>
-          {file ? (
-            <div className="text-center">
-              <p className="text-title-50 text-sm font-medium">{file.name}</p>
-              <p className="text-text-200 text-xs mt-0.5">{(file.size / 1024).toFixed(1)} KB · listo para subir</p>
-            </div>
-          ) : (
-            <div className="text-center">
-              <p className="text-title-50 text-sm font-medium">Arrastra tu archivo aquí</p>
-              <p className="text-text-200 text-xs mt-0.5">o haz clic para seleccionar · Solo .CSV, hasta 50MB</p>
-            </div>
-          )}
-          {!file && (
-            <button
-              onClick={e => { e.stopPropagation(); document.getElementById('file-input')?.click(); }}
-              className="mt-1 px-4 py-1.5 rounded-lg border border-base-200 text-xs text-title-50 hover:bg-background-soft-50 transition"
-            >
-              Seleccionar archivo
-            </button>
-          )}
-        </motion.div>
 
-        {/* Template download */}
-        <div className="flex items-center gap-3 rounded-xl border border-base-100 bg-background-soft-50 px-4 py-3">
-          <div className="flex size-9 items-center justify-center rounded-lg border border-base-100 bg-background-50 shrink-0">
-            <span className="[&_svg]:fill-none [&_path]:fill-none">
-              <FileMultipleStrokeRounded size={16} strokeWidth={1.4} className="text-text-100" />
-            </span>
+        {/* ── Estado: idle — drop zone ── */}
+        {uploadState === 'idle' && (
+          <>
+            <motion.div
+              onDragOver={e => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={handleDrop}
+              animate={{
+                borderColor: dragging ? '#0894c8' : file ? '#22c55e' : '#e4e4e7',
+                backgroundColor: dragging ? 'rgba(8,148,200,0.04)' : 'transparent',
+              }}
+              transition={{ duration: 0.15 }}
+              className="rounded-xl border-2 border-dashed p-8 flex flex-col items-center gap-3 cursor-pointer"
+              onClick={() => document.getElementById('file-input')?.click()}
+            >
+              <input id="file-input" type="file" accept=".csv" className="hidden" onChange={handleFile} />
+              <motion.div
+                animate={{ scale: dragging ? 1.1 : 1 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+                className={`size-12 rounded-full flex items-center justify-center ${file ? 'bg-green-50' : 'bg-background-soft-50'}`}
+              >
+                <span className="[&_svg]:fill-none [&_path]:fill-none">
+                  {file
+                    ? <CheckCircle1StrokeRounded size={24} strokeWidth={1.4} className="text-green-500" />
+                    : <CloudUploadStrokeRounded  size={24} strokeWidth={1.4} className="text-text-200" />
+                  }
+                </span>
+              </motion.div>
+              {file ? (
+                <div className="text-center">
+                  <p className="text-title-50 text-sm font-medium">{file.name}</p>
+                  <p className="text-text-200 text-xs mt-0.5">{fileSize} · listo para subir</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-title-50 text-sm font-medium">Arrastra tu archivo aquí</p>
+                  <p className="text-text-200 text-xs mt-0.5">o haz clic para seleccionar · Solo .CSV, hasta 50MB</p>
+                </div>
+              )}
+              {!file && (
+                <button
+                  onClick={e => { e.stopPropagation(); document.getElementById('file-input')?.click(); }}
+                  className="mt-1 px-4 py-1.5 rounded-lg border border-base-200 text-xs text-title-50 hover:bg-background-soft-50 transition"
+                >
+                  Seleccionar archivo
+                </button>
+              )}
+            </motion.div>
+
+            {/* Template download */}
+            <div className="flex items-center gap-3 rounded-xl border border-base-100 bg-background-soft-50 px-4 py-3">
+              <div className="flex size-9 items-center justify-center rounded-lg border border-base-100 bg-background-50 shrink-0">
+                <span className="[&_svg]:fill-none [&_path]:fill-none">
+                  <FileMultipleStrokeRounded size={16} strokeWidth={1.4} className="text-text-100" />
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-title-50 text-xs font-medium">Descarga la plantilla .CSV aquí</p>
+                <p className="text-text-200 text-[11px] mt-0.5">Campos: nombre, ID, teléfono, email, sexo (opc.), ID externo</p>
+              </div>
+              <button className="shrink-0 text-text-200 hover:text-primary-500 transition">
+                <span className="[&_svg]:fill-none [&_path]:fill-none">
+                  <Download1StrokeRounded size={16} strokeWidth={1.4} />
+                </span>
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ── Estados: uploading / completed / error — file row ── */}
+        {uploadState !== 'idle' && file && (
+          <div className="rounded-xl border border-base-100 bg-background-50 px-4 py-3.5 space-y-3">
+            <div className="flex items-center gap-3">
+              {/* PDF icon */}
+              <div className="relative shrink-0">
+                <div className="size-10 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center">
+                  <span className="[&_svg]:fill-none [&_path]:fill-none">
+                    <FileMultipleStrokeRounded size={18} strokeWidth={1.4} className="text-red-400" />
+                  </span>
+                </div>
+                <div className="absolute -bottom-1 -right-1 bg-red-500 rounded text-white text-[8px] font-bold px-0.5 leading-tight">
+                  PDF
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-title-50 text-sm font-medium truncate">{file.name}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-text-200 text-xs">
+                    {uploadState === 'uploading'
+                      ? `${Math.round(file.size / 1024 * (progress / 100))} KB of ${fileSize}`
+                      : `${fileSize} of ${fileSize}`
+                    }
+                  </p>
+                  {uploadState === 'completed' && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center gap-1 text-xs font-medium text-green-500"
+                    >
+                      <span className="size-1.5 rounded-full bg-green-500 inline-block" />
+                      Completed
+                    </motion.span>
+                  )}
+                  {uploadState === 'error' && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center gap-1 text-xs font-medium text-red-500"
+                    >
+                      <span className="size-1.5 rounded-full bg-red-500 inline-block" />
+                      Errores encontrados
+                    </motion.span>
+                  )}
+                </div>
+              </div>
+
+              <button className="shrink-0 text-text-200 hover:text-red-400 transition">
+                <span className="[&_svg]:fill-none [&_path]:fill-none">
+                  <Download1StrokeRounded size={16} strokeWidth={1.4} />
+                </span>
+              </button>
+            </div>
+
+            {/* Progress bar — solo en uploading */}
+            {uploadState === 'uploading' && (
+              <div className="space-y-1.5">
+                <div className="h-1.5 w-full rounded-full bg-background-soft-100 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-primary-500"
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.15, ease: 'linear' }}
+                  />
+                </div>
+                <p className="text-text-200 text-xs text-right">{progress}%</p>
+              </div>
+            )}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-title-50 text-xs font-medium">Descarga la plantilla .CSV aquí</p>
-            <p className="text-text-200 text-[11px] mt-0.5">Campos: nombre, ID, teléfono, email, sexo (opc.), ID externo</p>
-          </div>
-          <button className="shrink-0 text-text-200 hover:text-primary-500 transition">
-            <span className="[&_svg]:fill-none [&_path]:fill-none">
-              <Download1StrokeRounded size={16} strokeWidth={1.4} />
-            </span>
-          </button>
-        </div>
+        )}
+
       </div>
 
-      {/* Actions */}
+      {/* ── Actions ── */}
       <div className="px-6 pb-6 flex gap-3">
-        <Button appearance="outline" className="flex-1" onClick={onClose}>Cancelar</Button>
-        <Button className="flex-1" disabled={!file} onClick={handleUpload}>
-          {uploaded ? (
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-1.5"
-            >
-              <span className="[&_svg]:fill-none [&_path]:fill-none">
-                <CheckCircle1StrokeRounded size={14} strokeWidth={1.6} />
-              </span>
-              ¡Subido!
-            </motion.span>
-          ) : (
+        <Button appearance="outline" className="flex-1" onClick={onClose}>
+          Cancel
+        </Button>
+
+        {uploadState === 'idle' && (
+          <Button className="flex-1" disabled={!file} onClick={handleUpload}>
             <span className="flex items-center gap-1.5">
               <span className="[&_svg]:fill-none [&_path]:fill-none">
                 <Upload1StrokeRounded size={14} strokeWidth={1.6} />
               </span>
               Cargar clientes
             </span>
-          )}
-        </Button>
+          </Button>
+        )}
+
+        {uploadState === 'uploading' && (
+          <Button className="flex-1" disabled>
+            <span className="flex items-center gap-1.5">
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="[&_svg]:fill-none [&_path]:fill-none inline-flex"
+              >
+                <RefreshDollar1StrokeRounded size={14} strokeWidth={1.6} />
+              </motion.span>
+              Subiendo...
+            </span>
+          </Button>
+        )}
+
+        {uploadState === 'completed' && (
+          <Button className="flex-1" onClick={onClose}>
+            Continuar
+          </Button>
+        )}
+
+        {uploadState === 'error' && (
+          <Button className="flex-1" variant="danger">
+            <span className="flex items-center gap-1.5">
+              <span className="[&_svg]:fill-none [&_path]:fill-none">
+                <Download1StrokeRounded size={14} strokeWidth={1.6} />
+              </span>
+              Descargar errores
+            </span>
+          </Button>
+        )}
       </div>
     </motion.div>
   );
