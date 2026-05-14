@@ -1,8 +1,11 @@
-@import "tailwindcss";
-@import "./design-system/tokens.css";
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
-html {
-  font-family: var(--font-family-sans);
-  color: var(--color-text-body);
-  background-color: var(--color-background-white-primary);
-}
+@import './tokens/monato.css';
+
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@import './tokens/theme-bridge.css';
+
+/* Tell Tailwind v4 to treat [data-theme="dark"] as the dark variant. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

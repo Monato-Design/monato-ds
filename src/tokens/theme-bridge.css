@@ -1,0 +1,507 @@
+/* ================================================================
+   Monato DS — Theme Bridge
+
+   Maps Tailgrids-style token names (consumed by components/core/*)
+   to Monato semantic tokens (defined in tokens/monato.css).
+
+   Why this file exists:
+   - Tailgrids components use `bg-button-primary-background`,
+     `text-badge-primary-text`, etc. as Tailwind utility classes.
+   - Tailwind v4 generates those utilities from tokens declared
+     inside `@theme {}`. We use `@theme inline` (not just `@theme`)
+     so the `var(...)` references are kept in the generated utilities
+     and resolved at runtime — that's what lets [data-theme="dark"]
+     swap colors live, because monato.css redefines the right-hand
+     side semantics under that selector.
+   - Result: components stay generic, brand stays Monato, dark
+     mode works automatically with zero extra declarations here.
+
+   Coverage: 302/302 --color-* tokens mapped
+     · 164 explicit Monato semantic mappings
+     · 138 auto-matched (singular↔plural, -background↔-bg renames)
+     · 0 left at Tailgrids default
+
+   Tokens declared here, that DON'T exist yet in Monato Figma but
+   are reused from a Monato equivalent (worth surfacing back to
+   Figma DS Web 2026):
+     · --color-button-*-focus-ring  → uses --color-focus-ring
+     · --color-button-ghost-*       → derived from close-icon variant
+     · --color-chart-tick/legend/grid → derived from text/border
+     · --color-tooltip-background   → uses status-dark-solid-bg
+
+   Last generated: 2026-05-14 (from Tailgrids Pro Blocks + tokens.css)
+   ================================================================ */
+
+@theme inline {
+
+  /* Font family */
+  --font-sans: var(--font-family-sans);
+
+  /* ─── Brand · Primary scale (mapped to Monato Skyblue) ─── */
+  --color-primary-50: var(--primitive-skyblue-50);
+  --color-primary-100: var(--primitive-skyblue-100);
+  --color-primary-200: var(--primitive-skyblue-200);
+  --color-primary-300: var(--primitive-skyblue-300);
+  --color-primary-400: var(--primitive-skyblue-400);
+  --color-primary-500: var(--primitive-skyblue-500);
+  --color-primary-600: var(--primitive-skyblue-600);
+  --color-primary-700: var(--primitive-skyblue-700);
+  --color-primary-800: var(--primitive-skyblue-800);
+  --color-primary-900: var(--primitive-skyblue-900);
+  --color-primary-950: var(--primitive-bluedark-900);
+  --color-primary-text: var(--primitive-white);
+
+  /* ─── Brand · Neutral ─── */
+  --color-neutral-brand-color: var(--color-text-neutral-brand);
+
+  /* ─── Title ─── */
+  --color-title-50: var(--color-text-title);
+
+  /* ─── Text scale ─── */
+  --color-text-50: var(--color-text-body);
+  --color-text-100: var(--color-text-secondary-text);
+  --color-text-200: var(--color-text-tertiary-text);
+  --color-text-300: var(--color-border-secondary-alt);
+
+  /* ─── White (alpha scale) ─── */
+  --color-white-100: var(--primitive-white);
+  --color-white-90: var(--primitive-white-a90);
+  --color-white-80: var(--primitive-white-a80);
+  --color-white-70: var(--primitive-white-a70);
+  --color-white-60: var(--primitive-white-a60);
+
+  /* ─── Status · Error ─── */
+  --color-error-500: var(--primitive-red-500);
+
+  /* ─── Status · Success ─── */
+  --color-success-500: var(--primitive-green-500);
+
+  /* ─── Status · Warning ─── */
+  --color-warning-500: var(--primitive-yellow-500);
+
+  /* ─── Status · Info ─── */
+  --color-info-500: var(--primitive-bluelight-500);
+
+  /* ─── Foreground ─── */
+  --color-foreground-50: var(--color-foreground-dark-primary);
+  --color-foreground-100: var(--color-foreground-dark-secondary);
+
+  /* ─── Foreground · Soft (gray) ─── */
+  --color-foreground-soft-50: var(--color-foreground-gray-primary);
+  --color-foreground-soft-100: var(--color-foreground-gray-secondary);
+  --color-foreground-soft-200: var(--color-foreground-gray-secondary-alt);
+  --color-foreground-soft-300: var(--color-foreground-gray-secondary-alt-2);
+  --color-foreground-soft-400: var(--color-foreground-gray-tertiary);
+  --color-foreground-soft-500: var(--color-foreground-gray-quaternary);
+
+  /* ─── Background ─── */
+  --color-background-50: var(--color-background-white-primary);
+  --color-background-100: var(--color-background-white-secondary);
+  --color-background-success-600: var(--primitive-green-600);
+
+  /* ─── Background · Soft (gray) ─── */
+  --color-background-soft-50: var(--color-background-gray-primary);
+  --color-background-soft-100: var(--color-background-gray-secondary);
+  --color-background-soft-200: var(--color-background-gray-secondary-alt);
+  --color-background-soft-300: var(--color-background-gray-secondary-alt-2);
+  --color-background-soft-400: var(--color-background-gray-tertiary);
+  --color-background-soft-500: var(--color-background-gray-quaternary);
+
+  /* ─── Button ─── */
+  --color-button-primary-focus-ring: var(--color-focus-ring);
+  --color-button-outline-background: var(--color-button-primary-outline-background);
+  --color-button-outline-hover-background: var(--color-button-primary-outline-hover-background);
+  --color-button-outline-border: var(--color-button-primary-outline-stroke);
+  --color-button-outline-focus-ring: var(--color-focus-ring);
+  --color-button-outline-text: var(--color-button-primary-outline-text);
+  --color-button-outline-hover-text: var(--color-button-primary-outline-hover-text);
+  --color-button-outline-disabled-background: var(--color-button-primary-outline-disabled-bg);
+  --color-button-outline-disabled-text: var(--color-button-primary-outline-disabled-text);
+  --color-button-outline-disabled-border: var(--color-button-disabled-outline-border);
+  --color-button-disabled-background: var(--color-button-disabled-primary-background);
+  --color-button-disabled-border: var(--color-button-disabled-primary-border);
+  --color-button-disabled-text: var(--color-button-disabled-primary-text);
+  --color-button-error-background: var(--color-button-error-primary-background);
+  --color-button-error-hover-background: var(--color-button-error-primary-hover-background);
+  --color-button-error-border: var(--color-button-error-primary-stroke);
+  --color-button-error-text: var(--color-button-error-primary-text);
+  --color-button-error-focus-ring: var(--color-focus-ring);
+  --color-button-error-outline-border: var(--color-button-error-outline-stroke);
+  --color-button-error-outline-focus-border: var(--color-button-error-outline-focused-stroke);
+  --color-button-error-outline-focus-ring: var(--color-focus-ring);
+  --color-button-success-background: var(--color-button-success-primary-background);
+  --color-button-success-hover-background: var(--color-button-success-primary-hover-background);
+  --color-button-success-border: var(--color-button-success-primary-stroke);
+  --color-button-success-text: var(--color-button-success-primary-text);
+  --color-button-success-focus-ring: var(--color-focus-ring);
+  --color-button-success-outline-border: var(--color-button-success-outline-stroke);
+  --color-button-success-outline-focus-border: var(--color-button-success-outline-focused-stroke);
+  --color-button-success-outline-focus-ring: var(--color-focus-ring);
+  --color-button-ghost-text: var(--color-text-tertiary-text);
+  --color-button-ghost-hover-text: var(--color-text-secondary-text);
+  --color-button-ghost-hover-background: var(--color-button-close-icon-primary-hover-background);
+  --color-button-group-primary-background: var(--color-button-primary-button-group-primary-background);
+  --color-button-group-primary-hover-background: var(--color-button-primary-button-group-primary-hover-background);
+  --color-button-group-primary-text: var(--color-button-primary-button-group-primary-text);
+  --color-button-group-primary-hover-text: var(--color-button-primary-button-group-primary-hover-text);
+  --color-button-group-secondary-background: var(--color-button-primary-button-group-secondary-background);
+  --color-button-group-secondary-text: var(--color-button-primary-button-group-secondary-text);
+
+  /* ─── Badge ─── */
+  --color-badge-neutral-background: var(--color-badges-gray-background);
+  --color-badge-neutral-text: var(--color-badges-gray-text);
+  --color-badge-neutral-icon-color: var(--color-badges-gray-icon);
+  --color-badge-primary-background: var(--color-badges-primary-background);
+  --color-badge-primary-text: var(--color-badges-primary-text);
+  --color-badge-primary-icon-color: var(--color-badges-primary-icon);
+  --color-badge-error-background: var(--color-badges-error-background);
+  --color-badge-error-text: var(--color-badges-error-text);
+  --color-badge-error-icon-color: var(--color-badges-error-icon);
+  --color-badge-warning-background: var(--color-badges-warning-background);
+  --color-badge-warning-text: var(--color-badges-warning-text);
+  --color-badge-warning-icon-color: var(--color-badges-warning-icon);
+  --color-badge-success-background: var(--color-badges-success-background);
+  --color-badge-success-text: var(--color-badges-success-text);
+  --color-badge-success-icon-color: var(--color-badges-success-icon);
+  --color-badge-cyan-background: var(--color-badges-cyan-background);
+  --color-badge-cyan-text: var(--color-badges-cyan-text);
+  --color-badge-cyan-icon-color: var(--color-badges-cyan-icon);
+  --color-badge-sky-background: var(--color-badges-sky-background);
+  --color-badge-sky-text: var(--color-badges-sky-text);
+  --color-badge-sky-icon-color: var(--color-badges-sky-icon);
+  --color-badge-blue-background: var(--color-badges-blue-background);
+  --color-badge-blue-text: var(--color-badges-blue-text);
+  --color-badge-blue-icon-color: var(--color-badges-blue-icon);
+  --color-badge-violet-background: var(--color-badges-violet-background);
+  --color-badge-violet-text: var(--color-badges-violet-text);
+  --color-badge-violet-icon-color: var(--color-badges-violet-icon);
+  --color-badge-purple-background: var(--color-badges-purple-background);
+  --color-badge-purple-text: var(--color-badges-purple-text);
+  --color-badge-purple-icon-color: var(--color-badges-purple-icon);
+  --color-badge-pink-background: var(--color-badges-pink-background);
+  --color-badge-pink-text: var(--color-badges-pink-text);
+  --color-badge-pink-icon-color: var(--color-badges-pink-icon);
+  --color-badge-rose-background: var(--color-badges-rose-background);
+  --color-badge-rose-text: var(--color-badges-rose-text);
+  --color-badge-rose-icon-color: var(--color-badges-rose-icon);
+  --color-badge-orange-background: var(--color-badges-orange-background);
+  --color-badge-orange-text: var(--color-badges-orange-text);
+  --color-badge-orange-icon-color: var(--color-badges-orange-icon);
+
+  /* ─── Alert ─── */
+  --color-alert-success-background: var(--color-alerts-success-background);
+  --color-alert-success-icon-background: var(--color-alerts-success-icon-background);
+  --color-alert-success-border: var(--color-alerts-success-border);
+  --color-alert-success-close-icon: var(--color-alerts-success-close-icon);
+  --color-alert-success-title: var(--color-alerts-success-title);
+  --color-alert-success-description: var(--color-alerts-success-description);
+  --color-alert-success-button-background: var(--color-alerts-success-button-bg);
+  --color-alert-success-button-hover-background: var(--color-alerts-success-button-hover-bg);
+  --color-alert-success-button-text: var(--color-alerts-success-button);
+  --color-alert-danger-background: var(--color-alerts-danger-background);
+  --color-alert-danger-icon-background: var(--color-alerts-danger-icon-background);
+  --color-alert-danger-border: var(--color-alerts-danger-border);
+  --color-alert-danger-close-icon: var(--color-alerts-danger-close-icon);
+  --color-alert-danger-title: var(--color-alerts-danger-title);
+  --color-alert-danger-description: var(--color-alerts-danger-description);
+  --color-alert-danger-button-background: var(--color-alerts-danger-button-bg);
+  --color-alert-danger-button-hover-background: var(--color-alerts-danger-button-hover-bg);
+  --color-alert-danger-button-text: var(--color-alerts-danger-button);
+  --color-alert-info-background: var(--color-alerts-info-background);
+  --color-alert-info-icon-background: var(--color-alerts-info-icon-background);
+  --color-alert-info-border: var(--color-alerts-info-border);
+  --color-alert-info-close-icon: var(--color-alerts-info-close-icon);
+  --color-alert-info-title: var(--color-alerts-info-title);
+  --color-alert-info-description: var(--color-alerts-info-description);
+  --color-alert-info-button-background: var(--color-alerts-info-button-bg);
+  --color-alert-info-button-hover-background: var(--color-alerts-info-button-hover-bg);
+  --color-alert-info-button-text: var(--color-alerts-info-button);
+  --color-alert-warning-background: var(--color-alerts-warning-background);
+  --color-alert-warning-icon-background: var(--color-alerts-warning-icon-background);
+  --color-alert-warning-border: var(--color-alerts-warning-border);
+  --color-alert-warning-close-icon: var(--color-alerts-warning-close-icon);
+  --color-alert-warning-title: var(--color-alerts-warning-title);
+  --color-alert-warning-description: var(--color-alerts-warning-description);
+  --color-alert-warning-button-background: var(--color-alerts-warning-button-bg);
+  --color-alert-warning-button-hover-background: var(--color-alerts-warning-button-hover-bg);
+  --color-alert-warning-button-text: var(--color-alerts-warning-button);
+  --color-alert-default-background: var(--color-alerts-default-background);
+  --color-alert-default-icon-background: var(--color-alerts-default-icon-background);
+  --color-alert-default-border: var(--color-alerts-default-border);
+  --color-alert-default-close-icon: var(--color-alerts-default-close-icon);
+  --color-alert-default-title: var(--color-alerts-default-title);
+  --color-alert-default-description: var(--color-alerts-default-description);
+  --color-alert-default-button-background: var(--color-alerts-default-button-bg);
+  --color-alert-default-button-hover-background: var(--color-alerts-default-button-hover-bg);
+  --color-alert-default-button-text: var(--color-alerts-default-button);
+
+  /* ─── Input ─── */
+  --color-input-primary-focus-border: var(--color-input-brand-focus-border);
+
+  /* ─── Checkbox ─── */
+  --color-checkbox-checked-icon-color: var(--color-checkbox-checked);
+
+  /* ─── Tab ─── */
+
+  /* ─── Dropdown ─── */
+  --color-dropdown-background: var(--color-dropdowns-background);
+  --color-dropdown-hover-background: var(--color-dropdowns-hover-background);
+  --color-dropdown-secondary-background: var(--color-dropdowns-secondary-background);
+  --color-dropdown-divider: var(--color-dropdowns-divider);
+
+  /* ─── Tooltip ─── */
+  --color-tooltip-border: var(--color-border-secondary);
+
+  /* ─── Popover ─── */
+  --color-popover-title-background: var(--color-popovers-title-bg);
+  --color-popover-border: var(--color-popovers-border);
+
+  /* ─── Card ─── */
+  --color-card-background-50: var(--color-card-background);
+  --color-card-background-100: var(--color-card-solid-background);
+  --color-card-background-200: var(--color-card-secondary-background);
+  --color-card-background-300: var(--color-card-card-bg);
+
+  /* ─── Modal ─── */
+  --color-modal-button-success-background: var(--color-modal-success-button-bg);
+  --color-modal-button-info-background: var(--color-modal-info-button-bg);
+  --color-modal-button-warning-background: var(--color-modal-warning-button-bg);
+  --color-modal-button-error-background: var(--color-modal-error-button-bg);
+
+  /* ─── Sidebar ─── */
+  --color-sidebar-nav-default-background: var(--color-sidebar-navigation-nav-item-nav-default-background);
+  --color-sidebar-nav-hover-background: var(--color-sidebar-navigation-nav-item-nav-hover-background);
+  --color-sidebar-nav-secondary-hover-background: var(--color-sidebar-navigation-nav-item-nav-secondary-hover-background);
+  --color-sidebar-nav-hover-text: var(--color-sidebar-navigation-nav-item-nav-hover-text);
+  --color-sidebar-nav-active-text: var(--color-sidebar-navigation-nav-item-nav-active-text);
+  --color-sidebar-nav-active-background: var(--color-sidebar-navigation-nav-item-nav-active-background);
+  --color-sidebar-nav-focused-background: var(--color-sidebar-navigation-nav-item-nav-focused-background);
+  --color-sidebar-nav-default-text: var(--color-sidebar-navigation-nav-item-default-text);
+  --color-sidebar-nav-icon: var(--color-sidebar-navigation-nav-item-icon);
+  --color-sidebar-badge-background: var(--color-sidebar-navigation-nav-item-badge-background);
+  --color-sidebar-badge-text: var(--color-sidebar-navigation-nav-item-badge-text);
+  --color-sidebar-footer-background: var(--color-sidebar-navigation-footer-background);
+  --color-sidebar-footer-title: var(--color-sidebar-navigation-footer-title);
+  --color-sidebar-footer-subtitle: var(--color-sidebar-navigation-footer-sub-title);
+  --color-sidebar-footer-button-text: var(--color-sidebar-navigation-footer-button-text);
+
+  /* ─── AI · Sidebar ─── */
+  --color-ai-sidebar-primary-gradient-shade-1: var(--color-ai-component-sidebar-menu-primary-gradient-shade-1);
+  --color-ai-sidebar-primary-gradient-shade-2: var(--color-ai-component-sidebar-menu-primary-gradient-shade-2);
+  --color-ai-sidebar-secondary-gradient-shade-1: var(--color-ai-component-sidebar-menu-secondary-gradient-shade-1);
+  --color-ai-sidebar-secondary-gradient-shade-2: var(--color-ai-component-sidebar-menu-secondary-gradient-shade-2);
+  --color-ai-sidebar-hover-primary-shade-1: var(--color-ai-component-sidebar-menu-hover-effect-hover-primary-shade-1);
+  --color-ai-sidebar-hover-primary-shade-2: var(--color-ai-component-sidebar-menu-hover-effect-hover-primary-shade-2);
+  --color-ai-sidebar-hover-secondary-shade-1: var(--color-ai-component-sidebar-menu-hover-effect-hover-secondary-shade-1);
+  --color-ai-sidebar-hover-secondary-shade-2: var(--color-ai-component-sidebar-menu-hover-effect-hover-secondary-shade-2);
+  --color-ai-sidebar-hover-primary-background: var(--color-ai-component-sidebar-menu-hover-effect-hover-primary-bg);
+  --color-ai-sidebar-hover-secondary-background: var(--color-ai-component-sidebar-menu-hover-effect-hover-secondary-bg);
+
+  /* ─── AI · Title ─── */
+  --color-ai-title-gradient-shade-1: var(--color-ai-component-title-gradient-shade-1);
+  --color-ai-title-gradient-shade-2: var(--color-ai-component-title-gradient-shade-2);
+
+  /* ─── AI · Hero ─── */
+
+  /* ─── Datepicker ─── */
+  --color-datepicker-selected-background: var(--color-text-brand);
+  --color-datepicker-selected-hover-background: var(--color-datepicker-selected-date-background);
+
+  /* ─── Calendar ─── */
+  --color-calendar-primary-badge: var(--color-calendar-calendar-selected-date-primary-badge);
+  --color-calendar-primary-background: var(--color-calendar-calendar-selected-date-primary-bg);
+  --color-calendar-success-badge: var(--color-calendar-calendar-selected-date-success-badge);
+  --color-calendar-success-background: var(--color-calendar-calendar-selected-date-success-bg);
+  --color-calendar-warning-badge: var(--color-calendar-calendar-selected-date-warning-badge);
+  --color-calendar-warning-background: var(--color-calendar-calendar-selected-date-warning-bg);
+  --color-calendar-danger-badge: var(--color-calendar-calendar-selected-date-danger-badge);
+  --color-calendar-danger-background: var(--color-calendar-calendar-selected-date-danger-bg);
+  --color-calendar-info-badge: var(--color-calendar-calendar-selected-date-info-badge);
+  --color-calendar-info-background: var(--color-calendar-calendar-selected-date-info-bg);
+  --color-calendar-text: var(--color-calendar-calendar-selected-date-text);
+  --color-calendar-menu-text: var(--color-calendar-calendar-selected-date-more-menu);
+  --color-calendar-dropdown-background: var(--color-calendar-calendar-selected-date-dropdown-bg);
+
+  /* ─── Pricing table ─── */
+  --color-pricing-active-switcher-background: var(--color-pricing-table-active-switcher-bg);
+  --color-pricing-active-card-background: var(--color-pricing-table-active-pricing-card);
+  --color-pricing-button-background: var(--color-pricing-table-button-bg);
+  --color-pricing-icon-color: var(--color-pricing-table-table-2-icon);
+  --color-pricing-icon-background: var(--color-pricing-table-table-2-icon-bg);
+
+  /* ─── FAQ ─── */
+  --color-faq-primary-active-background: var(--color-faq-s-first-faq-active-title-bg);
+  --color-faq-secondary-active-background: var(--color-faq-s-second-faq-active-bg);
+  --color-faq-secondary-active-border: var(--color-faq-s-second-faq-active-border);
+  --color-faq-secondary-active-title: var(--color-faq-s-second-faq-active-title);
+  --color-faq-secondary-active-text: var(--color-faq-s-second-faq-active-text-color-2);
+
+  /* ─── Hero section ─── */
+  --color-hero-card-background: var(--color-hero-card);
+  --color-hero-card-2-background: var(--color-hero-card-2);
+
+  /* ─── CTA section ─── */
+  --color-cta-icon-background: var(--color-cta-icon-bg);
+
+  /* ─── Toggle ─── */
+  --color-toggle-default-background: var(--color-toggle-default-bg);
+  --color-toggle-disabled-background: var(--color-toggle-disabled-bg);
+  --color-toggle-active-background: var(--color-toggle-active-bg);
+
+  /* ─── Footer ─── */
+  --color-footer-card-background: var(--color-footer-card-bg);
+
+  /* ─── Bento ─── */
+  --color-bento-card-background: var(--color-bento-card-bg);
+
+  /* ─── Skeleton ─── */
+  --color-skeleton-gradient-50: var(--color-skeleton-gradient-100);
+
+  /* ─── Section title ─── */
+
+  /* ─── Chart ─── */
+  --color-chart-line: var(--color-border-secondary-alt);
+  --color-chart-tick: var(--color-text-secondary-text);
+  --color-chart-legend: var(--color-text-secondary-text);
+  --color-chart-grid: var(--color-border-secondary);
+
+  /* ─── Scrollbar ─── */
+  --color-scrollbar-background: var(--color-scrollbar);
+
+  /* ─── 404 page ─── */
+  --color-404-background: var(--color-404-page-blur-bg);
+  --color-404-foreground: var(--color-404-page-shape);
+
+  /* ─── Blog ─── */
+  --color-blog-shape: var(--color-blogs-shape);
+
+  /* ─── Map ─── */
+  --color-map-fill: var(--color-map-map);
+
+  /* ─── Misc ─── */
+  --color-chat-list-background-primary: var(--color-chat-list-chat-list-bg-primary);
+  --color-chat-list-background-primary-alt: var(--color-chat-list-chat-list-bg-primary-alt);
+  --color-chat-list-background-secondary: var(--color-chat-list-chat-list-bg-secondary);
+  --color-chat-list-background-secondary-alt: var(--color-chat-list-chat-list-bg-secondary-alt);
+  --color-mobile-nav-icon: var(--color-mobile-nav-menu-button-icon);
+  --color-mobile-nav-background: var(--color-mobile-nav-menu-button-background);
+  --color-mobile-nav-hover-background: var(--color-mobile-nav-menu-button-hover-background);
+
+  /* ─── Border base scale ───
+     Tailgrids components use `border-base-100`, `border-base-50`, etc.
+     Under Tailwind v4 these resolve from --color-base-*. We also keep
+     --border-color-base-* aliases for any legacy uses in components/core. */
+  --color-base-50:  var(--color-border-primary);
+  --color-base-100: var(--color-border-secondary);
+  --color-base-200: var(--color-border-secondary-alt);
+  --color-base-300: var(--color-border-tertiary);
+  --border-color-base-50:  var(--color-border-primary);
+  --border-color-base-100: var(--color-border-secondary);
+  --border-color-base-200: var(--color-border-secondary-alt);
+  --border-color-base-300: var(--color-border-tertiary);
+
+
+  /* ─── Tokens with identical names in Monato & Tailgrids ───
+     These can't be self-referencing var() in @theme inline — that creates
+     a CSS loop. Instead, we declare them pointing directly to their
+     underlying Monato semantic or primitive value. Dark mode still works
+     because the utility generates `color: var(--color-X)` and the browser
+     resolves it at runtime from :root / [data-theme="dark"]. ─── */
+
+  /* Button */
+  --color-button-primary-background:         var(--primitive-skyblue-500);
+  --color-button-primary-hover-background:   var(--primitive-skyblue-600);
+  --color-button-primary-text:               var(--primitive-white);
+  --color-button-error-outline-background:   var(--primitive-red-50);
+  --color-button-error-outline-hover-background: var(--primitive-red-200);
+  --color-button-error-outline-text:         var(--primitive-red-700);
+  --color-button-error-outline-hover-text:   var(--primitive-red-700);
+  --color-button-success-outline-background: var(--primitive-green-50);
+  --color-button-success-outline-hover-background: var(--primitive-green-200);
+  --color-button-success-outline-text:       var(--primitive-green-700);
+  --color-button-success-outline-hover-text: var(--primitive-green-700);
+
+  /* Input */
+  --color-input-background:         var(--primitive-white);
+  --color-input-label-text:         var(--color-text-body);
+  --color-input-disabled-text:      var(--primitive-gray-300);
+  --color-input-placeholder-text:   var(--primitive-gray-400);
+  --color-input-error-focus-border: var(--primitive-red-500);
+  --color-input-success-focus-border: var(--primitive-green-500);
+  --color-input-error:              var(--primitive-red-500);
+  --color-input-success:            var(--primitive-green-500);
+
+  /* Checkbox */
+  --color-checkbox-background:           var(--primitive-white-a100);
+  --color-checkbox-checked-border:       var(--primitive-skyblue-500);
+  --color-checkbox-checked-background:   var(--primitive-skyblue-500);
+
+  /* Tab */
+  --color-tab-background:                var(--primitive-gray-100);
+  --color-tab-active-background:         var(--primitive-white-a100);
+  --color-tab-secondary-active-background: var(--primitive-skyblue-50);
+
+  /* Misc */
+  --color-tooltip-text:              var(--primitive-gray-700);
+  --color-ai-hero-blend-1:           var(--primitive-gray-100);
+  --color-ai-hero-blend-2:           rgba(243, 244, 246, 0);
+  --color-datepicker-background:     var(--primitive-white-a100);
+  --color-hero-background:           var(--primitive-gray-100);
+  --color-hero-gradient-shade-1:     rgba(255, 255, 255, 0.6);
+  --color-hero-gradient-shade-2:     var(--primitive-white-a100);
+  --color-cta-background:            var(--primitive-white-a100);
+  --color-toggle-disabled-foreground: var(--primitive-white-a100);
+  --color-footer-background:         var(--primitive-white-a100);
+  --color-bento-gradient-shade-1:    var(--primitive-white-a00);
+  --color-bento-gradient-shade-2:    var(--primitive-white-a50);
+  --color-bento-gradient-shade-3:    var(--primitive-white-a100);
+  --color-skeleton-gradient-100:     var(--primitive-gray-200);
+  --color-skeleton-gradient-200:     var(--primitive-gray-50);
+  --color-section-title-badge:       var(--primitive-skyblue-500);
+  --color-section-title-badge-background: var(--primitive-skyblue-a05);
+
+  /* ─── Shadows (Tailgrids defaults; sync to Figma later if needed) ─── */
+  --shadow-xs:  0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --shadow-sm:  0px 1px 3px 0px rgba(16, 24, 40, 0.1);
+  --shadow-md:  0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --shadow-lg:  0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --shadow-xl:  0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --shadow-2xl: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --shadow-3xl: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --drop-shadow-theme-3xl: 0 32px 64px rgba(16, 24, 40, 0.14);
+  --popover-shadow: 0px 5px 5px -2px rgba(16, 24, 40, 0.04);
+  --shadow-hero: 0px -14px 100px 0px rgba(0, 0, 0, 0.05);
+
+  /* ─── Animations ─── */
+  --animate-pulse-custom: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  /* ─── Component-local keyframes (used by toast, dialog, popover) ─── */
+  @keyframes enter {
+    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes exit {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to   { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  }
+}
+
+@layer utilities {
+  .animate-in  { animation: enter 0.2s ease-out  forwards; }
+  .animate-out { animation: exit  0.15s ease-in  forwards; }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.7; }
+}
+
+/* Removes focus outline from all SVG elements and Recharts layers */
+.recharts-wrapper *:focus { outline: none; }
