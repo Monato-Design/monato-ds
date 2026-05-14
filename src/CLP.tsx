@@ -6,10 +6,6 @@ import { Button } from './components/core/button';
 import { Modal } from './components/core/modal';
 import { Pagination } from './components/core/pagination';
 import {
-  TableRoot, TableHeader, TableBody,
-  TableHead, TableRow, TableCell,
-} from './components/core/table';
-import {
   Home2StrokeRounded,
   CreditCardMultipleStrokeRounded, DollarCircleStrokeRounded,
   Search1StrokeRounded, Funnel1StrokeRounded,
@@ -228,17 +224,21 @@ function FileUploader({ onClose }: { onClose: () => void }) {
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
-const NAV_ITEMS = [
-  { id: 'portafolio' as Screen, label: 'Portafolio de obligaciones', icon: Layers1StrokeRounded },
-  { id: 'clientes'  as Screen, label: 'Clientes',                    icon: UserMultiple4StrokeRounded },
+
+// ─── Nav data ─────────────────────────────────────────────────────────────────
+const NAV_MAIN = [
+  { id: 'dashboard',   label: 'Dashboard',                icon: Home2StrokeRounded,              disabled: true  },
+  { id: 'products',    label: 'Products',                 icon: Layers1StrokeRounded,             disabled: true  },
+  { id: 'portafolio',  label: 'Portafolio de obligaciones',icon: CreditCardMultipleStrokeRounded, disabled: false },
+  { id: 'clientes',    label: 'Clientes',                 icon: UserMultiple4StrokeRounded,       disabled: false },
+  { id: 'payments',    label: 'Payments',                 icon: DollarCircleStrokeRounded,        disabled: true  },
 ];
 
 const NAV_OTHERS = [
-  { label: 'Dashboard',  icon: Home2StrokeRounded },
-  { label: 'Payments',   icon: DollarCircleStrokeRounded },
-  { label: 'Marketing',  icon: TrendUp1StrokeRounded },
-  { label: 'Notification',icon: Bell1StrokeRounded },
-  { label: 'Cashback',   icon: RefreshDollar1StrokeRounded },
+  { label: 'Marketing',    icon: TrendUp1StrokeRounded,       disabled: true },
+  { label: 'Notification', icon: Bell1StrokeRounded,          disabled: true },
+  { label: 'Store',        icon: RefreshDollar1StrokeRounded, disabled: true },
+  { label: 'Cashback',     icon: BarChart4StrokeRounded,      disabled: true },
 ];
 
 function Sidebar({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Screen) => void }) {
@@ -258,35 +258,47 @@ function Sidebar({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Scree
         {/* Main menu */}
         <div>
           <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Main menu</p>
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => onNavigate(id)}
-              className={[
-                'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors',
-                screen === id ? 'text-primary-500 font-medium' : 'text-text-50 hover:bg-background-soft-50',
-              ].join(' ')}
-            >
-              {screen === id && (
-                <motion.div
-                  layoutId="clp-nav-bg"
-                  className="absolute inset-0 rounded-lg bg-primary-500/10"
-                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                />
-              )}
-              <span className="[&_svg]:fill-none [&_path]:fill-none relative z-10">
-                <Icon size={15} strokeWidth={1.4} className={screen === id ? 'text-primary-500' : 'text-text-200'} />
-              </span>
-              <span className="relative z-10 leading-tight">{label}</span>
-            </button>
-          ))}
+          {NAV_MAIN.map(({ id, label, icon: Icon, disabled }) => {
+            const isActive = screen === id;
+            return (
+              <button
+                key={id}
+                onClick={() => !disabled && onNavigate(id as Screen)}
+                disabled={disabled}
+                className={[
+                  'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors',
+                  isActive
+                    ? 'text-primary-500 font-medium'
+                    : disabled
+                    ? 'text-text-200 opacity-50 cursor-not-allowed'
+                    : 'text-text-50 hover:bg-background-soft-50',
+                ].join(' ')}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="clp-nav-bg"
+                    className="absolute inset-0 rounded-lg bg-primary-500/10"
+                    transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                  />
+                )}
+                <span className="[&_svg]:fill-none [&_path]:fill-none relative z-10">
+                  <Icon size={15} strokeWidth={1.4} className={isActive ? 'text-primary-500' : 'text-text-200'} />
+                </span>
+                <span className="relative z-10 leading-tight">{label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Others */}
         <div>
           <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Others</p>
           {NAV_OTHERS.map(({ label, icon: Icon }) => (
-            <button key={label} className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-50 hover:bg-background-soft-50 transition-colors">
+            <button
+              key={label}
+              disabled
+              className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-200 opacity-50 cursor-not-allowed"
+            >
               <span className="[&_svg]:fill-none [&_path]:fill-none">
                 <Icon size={15} strokeWidth={1.4} className="text-text-200" />
               </span>
@@ -298,8 +310,15 @@ function Sidebar({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Scree
         {/* Support */}
         <div>
           <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Support</p>
-          {[{ label: 'Support', icon: Bell1StrokeRounded }, { label: 'Settings', icon: Gear1StrokeRounded }].map(({ label, icon: Icon }) => (
-            <button key={label} className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-50 hover:bg-background-soft-50 transition-colors">
+          {[
+            { label: 'Support',  icon: Bell1StrokeRounded },
+            { label: 'Settings', icon: Gear1StrokeRounded },
+          ].map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              disabled
+              className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-200 opacity-50 cursor-not-allowed"
+            >
               <span className="[&_svg]:fill-none [&_path]:fill-none">
                 <Icon size={15} strokeWidth={1.4} className="text-text-200" />
               </span>
@@ -336,27 +355,17 @@ function PortafolioScreen() {
   return (
     <div className="flex-1 overflow-y-auto bg-background-soft-50">
       {/* Top bar */}
-      <div className="bg-background-50 border-b border-base-100 px-8 py-4 flex items-center justify-between">
+      <div className="bg-background-50 border-b border-base-100 px-7 py-4 flex items-center">
         <h1 className="text-title-50 text-lg font-semibold">Portafolio de obligaciones</h1>
-        <div className="flex items-center gap-2">
-          <Button size="sm" appearance="outline">
-            <span className="[&_svg]:fill-none [&_path]:fill-none"><RefreshDollar1StrokeRounded size={13} strokeWidth={1.4} /></span>
-            Actualizar portafolio
-          </Button>
-          <Button size="sm">
-            <span className="[&_svg]:fill-none [&_path]:fill-none"><Upload1StrokeRounded size={13} strokeWidth={1.4} /></span>
-            Cargar portafolio
-          </Button>
-        </div>
       </div>
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-7 py-6 space-y-5">
         {/* KPI Cards row 1 */}
         <div className="grid grid-cols-4 gap-4">
-          <KpiCard icon={CreditCardMultipleStrokeRounded} label="Obligaciones activas"    value="3,782" sub="Total en cartera"       trend="11.01%" delay={0}    />
-          <KpiCard icon={DollarCircleStrokeRounded}       label="Monto total esperado"   value="3,782" sub="MXN en periodo actual"  trend="11.01%" delay={0.05} />
-          <KpiCard icon={BarChart4StrokeRounded}          label="Obligaciones en mora"   value="3,782" sub="Requieren seguimiento"   trend="11.01%" delay={0.10} />
-          <KpiCard icon={TrendUp1StrokeRounded}           label="Performance del portafolio" value="3,782" sub="Índice general"      trend="11.01%" delay={0.15} />
+          <KpiCard icon={CreditCardMultipleStrokeRounded} label="Obligaciones activas"        value="3,782" sub="Total en cartera"       trend="11.01%" delay={0}    />
+          <KpiCard icon={DollarCircleStrokeRounded}       label="Monto total esperado"         value="3,782" sub="MXN en periodo actual"  trend="11.01%" delay={0.05} />
+          <KpiCard icon={BarChart4StrokeRounded}          label="Obligaciones en mora"         value="3,782" sub="Requieren seguimiento"   trend="11.01%" delay={0.10} />
+          <KpiCard icon={TrendUp1StrokeRounded}           label="Performance del portafolio"   value="3,782" sub="Índice general"          trend="11.01%" delay={0.15} />
         </div>
 
         {/* KPI Cards row 2 */}
@@ -387,7 +396,7 @@ function PortafolioScreen() {
           transition={{ delay: 0.35, duration: 0.22, ease: 'easeOut' }}
           className="rounded-xl border border-base-100 bg-background-50 overflow-hidden"
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-base-100">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-base-100">
             <h3 className="text-title-50 text-sm font-semibold">Obligaciones</h3>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -407,25 +416,33 @@ function PortafolioScreen() {
                 </span>
                 Filtrar
               </button>
+              <Button size="sm" appearance="outline">
+                <span className="[&_svg]:fill-none [&_path]:fill-none"><RefreshDollar1StrokeRounded size={13} strokeWidth={1.4} /></span>
+                Actualizar portafolio
+              </Button>
+              <Button size="sm">
+                <span className="[&_svg]:fill-none [&_path]:fill-none"><Upload1StrokeRounded size={13} strokeWidth={1.4} /></span>
+                Cargar portafolio
+              </Button>
             </div>
           </div>
 
-          <TableRoot>
-            <TableHeader>
-              <TableRow>
+          <table className="min-w-full border-separate border-spacing-0 text-left">
+            <thead>
+              <tr>
                 {['Cliente', 'Monto', 'Vencimiento', 'Tipo', 'Etapa', 'Estado'].map(h => (
-                  <TableHead key={h}>
+                  <th key={h} className="border-base-100 border-b px-5 py-3 text-xs font-medium text-text-100">
                     <span className="flex items-center gap-1 cursor-pointer hover:text-title-50 transition">
                       {h}
                       <span className="[&_svg]:fill-none [&_path]:fill-none opacity-40">
                         <ChevronDownStrokeRounded size={10} strokeWidth={2} />
                       </span>
                     </span>
-                  </TableHead>
+                  </th>
                 ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+              </tr>
+            </thead>
+            <tbody>
               <AnimatePresence mode="wait">
                 {paginated.map((c, i) => (
                   <motion.tr
@@ -434,9 +451,9 @@ function PortafolioScreen() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ delay: i * 0.04, duration: 0.18 }}
-                    className="not-last:[&>*]:border-base-100 not-last:[&>td]:border-b hover:bg-background-soft-50 transition-colors"
+                    className="hover:bg-background-soft-50 transition-colors border-b border-base-100 last:border-0"
                   >
-                    <TableCell>
+                    <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className={`size-8 rounded-full ${AVATAR_COLORS[parseInt(c.id) % AVATAR_COLORS.length]} flex items-center justify-center text-white text-xs font-semibold shrink-0`}>
                           {c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
@@ -446,25 +463,27 @@ function PortafolioScreen() {
                           <p className="text-text-200 text-xs">{c.email}</p>
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell><span className="text-title-50 font-medium">{c.monto}</span></TableCell>
-                    <TableCell><span className="text-text-50">{c.venc}</span></TableCell>
-                    <TableCell><span className="text-text-50">{c.tipo}</span></TableCell>
-                    <TableCell><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></TableCell>
-                    <TableCell><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></TableCell>
+                    </td>
+                    <td className="px-5 py-3.5"><span className="text-title-50 text-sm font-medium">{c.monto}</span></td>
+                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.venc}</span></td>
+                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.tipo}</span></td>
+                    <td className="px-5 py-3.5"><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></td>
+                    <td className="px-5 py-3.5"><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></td>
                   </motion.tr>
                 ))}
               </AnimatePresence>
-            </TableBody>
-          </TableRoot>
+            </tbody>
+          </table>
 
-          <div className="border-t border-base-100 px-5 py-3 flex items-center justify-between">
-            <span className="text-text-200 text-xs">{filtered.length} obligaciones</span>
-            <Pagination
-              totalPages={Math.ceil(filtered.length / PER_PAGE)}
-              currentPage={page}
-              onPageChange={setPage}
-            />
+          <div className="border-t border-base-100 px-5 py-3 flex items-center gap-4">
+            <span className="text-text-200 text-xs shrink-0">{filtered.length} obligaciones</span>
+            <div className="ml-auto">
+              <Pagination
+                totalPages={Math.ceil(filtered.length / PER_PAGE)}
+                currentPage={page}
+                onPageChange={setPage}
+              />
+            </div>
           </div>
         </motion.div>
       </div>
@@ -488,21 +507,17 @@ function ClientesScreen() {
   return (
     <div className="flex-1 overflow-y-auto bg-background-soft-50">
       {/* Top bar */}
-      <div className="bg-background-50 border-b border-base-100 px-8 py-4 flex items-center justify-between">
+      <div className="bg-background-50 border-b border-base-100 px-7 py-4 flex items-center">
         <h1 className="text-title-50 text-lg font-semibold">Clientes</h1>
-        <Button size="sm" onClick={() => setUploadOpen(true)}>
-          <span className="[&_svg]:fill-none [&_path]:fill-none"><Upload1StrokeRounded size={13} strokeWidth={1.4} /></span>
-          Cargar clientes
-        </Button>
       </div>
 
-      <div className="px-8 py-6 space-y-5">
+      <div className="px-7 py-6 space-y-5">
         {/* KPI cards */}
         <div className="grid grid-cols-4 gap-4">
-          <KpiCard icon={UserMultiple4StrokeRounded} label="Obligaciones activas"    value="3,782" sub="Clientes activos"         trend="11.01%" delay={0}    />
-          <KpiCard icon={DollarCircleStrokeRounded}  label="Monto total esperado"   value="3,782" sub="MXN en cartera"           trend="11.01%" delay={0.05} />
-          <KpiCard icon={BarChart4StrokeRounded}     label="Obligaciones en mora"   value="3,782" sub="Clientes con deuda vencida" trend="11.01%" delay={0.10} />
-          <KpiCard icon={TrendUp1StrokeRounded}      label="Performance del portafolio" value="3,782" sub="Índice general"        trend="11.01%" delay={0.15} />
+          <KpiCard icon={UserMultiple4StrokeRounded} label="Obligaciones activas"        value="3,782" sub="Clientes activos"           trend="11.01%" delay={0}    />
+          <KpiCard icon={DollarCircleStrokeRounded}  label="Monto total esperado"         value="3,782" sub="MXN en cartera"             trend="11.01%" delay={0.05} />
+          <KpiCard icon={BarChart4StrokeRounded}     label="Obligaciones en mora"         value="3,782" sub="Clientes con deuda vencida" trend="11.01%" delay={0.10} />
+          <KpiCard icon={TrendUp1StrokeRounded}      label="Performance del portafolio"   value="3,782" sub="Índice general"             trend="11.01%" delay={0.15} />
         </div>
 
         {/* Table */}
@@ -512,7 +527,7 @@ function ClientesScreen() {
           transition={{ delay: 0.2, duration: 0.22 }}
           className="rounded-xl border border-base-100 bg-background-50 overflow-hidden"
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-base-100">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-base-100">
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 [&_svg]:fill-none [&_path]:fill-none pointer-events-none">
                 <Search1StrokeRounded size={13} strokeWidth={1.4} className="text-text-200" />
@@ -530,22 +545,22 @@ function ClientesScreen() {
             </Button>
           </div>
 
-          <TableRoot>
-            <TableHeader>
-              <TableRow>
+          <table className="min-w-full border-separate border-spacing-0 text-left">
+            <thead>
+              <tr>
                 {['Cliente', 'ID Externo', 'Etapa', 'Teléfono', 'Sexo', 'Estado'].map(h => (
-                  <TableHead key={h}>
+                  <th key={h} className="border-base-100 border-b px-5 py-3 text-xs font-medium text-text-100">
                     <span className="flex items-center gap-1 cursor-pointer hover:text-title-50 transition">
                       {h}
                       <span className="[&_svg]:fill-none [&_path]:fill-none opacity-40">
                         <ChevronDownStrokeRounded size={10} strokeWidth={2} />
                       </span>
                     </span>
-                  </TableHead>
+                  </th>
                 ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+              </tr>
+            </thead>
+            <tbody>
               <AnimatePresence mode="wait">
                 {paginated.map((c, i) => (
                   <motion.tr
@@ -554,9 +569,9 @@ function ClientesScreen() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ delay: i * 0.04, duration: 0.18 }}
-                    className="not-last:[&>*]:border-base-100 not-last:[&>td]:border-b hover:bg-background-soft-50 transition-colors"
+                    className="hover:bg-background-soft-50 transition-colors border-b border-base-100 last:border-0"
                   >
-                    <TableCell>
+                    <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className={`size-8 rounded-full ${AVATAR_COLORS[parseInt(c.id) % AVATAR_COLORS.length]} flex items-center justify-center text-white text-xs font-semibold shrink-0`}>
                           {c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
@@ -566,25 +581,27 @@ function ClientesScreen() {
                           <p className="text-text-200 text-xs">{c.email}</p>
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell><span className="text-text-50 font-mono text-xs">{c.extId}</span></TableCell>
-                    <TableCell><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></TableCell>
-                    <TableCell><span className="text-text-50">{c.tel}</span></TableCell>
-                    <TableCell><span className="text-text-50">{c.sex === 'F' ? 'Femenino' : 'Masculino'}</span></TableCell>
-                    <TableCell><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></TableCell>
+                    </td>
+                    <td className="px-5 py-3.5"><span className="text-text-50 font-mono text-sm">{c.extId}</span></td>
+                    <td className="px-5 py-3.5"><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></td>
+                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.tel}</span></td>
+                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.sex === 'F' ? 'Femenino' : 'Masculino'}</span></td>
+                    <td className="px-5 py-3.5"><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></td>
                   </motion.tr>
                 ))}
               </AnimatePresence>
-            </TableBody>
-          </TableRoot>
+            </tbody>
+          </table>
 
-          <div className="border-t border-base-100 px-5 py-3 flex items-center justify-between">
-            <span className="text-text-200 text-xs">{filtered.length} clientes</span>
-            <Pagination
-              totalPages={Math.ceil(filtered.length / PER_PAGE)}
-              currentPage={page}
-              onPageChange={setPage}
-            />
+          <div className="border-t border-base-100 px-5 py-3 flex items-center gap-4">
+            <span className="text-text-200 text-xs shrink-0">{filtered.length} clientes</span>
+            <div className="ml-auto">
+              <Pagination
+                totalPages={Math.ceil(filtered.length / PER_PAGE)}
+                currentPage={page}
+                onPageChange={setPage}
+              />
+            </div>
           </div>
         </motion.div>
       </div>
@@ -602,13 +619,14 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
   const [screen, setScreen] = useState<Screen>('portafolio');
 
   return (
-    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-3">
+    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
       {/* Window */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-[1440px] h-full rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
+        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
+        style={{ height: 'min(1000px, calc(100vh - 32px))' }}
       >
         {/* Mac title bar */}
         <div className="h-9 bg-[#1e1e1e] flex items-center px-4 gap-2 shrink-0">
