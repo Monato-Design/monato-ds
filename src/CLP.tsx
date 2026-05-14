@@ -602,13 +602,13 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
   const [screen, setScreen] = useState<Screen>('portafolio');
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-3">
+    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-3">
       {/* Window */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-[1440px] h-[calc(100vh-24px)] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
+        className="w-full max-w-[1440px] h-full rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
       >
         {/* Mac title bar */}
         <div className="h-9 bg-[#1e1e1e] flex items-center px-4 gap-2 shrink-0">
