@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",
+    "@lineiconshq/react-lineicons": "^1.0.5",
     "@tailgrids/icons": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
