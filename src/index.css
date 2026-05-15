@@ -1,4 +1,29 @@
+/* ================================================================
+   Monato DS — index.css
+
+   Layer order (matters for cascade):
+     1. tokens/monato.css     → Layer 1 (primitives), Layer 2 (semantic
+                                tokens light + dark via [data-theme]),
+                                Layer 3 (typography). Single source of
+                                truth, synced from Figma DS Web 2026.
+
+     2. tokens/theme-bridge.css → Re-exposes Monato semantics inside
+                                  `@theme inline {}` under the names
+                                  that Tailgrids-style components expect
+                                  (`bg-button-primary-background`, etc.).
+                                  Uses `inline` so [data-theme="dark"]
+                                  swaps still work at runtime.
+
+     3. tailwindcss            → Generates utility classes from the
+                                  theme tokens.
+
+     4. @tailwindcss/forms     → Form element resets.
+
+     5. DM Sans                → Brand font.
+   ================================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import 'flag-icons/css/flag-icons.min.css';
 
 @import './tokens/monato.css';
 
@@ -7,5 +32,6 @@
 
 @import './tokens/theme-bridge.css';
 
-/* Tell Tailwind v4 to treat [data-theme="dark"] as the dark variant. */
+/* Tell Tailwind v4 to treat [data-theme="dark"] as the dark variant.
+   This matches the selector used in tokens/monato.css. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
