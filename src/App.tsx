@@ -42,43 +42,64 @@ const LogoDefault = '/src/assets/logo-default.png';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes';
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' |
+  'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid';
 
-// ─── Nav structure (agrupado como Figma reference) ────────────────────────────
-const NAV_GROUPS = [
+// ─── Nav structure ────────────────────────────────────────────────────────────
+type NavItem = { id: TabId; label: string; icon: React.FC<{size?:number;className?:string;strokeWidth?:number}> };
+type NavGroup = {
+  label: string;
+  items: NavItem[];
+  children?: { label: string; items: NavItem[] }[]; // para dropdown de sub-grupos
+};
+
+const NAV_GROUPS: NavGroup[] = [
   {
     label: 'General',
     items: [
-      { id: 'overview' as TabId,  label: 'Overview',   icon: Home2StrokeRounded },
+      { id: 'overview', label: 'Overview', icon: Home2StrokeRounded },
+    ],
+  },
+  {
+    label: 'Foundations',
+    items: [
+      { id: 'colors',     label: 'Colors',     icon: ColourPalette3StrokeRounded },
+      { id: 'typography', label: 'Typography',  icon: Code1StrokeRounded },
+      { id: 'icons',      label: 'Icons',       icon: Diamonds1StrokeRounded },
+    ],
+    children: [
+      {
+        label: 'Primitives',
+        items: [
+          { id: 'shadows',       label: 'Shadows',       icon: Layers1StrokeRounded },
+          { id: 'spacing',       label: 'Spacing',        icon: SlidersHorizontalSquare2StrokeRounded },
+          { id: 'grid',          label: 'Grid Layouts',   icon: Layout9StrokeRounded },
+          { id: 'border-radius', label: 'Border Radius',  icon: PaginationStrokeRounded },
+        ],
+      },
     ],
   },
   {
     label: 'Components',
     items: [
-      { id: 'buttons' as TabId,   label: 'Buttons',    icon: Bolt2StrokeRounded },
-      { id: 'badges' as TabId,    label: 'Badges',     icon: Diamonds1StrokeRounded },
-      { id: 'inputs' as TabId,    label: 'Inputs',     icon: SlidersHorizontalSquare2StrokeRounded },
-      { id: 'alerts' as TabId,    label: 'Alerts',     icon: Bell1StrokeRounded },
-      { id: 'avatars' as TabId,   label: 'Avatars',    icon: User4StrokeRounded },
-      { id: 'controls' as TabId,  label: 'Controls',   icon: CheckSquare2StrokeRounded },
-      { id: 'feedback' as TabId,  label: 'Feedback',   icon: Comment1StrokeRounded },
-      { id: 'tabs' as TabId,      label: 'Tabs',       icon: Layout9StrokeRounded },
-      { id: 'accordion' as TabId, label: 'Accordion',  icon: FileMultipleStrokeRounded },
-      { id: 'toast' as TabId,     label: 'Toast',      icon: CheckCircle1StrokeRounded },
-      { id: 'modal' as TabId,     label: 'Modal',      icon: Layers1StrokeRounded },
-      { id: 'pagination' as TabId, label: 'Pagination', icon: PaginationStrokeRounded },
-    ],
-  },
-  {
-    label: 'Assets',
-    items: [
-      { id: 'icons' as TabId,      label: 'Icons',      icon: ColourPalette3StrokeRounded },
+      { id: 'buttons',    label: 'Buttons',    icon: Bolt2StrokeRounded },
+      { id: 'badges',     label: 'Badges',     icon: Diamonds1StrokeRounded },
+      { id: 'inputs',     label: 'Inputs',     icon: SlidersHorizontalSquare2StrokeRounded },
+      { id: 'alerts',     label: 'Alerts',     icon: Bell1StrokeRounded },
+      { id: 'avatars',    label: 'Avatars',    icon: User4StrokeRounded },
+      { id: 'controls',   label: 'Controls',   icon: CheckSquare2StrokeRounded },
+      { id: 'feedback',   label: 'Feedback',   icon: Comment1StrokeRounded },
+      { id: 'tabs',       label: 'Tabs',       icon: Layout9StrokeRounded },
+      { id: 'accordion',  label: 'Accordion',  icon: FileMultipleStrokeRounded },
+      { id: 'toast',      label: 'Toast',      icon: CheckCircle1StrokeRounded },
+      { id: 'modal',      label: 'Modal',      icon: Layers1StrokeRounded },
+      { id: 'pagination', label: 'Pagination', icon: PaginationStrokeRounded },
     ],
   },
   {
     label: 'Prototypes',
     items: [
-      { id: 'prototypes' as TabId, label: 'CLP v1.0',   icon: Rocket5StrokeRounded },
+      { id: 'prototypes', label: 'CLP v1.0', icon: Rocket5StrokeRounded },
     ],
   },
 ];
@@ -616,7 +637,300 @@ function IconsPage() {
   );
 }
 
-// ─── Prototypes Page ──────────────────────────────────────────────────────────
+// ─── Foundations Pages ────────────────────────────────────────────────────────
+
+function ColorsPage() {
+  const PALETTES = [
+    { name: 'Skyblue (Brand)', prefix: 'skyblue', shades: [
+      { shade: '50', hex: '#e6f4fa' }, { shade: '100', hex: '#b2deee' },
+      { shade: '200', hex: '#8dcee6' }, { shade: '300', hex: '#5ab7da' },
+      { shade: '400', hex: '#39a9d3' }, { shade: '500', hex: '#0894c8' },
+      { shade: '600', hex: '#0787b6' }, { shade: '700', hex: '#06698e' },
+      { shade: '800', hex: '#04516e' }, { shade: '900', hex: '#033e54' },
+    ]},
+    { name: 'Gray', prefix: 'gray', shades: [
+      { shade: '50',  hex: '#fafafa' }, { shade: '100', hex: '#f4f4f5' },
+      { shade: '200', hex: '#a1a1aa' }, { shade: '300', hex: '#71717a' },
+      { shade: '400', hex: '#52525b' }, { shade: '500', hex: '#3f3f46' },
+      { shade: '600', hex: '#27272a' }, { shade: '700', hex: '#1e1e22' },
+      { shade: '800', hex: '#18181b' }, { shade: '900', hex: '#09090b' },
+    ]},
+    { name: 'Red', prefix: 'red', shades: [
+      { shade: '50',  hex: '#ffebed' }, { shade: '100', hex: '#fec1c6' },
+      { shade: '300', hex: '#fc7984' }, { shade: '500', hex: '#fb3748' },
+      { shade: '600', hex: '#e43242' }, { shade: '700', hex: '#b22733' },
+      { shade: '800', hex: '#8a1e28' }, { shade: '900', hex: '#69171e' },
+    ]},
+    { name: 'Green', prefix: 'green', shades: [
+      { shade: '50',  hex: '#f0fdf4' }, { shade: '100', hex: '#dcfce7' },
+      { shade: '300', hex: '#86efac' }, { shade: '500', hex: '#22c55e' },
+      { shade: '600', hex: '#16a34a' }, { shade: '700', hex: '#15803d' },
+      { shade: '800', hex: '#166534' }, { shade: '900', hex: '#14532d' },
+    ]},
+    { name: 'Yellow', prefix: 'yellow', shades: [
+      { shade: '50',  hex: '#fef8e9' }, { shade: '100', hex: '#fce8b9' },
+      { shade: '300', hex: '#f9cd68' }, { shade: '500', hex: '#f6b51e' },
+      { shade: '600', hex: '#e0a51b' }, { shade: '700', hex: '#af8115' },
+      { shade: '800', hex: '#876411' }, { shade: '900', hex: '#674c0d' },
+    ]},
+  ];
+  return (
+    <div className="space-y-4">
+      <div className="mb-8 pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Colors</h1>
+        <p className="text-text-100 mt-1 text-sm">Paleta de primitivos · Sincronizada desde Figma DS Web 2026</p>
+      </div>
+      <div className="space-y-8">
+        {PALETTES.map(({ name, shades }) => (
+          <div key={name}>
+            <p className="text-title-50 text-sm font-semibold mb-3">{name}</p>
+            <div className="flex gap-2 flex-wrap">
+              {shades.map(({ shade, hex }) => (
+                <motion.div
+                  key={shade}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="flex flex-col items-center gap-1.5 cursor-default"
+                >
+                  <div
+                    className="w-14 h-10 rounded-lg border border-black/5 shadow-sm"
+                    style={{ backgroundColor: hex }}
+                  />
+                  <p className="text-text-200 text-[10px] font-medium">{shade}</p>
+                  <p className="text-text-200 text-[9px] font-mono uppercase">{hex}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TypographyPage() {
+  const SCALE = [
+    { token: '--font-size-xs',  size: '12px', lh: '16px', label: 'XS — Caption' },
+    { token: '--font-size-sm',  size: '14px', lh: '20px', label: 'SM — Body small' },
+    { token: '--font-size-md',  size: '16px', lh: '24px', label: 'MD — Body' },
+    { token: '--font-size-lg',  size: '18px', lh: '28px', label: 'LG — Body large' },
+    { token: '--font-size-xl',  size: '20px', lh: '28px', label: 'XL — Subtitle' },
+    { token: '--font-size-2xl', size: '24px', lh: '32px', label: '2XL — Title' },
+    { token: '--font-size-3xl', size: '30px', lh: '36px', label: '3XL — H3' },
+    { token: '--font-size-4xl', size: '36px', lh: '40px', label: '4XL — H2' },
+    { token: '--font-size-5xl', size: '48px', lh: '52px', label: '5XL — H1' },
+  ];
+  const WEIGHTS = [
+    { token: '--font-weight-regular',  value: '400', label: 'Regular' },
+    { token: '--font-weight-medium',   value: '500', label: 'Medium' },
+    { token: '--font-weight-semibold', value: '600', label: 'Semibold' },
+    { token: '--font-weight-bold',     value: '700', label: 'Bold' },
+  ];
+  return (
+    <div className="space-y-10">
+      <div className="pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Typography</h1>
+        <p className="text-text-100 mt-1 text-sm">DM Sans · Escala tipográfica del DS</p>
+      </div>
+      {/* Scale */}
+      <div>
+        <p className="text-title-50 text-sm font-semibold mb-4">Escala de tamaños</p>
+        <div className="rounded-xl border border-base-100 overflow-hidden">
+          {SCALE.map(({ token, size, lh, label }, i) => (
+            <motion.div
+              key={token}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className="flex items-center gap-6 px-5 py-4 border-b border-base-100 last:border-0 hover:bg-background-soft-50 transition-colors"
+            >
+              <div className="w-32 shrink-0">
+                <p className="text-text-200 text-xs font-mono">{token}</p>
+                <p className="text-text-200 text-[10px] mt-0.5">{size} / {lh}</p>
+              </div>
+              <p style={{ fontSize: size, lineHeight: lh, fontFamily: 'DM Sans, sans-serif' }}
+                className="text-title-50 truncate flex-1"
+              >
+                {label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+      {/* Weights */}
+      <div>
+        <p className="text-title-50 text-sm font-semibold mb-4">Pesos tipográficos</p>
+        <div className="grid grid-cols-4 gap-4">
+          {WEIGHTS.map(({ value, label }) => (
+            <div key={label} className="rounded-xl border border-base-100 p-5 space-y-2">
+              <p style={{ fontWeight: value, fontSize: '24px', fontFamily: 'DM Sans, sans-serif' }}
+                className="text-title-50"
+              >Aa</p>
+              <p className="text-title-50 text-sm font-medium">{label}</p>
+              <p className="text-text-200 text-xs font-mono">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShadowsPage() {
+  const SHADOWS = [
+    { name: 'xs',   value: '0px 1px 2px 0px rgba(16,24,40,0.05)',    token: '--shadow-xs' },
+    { name: 'sm',   value: '0px 1px 3px 0px rgba(16,24,40,0.1)',     token: '--shadow-sm' },
+    { name: 'md',   value: '0px 4px 8px -2px rgba(16,24,40,0.1)',    token: '--shadow-md' },
+    { name: 'lg',   value: '0px 12px 16px -4px rgba(16,24,40,0.08)', token: '--shadow-lg' },
+    { name: 'xl',   value: '0px 20px 24px -4px rgba(16,24,40,0.08)', token: '--shadow-xl' },
+    { name: '2xl',  value: '0px 24px 48px -12px rgba(16,24,40,0.18)',token: '--shadow-2xl' },
+  ];
+  return (
+    <div className="space-y-6">
+      <div className="pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Shadows</h1>
+        <p className="text-text-100 mt-1 text-sm">Escala de sombras del DS</p>
+      </div>
+      <div className="grid grid-cols-3 gap-6">
+        {SHADOWS.map(({ name, value, token }, i) => (
+          <motion.div
+            key={name}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.06 }}
+            className="rounded-xl bg-background-50 border border-base-100 p-6 space-y-4"
+            style={{ boxShadow: value }}
+          >
+            <div>
+              <p className="text-title-50 text-sm font-semibold">shadow-{name}</p>
+              <p className="text-text-200 text-xs font-mono mt-1">{token}</p>
+            </div>
+            <p className="text-text-200 text-[11px] font-mono leading-relaxed">{value}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SpacingPage() {
+  const TOKENS = [
+    { token: '0',   px: '0px'  }, { token: '0.5', px: '2px'  }, { token: '1',  px: '4px'  },
+    { token: '1.5', px: '6px'  }, { token: '2',   px: '8px'  }, { token: '2.5',px: '10px' },
+    { token: '3',   px: '12px' }, { token: '3.5', px: '14px' }, { token: '4',  px: '16px' },
+    { token: '5',   px: '20px' }, { token: '6',   px: '24px' }, { token: '7',  px: '28px' },
+    { token: '8',   px: '32px' }, { token: '10',  px: '40px' }, { token: '12', px: '48px' },
+    { token: '16',  px: '64px' }, { token: '20',  px: '80px' }, { token: '24', px: '96px' },
+  ];
+  return (
+    <div className="space-y-6">
+      <div className="pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Spacing</h1>
+        <p className="text-text-100 mt-1 text-sm">Escala base-4 · {TOKENS.length} tokens</p>
+      </div>
+      <div className="space-y-2">
+        {TOKENS.map(({ token, px }, i) => (
+          <motion.div
+            key={token}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.025 }}
+            className="flex items-center gap-4 rounded-lg hover:bg-background-soft-50 px-3 py-2 transition-colors"
+          >
+            <p className="text-text-200 text-xs font-mono w-20 shrink-0">--space-{token}</p>
+            <p className="text-text-200 text-xs w-10 shrink-0">{px}</p>
+            <div className="bg-primary-500/30 rounded" style={{ width: px, height: '8px', minWidth: '2px' }} />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BorderRadiusPage() {
+  const TOKENS = [
+    { name: 'none',    token: '--radius-none',    px: '0px',    sample: 0    },
+    { name: 'sm',      token: '--radius-sm',      px: '2px',    sample: 2    },
+    { name: 'default', token: '--radius-default', px: '4px',    sample: 4    },
+    { name: 'md',      token: '--radius-md',      px: '6px',    sample: 6    },
+    { name: 'lg',      token: '--radius-lg',      px: '8px',    sample: 8    },
+    { name: 'xl',      token: '--radius-xl',      px: '12px',   sample: 12   },
+    { name: '2xl',     token: '--radius-2xl',     px: '16px',   sample: 16   },
+    { name: '3xl',     token: '--radius-3xl',     px: '24px',   sample: 24   },
+    { name: '4xl',     token: '--radius-4xl',     px: '32px',   sample: 32   },
+    { name: 'full',    token: '--radius-full',    px: '9999px', sample: 9999 },
+  ];
+  return (
+    <div className="space-y-6">
+      <div className="pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Border Radius</h1>
+        <p className="text-text-100 mt-1 text-sm">Escala de radios del DS</p>
+      </div>
+      <div className="grid grid-cols-5 gap-4">
+        {TOKENS.map(({ name, token, px, sample }, i) => (
+          <motion.div
+            key={name}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05, type: 'spring', stiffness: 400 }}
+            className="flex flex-col items-center gap-3 p-4 rounded-xl border border-base-100 bg-background-50"
+          >
+            <div
+              className="size-12 bg-primary-500/20 border-2 border-primary-500/40"
+              style={{ borderRadius: Math.min(sample, 24) }}
+            />
+            <div className="text-center">
+              <p className="text-title-50 text-xs font-semibold">{name}</p>
+              <p className="text-text-200 text-[10px] font-mono mt-0.5">{px}</p>
+              <p className="text-text-200 text-[9px] font-mono mt-0.5 truncate w-full">{token}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GridPage() {
+  const GRIDS = [
+    { cols: 1, label: '1 columna',   use: 'Móvil · contenido full width' },
+    { cols: 2, label: '2 columnas',  use: 'Comparaciones, lado a lado' },
+    { cols: 3, label: '3 columnas',  use: 'Cards de features, métricas' },
+    { cols: 4, label: '4 columnas',  use: 'KPI cards, dashboards' },
+    { cols: 6, label: '6 columnas',  use: 'Grids densos, íconos' },
+    { cols: 12,label: '12 columnas', use: 'Layout base (sub-grids)' },
+  ];
+  return (
+    <div className="space-y-8">
+      <div className="pb-6 border-b border-base-100">
+        <h1 className="text-title-50 text-xl font-semibold">Grid Layouts</h1>
+        <p className="text-text-100 mt-1 text-sm">Sistema de grillas · gap-4 (16px) por defecto</p>
+      </div>
+      <div className="space-y-6">
+        {GRIDS.map(({ cols, label, use }, i) => (
+          <motion.div
+            key={cols}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+            className="space-y-2"
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-title-50 text-xs font-semibold">{label}</p>
+              <p className="text-text-200 text-xs">{use}</p>
+            </div>
+            <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${Math.min(cols, 12)}, 1fr)` }}>
+              {Array.from({ length: Math.min(cols, 12) }).map((_, j) => (
+                <div key={j} className="h-8 rounded-md bg-primary-500/15 border border-primary-500/20" />
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
 function PrototypesPage() {
   return (
     <div className="space-y-4">
@@ -640,7 +954,81 @@ const PAGES: Record<TabId, React.FC> = {
   accordion: AccordionPage, toast: ToastPage, modal: ModalPage,
   pagination: PaginationPage, icons: IconsPage,
   prototypes: PrototypesPage,
+  colors: ColorsPage, typography: TypographyPage,
+  shadows: ShadowsPage, spacing: SpacingPage,
+  'border-radius': BorderRadiusPage, grid: GridPage,
 };
+
+// ─── Primitives Dropdown ──────────────────────────────────────────────────────
+function PrimitivesDropdown({ label, items, active, onSelect }: {
+  label: string;
+  items: NavItem[];
+  active: TabId;
+  onSelect: (id: TabId) => void;
+}) {
+  const hasActive = items.some(i => i.id === active);
+  const [open, setOpen] = useState(hasActive);
+
+  return (
+    <div>
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen(v => !v)}
+        className={[
+          'w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors',
+          hasActive
+            ? 'text-primary-500 font-medium bg-primary-500/5'
+            : 'text-text-50 hover:bg-background-soft-50 hover:text-title-50',
+        ].join(' ')}
+      >
+        <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0">
+          <Layers1StrokeRounded size={16} strokeWidth={1.4} className={hasActive ? 'text-primary-500' : 'text-text-200'} />
+        </span>
+        <span className="flex-1">{label}</span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="[&_svg]:fill-none [&_path]:fill-none shrink-0"
+        >
+          <ChevronDownStrokeRounded size={13} strokeWidth={1.6} className="text-text-200" />
+        </motion.span>
+      </button>
+
+      {/* Sub-items */}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="ml-4 pl-3 border-l border-base-100 mt-0.5 space-y-0.5 pb-1">
+              {items.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => onSelect(id)}
+                  className={[
+                    'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-left text-sm transition-colors',
+                    active === id
+                      ? 'text-primary-500 font-medium bg-primary-500/10'
+                      : 'text-text-50 hover:bg-background-soft-50 hover:text-title-50',
+                  ].join(' ')}
+                >
+                  <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0">
+                    <Icon size={14} strokeWidth={1.4} className={active === id ? 'text-primary-500' : 'text-text-200'} />
+                  </span>
+                  <span>{label}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 export function App() {
@@ -667,6 +1055,7 @@ export function App() {
                 {group.label}
               </p>
               <div className="space-y-0.5">
+                {/* Items regulares del grupo */}
                 {group.items.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
@@ -695,6 +1084,17 @@ export function App() {
                       </span>
                     )}
                   </button>
+                ))}
+
+                {/* Sub-grupos con dropdown (ej: Primitives) */}
+                {group.children?.map(sub => (
+                  <PrimitivesDropdown
+                    key={sub.label}
+                    label={sub.label}
+                    items={sub.items}
+                    active={active}
+                    onSelect={setActive}
+                  />
                 ))}
               </div>
             </div>
