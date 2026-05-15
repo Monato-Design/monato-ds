@@ -1,4 +1,4 @@
-# Monato DS
+# Monato Design Sytem
 
 Componentes React para los productos Monato. Construido sobre Tailwind v4 y temado vía tokens sincronizados con el Figma `DS Web 2026`.
 
