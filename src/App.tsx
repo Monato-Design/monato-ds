@@ -38,7 +38,7 @@ import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } fro
 import { CLP } from './CLP';
 import { CrossBorderPrototype } from './CrossBorder';
 // Logo — using PNG for correct rendering on light backgrounds
-const LogoDefault = '/src/assets/logo-default.png';
+import LogoDefault from './assets/logo-default.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
@@ -237,7 +237,7 @@ function OverviewPage() {
           </div>
           {/* Buscador dentro de la tabla */}
           <div className="relative">
-            <Search1 size={13} className="text-text-200" />
+            <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
             <input
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
@@ -593,7 +593,7 @@ function IconsPage() {
       <PageHeader title="Icons" sub="Lineicons Free — StrokeRounded style · vía @lineiconshq/react-lineicons" />
       <div className="flex items-center gap-3">
         <div className="relative">
-          <Search1 size={13} className="text-text-200" />
+          <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}

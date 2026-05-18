@@ -708,7 +708,7 @@ function PortafolioScreen() {
             <h3 className="text-title-50 text-sm font-semibold">Obligaciones</h3>
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Search1 size={13} className="text-text-200" />
+                <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
                 <input
                   value={search}
                   onChange={e => { setSearch(e.target.value); setPage(1); }}
@@ -831,7 +831,7 @@ function ClientesScreen() {
         >
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-base-100">
             <div className="relative">
-              <Search1 size={13} className="text-text-200" />
+              <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
               <input
                 value={search}
                 onChange={e => { setSearch(e.target.value); setPage(1); }}
