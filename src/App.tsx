@@ -1,20 +1,12 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import * as TailgridsIcons from '@tailgrids/icons';
 import {
-  Home, Layers2,
-  Code1, Gear1,
-  Bell1, CreditCard, BarChart2,
-  User2, UserMultiple4, Search1,
-  Calendar, FileTextMultiple, Doller,
-  Locked3, Eye, CheckCircle1,
-  ChevronDown, ChevronRight,
-  Shield1Check, Globe2, Wallet2,
-  ArrowRight, RefreshCircle1Clockwise, TrendUp2,
-  Envelope1, Plus, Funnel1,
-  ColourPalette3, Layout14, Bolt1,
-  SlidersDoubleHorizontal, Check,
-  Comment1, ChevronBothDirection, Diamonds1,
-  Rocket1,
+  Home, Layers2, Code1, Bell1, User2, Search1,
+  ChevronDown, ChevronRight, Plus, Funnel1, Layout14,
+  Bolt1, Check, Comment1, ChevronBothDirection,
+  Diamonds1, Rocket1, ColourPalette3, SlidersDoubleHorizontal,
+  FileTextMultiple, CheckCircle1, Doller, Globe2,
 } from '@tailgrids/icons';
 import { Button } from './components/core/button';
 import { ButtonGroup } from './components/core/button-group';
@@ -135,36 +127,11 @@ const STATUS_COLOR: Record<string, 'success' | 'warning' | 'gray'> = {
 };
 
 // ─── Icons showcase ───────────────────────────────────────────────────────────
-const ICON_SHOWCASE = [
-  { icon: Home,            name: 'Home2' },
-  { icon: Layout14,           name: 'Layout' },
-  { icon: User2,            name: 'User' },
-  { icon: UserMultiple4,    name: 'Users' },
-  { icon: Search1,          name: 'Search' },
-  { icon: Bell1,            name: 'Bell' },
-  { icon: Gear1,            name: 'Gear' },
-  { icon: CreditCard, name: 'CreditCard' },
-  { icon: BarChart2,        name: 'BarChart' },
-  { icon: Calendar,     name: 'Calendar' },
-  { icon: FileTextMultiple,     name: 'Files' },
-  { icon: Doller,     name: 'Dollar' },
-  { icon: Locked3,          name: 'Lock' },
-  { icon: Eye,              name: 'Eye' },
-  { icon: CheckCircle1,     name: 'CheckCircle' },
-  { icon: Shield1Check,     name: 'ShieldCheck' },
-  { icon: Globe2,           name: 'Globe' },
-  { icon: Wallet2,          name: 'Wallet' },
-  { icon: ArrowRight,       name: 'ArrowRight' },
-  { icon: RefreshCircle1Clockwise,   name: 'RefreshDollar' },
-  { icon: TrendUp2,         name: 'TrendUp' },
-  { icon: Envelope1,        name: 'Envelope' },
-  { icon: Plus,             name: 'Plus' },
-  { icon: Funnel1,          name: 'Funnel' },
-  { icon: Layers2,          name: 'Layers' },
-  { icon: ColourPalette3,   name: 'Palette' },
-  { icon: Code1,            name: 'Code' },
-  { icon: ChevronDown,      name: 'ChevronDown' },
-];
+// Genera automáticamente la lista desde todos los exports de @tailgrids/icons
+const ICON_SHOWCASE = Object.entries(TailgridsIcons)
+  .filter(([, val]) => typeof val === 'function')
+  .map(([name, icon]) => ({ name, icon: icon as React.FC<{ size?: number; className?: string }> }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function PreviewCard({ label, children }: { label: string; children: React.ReactNode }) {
@@ -590,7 +557,7 @@ function IconsPage() {
   );
   return (
     <div className="space-y-6">
-      <PageHeader title="Icons" sub="Lineicons Free — StrokeRounded style · vía @lineiconshq/react-lineicons" />
+      <PageHeader title="Icons" sub="Tailgrids Icons — 240+ SVG icons · vía @tailgrids/icons" />
       <div className="flex items-center gap-3">
         <div className="relative">
           <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
@@ -603,18 +570,18 @@ function IconsPage() {
         </div>
         <span className="text-text-200 text-xs">{filtered.length} íconos</span>
       </div>
-      <div className="grid grid-cols-7 gap-3">
+      <div className="grid grid-cols-8 gap-2.5">
         {filtered.map(({ icon: Icon, name }, i) => (
           <motion.div
             key={name}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.025, type: 'spring', stiffness: 400, damping: 28 }}
+            transition={{ delay: Math.min(i * 0.008, 0.3), type: 'spring', stiffness: 400, damping: 28 }}
             whileHover={{ scale: 1.06, y: -2 }}
             whileTap={{ scale: 0.96 }}
-            className="group flex flex-col items-center gap-2 rounded-xl border border-base-100 bg-background-50 p-4 hover:border-primary-500/40 hover:bg-primary-500/5 transition-colors cursor-default"
+            className="group flex flex-col items-center gap-2 rounded-xl border border-base-100 bg-background-50 p-3.5 hover:border-primary-500/40 hover:bg-primary-500/5 transition-colors cursor-default"
           >
-            <Icon size={22} className="text-title-50 group-hover:text-primary-500 transition-colors" />
+            <Icon size={20} className="text-title-50 group-hover:text-primary-500 transition-colors" />
             <span className="text-text-200 text-[10px] text-center leading-tight truncate w-full">{name}</span>
           </motion.div>
         ))}
@@ -623,11 +590,11 @@ function IconsPage() {
         <p className="text-text-100 text-xs">
           <span className="font-medium text-title-50">Uso:</span>{' '}
           <code className="bg-background-soft-100 px-1.5 py-0.5 rounded text-primary-500 text-[11px]">
-            {`import { Home } from '@lineiconshq/free-icons'`}
+            {`import { Home } from '@tailgrids/icons'`}
           </code>
           {' · '}
           <code className="bg-background-soft-100 px-1.5 py-0.5 rounded text-primary-500 text-[11px]">
-            {`<Home size={20} />`}
+            {`<Home size={20} className="text-primary-500" />`}
           </code>
         </p>
       </div>
