@@ -7,15 +7,15 @@ import { useState, useReducer, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  DollarCircleStrokeRounded, UserMultiple4StrokeRounded,
-  ChevronDownStrokeRounded, ChevronLeftStrokeRounded,
-  ArrowRightStrokeRounded, CheckStrokeRounded,
-  CheckCircle1StrokeRounded, RefreshDollar1StrokeRounded,
-  Bolt2StrokeRounded, QuestionMarkCircleStrokeRounded,
-  Locked1StrokeRounded, Layers1StrokeRounded, Wallet1StrokeRounded,
-} from '@lineiconshq/free-icons';
+  Doller, UserMultiple4,
+  ChevronDown, ChevronLeft,
+  ArrowRight, Check,
+  CheckCircle1, RefreshCircle1Clockwise,
+  Bolt1, QuestionMarkCircle,
+  Locked3, Layers2, Wallet2,
+} from '@tailgrids/icons';
 
-import LogoDefault from './assets/logo-default.svg';
+import LogoDefault from './assets/logo-default.png';
 import { Button } from './components/core/button';
 import { Badge } from './components/core/badge';
 import { Avatar } from './components/core/avatar';
@@ -106,7 +106,7 @@ function CurrencySelector({
           <span className="text-text-200 text-sm">Select...</span>
         )}
         <motion.span animate={{ rotate: open ? 180 : 0 }} className="[&_svg]:fill-none [&_path]:fill-none ml-auto">
-          <ChevronDownStrokeRounded size={13} strokeWidth={1.6} className="text-text-200" />
+          <ChevronDown size={13} className="text-text-200" />
         </motion.span>
       </button>
 
@@ -168,7 +168,7 @@ function Stepper({ current }: { current: Step }) {
                               'bg-background-soft-100 text-text-200 border border-base-200'
               }`}>
                 {isCompleted
-                  ? <span className="[&_svg]:fill-none [&_path]:fill-none"><CheckStrokeRounded size={12} strokeWidth={2.2} /></span>
+                  ? <Check size={12} />
                   : step.id
                 }
               </div>
@@ -181,10 +181,10 @@ function Stepper({ current }: { current: Step }) {
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <span className={`mx-2 [&_svg]:fill-none [&_path]:fill-none transition-colors ${
+              <span className={`mx-2 transition-colors ${
                 step.id < current ? 'text-primary-500' : 'text-text-200'
               }`}>
-                <ArrowRightStrokeRounded size={14} strokeWidth={1.6} />
+                <ArrowRight size={14} />
               </span>
             )}
           </div>
@@ -319,9 +319,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
             onClick={swap}
             className="flex items-center gap-1.5 h-8 px-4 rounded-full border border-base-200 bg-background-50 text-xs font-medium text-title-50 shadow-md hover:shadow-lg transition"
           >
-            <span className="[&_svg]:fill-none [&_path]:fill-none text-primary-500">
-              <RefreshDollar1StrokeRounded size={13} strokeWidth={1.6} />
-            </span>
+            <RefreshCircle1Clockwise size={13} />
             Swap
           </motion.button>
         </div>
@@ -356,9 +354,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
             exit={{ opacity: 0, height: 0, marginTop: 0 }}
           >
             <div className="flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
-              <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0 mt-0.5">
-                <QuestionMarkCircleStrokeRounded size={14} strokeWidth={1.6} className="text-yellow-600" />
-              </span>
+              <QuestionMarkCircle size={14} className="text-yellow-600" />
               <p className="text-yellow-800 text-xs leading-relaxed">
                 The exchange rate is dynamic. Once you review details and agree, this quote will expire in 2 hrs.{' '}
                 <a href="#" className="underline font-medium">Read more</a> about after-hours rates.
@@ -386,9 +382,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
           className="rounded-full w-full"
         >
           Continue
-          <span className="[&_svg]:fill-none [&_path]:fill-none ml-1">
-            <ArrowRightStrokeRounded size={14} strokeWidth={1.6} />
-          </span>
+          <ArrowRight size={14} />
         </Button>
       </div>
     </div>
@@ -450,7 +444,7 @@ function CountrySelector({ value, onChange }: { value: string; onChange: (v: str
         )}
         <span className="flex-1 text-sm text-title-50">{selected?.label}</span>
         <motion.span animate={{ rotate: open ? 180 : 0 }} className="[&_svg]:fill-none [&_path]:fill-none">
-          <ChevronDownStrokeRounded size={13} strokeWidth={1.6} className="text-text-200" />
+          <ChevronDown size={13} className="text-text-200" />
         </motion.span>
       </button>
       <AnimatePresence>
@@ -492,7 +486,7 @@ function BankSelector({ value, onChange }: { value: string; onChange: (v: string
           {value || 'Ex. Banco Banorte'}
         </span>
         <motion.span animate={{ rotate: open ? 180 : 0 }} className="[&_svg]:fill-none [&_path]:fill-none">
-          <ChevronDownStrokeRounded size={13} strokeWidth={1.6} className="text-text-200" />
+          <ChevronDown size={13} className="text-text-200" />
         </motion.span>
       </button>
       <AnimatePresence>
@@ -537,9 +531,7 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
         onClick={() => dispatch({ type: 'back' })}
         className="flex items-center text-primary-500 mb-6"
       >
-        <span className="[&_svg]:fill-none [&_path]:fill-none">
-          <ChevronLeftStrokeRounded size={18} strokeWidth={1.8} />
-        </span>
+        <ChevronLeft size={18} />
       </motion.button>
 
       <h2 className="text-title-50 text-2xl font-semibold">Who are you going to send it to?</h2>
@@ -593,9 +585,7 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
             className="rounded-full px-10 w-full"
           >
             Continue
-            <span className="[&_svg]:fill-none [&_path]:fill-none ml-1">
-              <ArrowRightStrokeRounded size={14} strokeWidth={1.6} />
-            </span>
+            <ArrowRight size={14} />
           </Button>
         </div>
       </div>
@@ -628,9 +618,7 @@ function ReviewScreen({
         onClick={() => dispatch({ type: 'back' })}
         className="flex items-center text-primary-500 mb-6"
       >
-        <span className="[&_svg]:fill-none [&_path]:fill-none">
-          <ChevronLeftStrokeRounded size={18} strokeWidth={1.8} />
-        </span>
+        <ChevronLeft size={18} />
       </motion.button>
 
       <h2 className="text-title-50 text-2xl font-semibold">Review details</h2>
@@ -652,7 +640,7 @@ function ReviewScreen({
             initial={{ y: -3, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
             className="[&_svg]:fill-none [&_path]:fill-none inline-block text-primary-500"
           >
-            <ChevronDownStrokeRounded size={18} strokeWidth={1.6} />
+            <ChevronDown size={18} />
           </motion.span>
 
           <div>
@@ -698,15 +686,11 @@ function ReviewScreen({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="size-7 rounded-lg bg-primary-500/10 flex items-center justify-center shrink-0">
-                    <span className="[&_svg]:fill-none [&_path]:fill-none">
-                      <Wallet1StrokeRounded size={13} strokeWidth={1.4} className="text-primary-500" />
-                    </span>
+                    <Wallet2 size={13} className="text-primary-500" />
                   </span>
                   <p className="text-title-50 text-sm font-medium">Fund from my Monato account</p>
                   <Badge color="success" size="sm" className="text-[10px]">
-                    <span className="[&_svg]:fill-none [&_path]:fill-none mr-0.5">
-                      <Bolt2StrokeRounded size={9} strokeWidth={2} />
-                    </span>
+                    <Bolt1 size={9} />
                     INSTANT
                   </Badge>
                 </div>
@@ -762,15 +746,11 @@ function ReviewScreen({
                     {/* Pagination dummy */}
                     <div className="flex items-center justify-center gap-2 pt-1">
                       <button className="size-6 rounded-md border border-base-100 flex items-center justify-center text-text-200 hover:bg-background-50 transition">
-                        <span className="[&_svg]:fill-none [&_path]:fill-none">
-                          <ChevronLeftStrokeRounded size={11} strokeWidth={1.6} />
-                        </span>
+                        <ChevronLeft size={11} />
                       </button>
                       <span className="text-[11px] text-text-100">1 de 1</span>
                       <button className="size-6 rounded-md border border-base-100 flex items-center justify-center text-text-200 hover:bg-background-50 transition">
-                        <span className="[&_svg]:fill-none [&_path]:fill-none">
-                          <ArrowRightStrokeRounded size={11} strokeWidth={1.6} />
-                        </span>
+                        <ArrowRight size={11} />
                       </button>
                     </div>
                   </div>
@@ -798,9 +778,7 @@ function ReviewScreen({
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="size-7 rounded-lg bg-background-soft-100 flex items-center justify-center shrink-0">
-                  <span className="[&_svg]:fill-none [&_path]:fill-none">
-                    <Wallet1StrokeRounded size={13} strokeWidth={1.4} className="text-text-100" />
-                  </span>
+                  <Wallet2 size={13} className="text-text-100" />
                 </span>
                 <p className="text-title-50 text-sm font-medium">Fund with external SPEI transfer</p>
               </div>
@@ -826,9 +804,7 @@ function ReviewScreen({
 
       {/* Lock alert */}
       <div className="mt-5 flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
-        <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0 mt-0.5">
-          <Locked1StrokeRounded size={13} strokeWidth={1.6} className="text-yellow-600" />
-        </span>
+        <Locked3 size={13} className="text-yellow-600" />
         <p className="text-yellow-800 text-xs leading-relaxed">
           The exchange rate will be locked for 2 hours after you agree with the quote and details.{' '}
           <a href="#" className="underline font-medium">Read more</a> about after-hours rates.
@@ -844,9 +820,7 @@ function ReviewScreen({
           className="rounded-full px-10 w-full"
         >
           Continue
-          <span className="[&_svg]:fill-none [&_path]:fill-none ml-1">
-            <ArrowRightStrokeRounded size={14} strokeWidth={1.6} />
-          </span>
+          <ArrowRight size={14} />
         </Button>
       </div>
     </div>
@@ -874,9 +848,7 @@ function FundScreen({ state, dispatch, onExit }: {
           transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.1 }}
           className="mt-4 inline-flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-500/30"
         >
-          <span className="[&_svg]:fill-none [&_path]:fill-none">
-            <CheckCircle1StrokeRounded size={32} strokeWidth={1.8} className="text-white" />
-          </span>
+          <CheckCircle1 size={32} className="text-white" />
         </motion.div>
         <p className="text-text-100 text-sm mt-4 leading-relaxed max-w-sm mx-auto">
           Your balance has been successfully used to fund this transaction. We are now processing your cross-border payment,
@@ -898,7 +870,7 @@ function FundScreen({ state, dispatch, onExit }: {
           <motion.span initial={{ y: -3, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
             className="[&_svg]:fill-none [&_path]:fill-none inline-block text-primary-500"
           >
-            <ChevronDownStrokeRounded size={18} strokeWidth={1.6} />
+            <ChevronDown size={18} />
           </motion.span>
           <div>
             <p className="text-text-100 text-xs">{state.firstName || 'Recipient'} gets</p>
@@ -928,9 +900,7 @@ function FundScreen({ state, dispatch, onExit }: {
 
       {/* Lock alert */}
       <div className="mt-5 flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
-        <span className="[&_svg]:fill-none [&_path]:fill-none shrink-0 mt-0.5">
-          <Locked1StrokeRounded size={13} strokeWidth={1.6} className="text-yellow-600" />
-        </span>
+        <Locked3 size={13} className="text-yellow-600" />
         <p className="text-yellow-800 text-xs leading-relaxed">
           The exchange rate will be locked for 2 hours after details are saved.{' '}
           <a href="#" className="underline font-medium">Read more</a> about after-hours rates.
@@ -972,9 +942,9 @@ type SidebarItem = 'quote' | 'transactions' | 'accounts';
 
 function CBSidebar({ active }: { active: SidebarItem }) {
   const items = [
-    { id: 'quote'        as const, label: 'Quote',            icon: DollarCircleStrokeRounded,    disabled: false },
-    { id: 'transactions' as const, label: 'All transactions', icon: Layers1StrokeRounded,         disabled: true  },
-    { id: 'accounts'     as const, label: 'Accounts',         icon: UserMultiple4StrokeRounded,   disabled: true  },
+    { id: 'quote'        as const, label: 'Quote',            icon: Doller,    disabled: false },
+    { id: 'transactions' as const, label: 'All transactions', icon: Layers2,         disabled: true  },
+    { id: 'accounts'     as const, label: 'Accounts',         icon: UserMultiple4,   disabled: true  },
   ];
 
   return (
@@ -1006,9 +976,7 @@ function CBSidebar({ active }: { active: SidebarItem }) {
                   transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                 />
               )}
-              <span className="[&_svg]:fill-none [&_path]:fill-none relative z-10">
-                <Icon size={15} strokeWidth={1.4} className={isActive ? 'text-primary-500' : 'text-text-200'} />
-              </span>
+              <Icon size={15} className={isActive ? 'text-primary-500' : 'text-text-200'} />
               <span className="relative z-10">{label}</span>
               {disabled && (
                 <Badge color="gray" size="sm" className="ml-auto relative z-10 text-[9px]">Pronto</Badge>
@@ -1176,9 +1144,7 @@ export function CrossBorderPrototype() {
             </div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
               <Button onClick={() => setOpen(true)}>
-                <span className="[&_svg]:fill-none [&_path]:fill-none">
-                  <DollarCircleStrokeRounded size={14} strokeWidth={1.4} />
-                </span>
+                <Doller size={14} />
                 Abrir prototipo
               </Button>
             </motion.div>
