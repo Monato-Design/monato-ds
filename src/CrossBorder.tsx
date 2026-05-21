@@ -10,7 +10,7 @@ import {
   Doller, UserMultiple4, ChevronDown, ChevronLeft,
   ArrowRight, Check, CheckCircle1, RefreshCircle1Clockwise,
   QuestionMarkCircle, Locked3, Layers2,
-  Home, Bell1, Gear1,
+  Bell1, Gear1,
 } from '@tailgrids/icons';
 
 import LogoDefault from './assets/logo-default.png';
@@ -849,7 +849,7 @@ function CBSidebar({ onExit: _onExit }: { onExit: () => void }) {
   );
 }
 
-// ─── App Layout ───────────────────────────────────────────────────────────────
+// ─── Mac Desktop wrapper — igual que CLP ─────────────────────────────────────
 function CBApp({ onExit }: { onExit: () => void }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -866,45 +866,68 @@ function CBApp({ onExit }: { onExit: () => void }) {
   })();
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-background-50">
-      <CBSidebar onExit={onExit} />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Breadcrumb header */}
-        <div className="bg-background-50 border-b border-base-100 px-7 py-4 shrink-0 flex items-center justify-between">
-          <p className="text-text-200 text-sm">
-            <span className="text-title-50 font-medium">Crossborder</span>
-            {' / '}
-            {stepLabels[state.step - 1]}
-          </p>
-          <button onClick={onExit}
-            className="flex items-center gap-1.5 text-text-200 text-xs hover:text-title-50 transition">
-            <Home size={13} className="text-text-200" />
-            Volver al catálogo
+    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
+      {/* Window */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10 relative"
+        style={{ height: 'min(1000px, calc(100vh - 32px))' }}
+      >
+        {/* Mac title bar */}
+        <div className="h-9 bg-[#1e1e1e] flex items-center px-4 gap-2 shrink-0">
+          <button
+            onClick={onExit}
+            className="size-3 rounded-full bg-red-500 hover:bg-red-400 transition flex items-center justify-center group"
+            title="Volver al catálogo"
+          >
+            <span className="text-red-900 text-[8px] font-bold opacity-0 group-hover:opacity-100">✕</span>
           </button>
+          <div className="size-3 rounded-full bg-yellow-500" />
+          <div className="size-3 rounded-full bg-green-500" />
+          <div className="flex-1 flex justify-center">
+            <span className="text-white/40 text-[11px]">CrossBorder — Monato · {stepLabels[state.step - 1]}</span>
+          </div>
         </div>
 
-        {/* Stepper */}
-        <div className="bg-background-50 border-b border-base-100 px-7 py-3 shrink-0">
-          <Stepper current={state.step} />
-        </div>
+        {/* App content */}
+        <div className="flex-1 flex overflow-hidden bg-background-50">
+          <CBSidebar onExit={onExit} />
 
-        {/* Screens */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={state.step}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.16, ease: 'easeOut' }}
-              className="flex-1 flex flex-col h-full"
-            >
-              {ScreenComponent}
-            </motion.div>
-          </AnimatePresence>
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Breadcrumb header */}
+            <div className="bg-background-50 border-b border-base-100 px-7 py-4 shrink-0 flex items-center justify-between">
+              <p className="text-text-200 text-sm">
+                <span className="text-title-50 font-medium">Crossborder</span>
+                {' / '}
+                {stepLabels[state.step - 1]}
+              </p>
+            </div>
+
+            {/* Stepper */}
+            <div className="bg-background-50 border-b border-base-100 px-7 py-3 shrink-0">
+              <Stepper current={state.step} />
+            </div>
+
+            {/* Screens */}
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={state.step}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.16, ease: 'easeOut' }}
+                  className="flex-1 flex flex-col h-full"
+                >
+                  {ScreenComponent}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       <ConfirmModal
         open={confirmOpen}
@@ -972,7 +995,13 @@ export function CrossBorderPrototype() {
 
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50"
+          >
             <CBApp onExit={() => setOpen(false)} />
           </motion.div>
         )}
