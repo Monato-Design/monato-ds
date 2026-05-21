@@ -251,7 +251,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
   const canContinue  = bothSelected && hasAmount && !!state.toAmount && !state.calculating;
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 pt-5 pb-10 bg-[#f8fafc]">
+    <div className="flex-1 flex flex-col items-center justify-start px-8 pt-12 pb-10 bg-[#f8fafc]">
       <div className="w-full max-w-[376px] flex flex-col gap-6">
 
         {/* Título */}
@@ -494,67 +494,73 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
   const canContinue    = !!(state.firstName && state.firstLastName && accountValid && state.bank);
 
   return (
-    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc] flex justify-center">
-      <div className="w-full max-w-3xl bg-white rounded-2xl border border-[#f0f4f8] shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] px-10 py-8">
-      <h2 className="text-title-50 text-xl font-bold mb-8">Who are you going to send it to?</h2>
+    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
+      <div className="max-w-3xl mx-auto flex flex-col gap-6">
 
-      <div className="divide-y divide-base-100">
+        <h2 className="text-[#151515] text-2xl font-semibold">Who are you going to send it to?</h2>
 
-        {/* Country */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Country of destination</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Select the country where the funds will be received</p>
-          </div>
-          <div className="max-w-sm">
-            <CountrySelector value={state.country} onChange={v => dispatch({ type: 'set', field: 'country', value: v })} />
-          </div>
-        </div>
+        {/* Card blanco — solo el form, exacto Figma */}
+        <div className="bg-white rounded-2xl border border-[#f8fafc] shadow-[0_1px_2px_0_rgba(0,0,0,0.04)]">
+          <div className="divide-y divide-[#f8fafc]">
 
-        {/* Personal data */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Personal data</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Enter the recipient's full legal name as it appears on their ID</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 max-w-xl">
-            <FormInput label="First name"       value={state.firstName}      onChange={v => dispatch({ type: 'set', field: 'firstName',      value: v })} placeholder="Ex. Roberto" />
-            <FormInput label="Middle name"      value={state.middleName}     onChange={v => dispatch({ type: 'set', field: 'middleName',     value: v })} placeholder="Ex. Felipe" />
-            <FormInput label="First last name"  value={state.firstLastName}  onChange={v => dispatch({ type: 'set', field: 'firstLastName',  value: v })} placeholder="Ex. Lopez" />
-            <FormInput label="Second last name" value={state.secondLastName} onChange={v => dispatch({ type: 'set', field: 'secondLastName', value: v })} placeholder="Ex. Perez" />
-            <div className="col-span-2">
-              <FormInput label="Alias" value={state.alias} onChange={v => dispatch({ type: 'set', field: 'alias', value: v })} placeholder="Ex. Rob Main Account" optional />
+            {/* Country */}
+            <div className="flex gap-10 items-start px-5 py-5">
+              <div className="w-[307px] shrink-0">
+                <p className="text-[#486581] text-base font-medium">Country of destination</p>
+                <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">Select the country where the funds will be received</p>
+              </div>
+              <div className="flex-1">
+                <CountrySelector value={state.country} onChange={v => dispatch({ type: 'set', field: 'country', value: v })} />
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Bank details */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Bank details</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Provide the recipient's banking information for the transfer</p>
-          </div>
-          <div className="space-y-4 max-w-xl">
-            <FormInput
-              label="Account Number"
-              value={state.accountNumber}
-              onChange={v => { dispatch({ type: 'set', field: 'accountNumber', value: v }); setAccountTouched(true); }}
-              placeholder="Ex. 734180999000000006"
-              error={showAccountErr ? 'Please enter a valid number' : undefined}
-            />
-            <div>
-              <label className="text-text-50 text-xs font-medium mb-1.5 block">Bank</label>
-              <BankSelector value={state.bank} onChange={v => dispatch({ type: 'set', field: 'bank', value: v })} />
+            {/* Personal data */}
+            <div className="flex gap-10 items-start px-5 py-5">
+              <div className="w-[307px] shrink-0">
+                <p className="text-[#486581] text-base font-medium">Personal data</p>
+                <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">{"Enter the recipient's full legal name as it appears on their ID"}</p>
+              </div>
+              <div className="flex-1 grid grid-cols-2 gap-4">
+                <FormInput label="First name"       value={state.firstName}      onChange={v => dispatch({ type: 'set', field: 'firstName',      value: v })} placeholder="Ex. Roberto" />
+                <FormInput label="Middle name"      value={state.middleName}     onChange={v => dispatch({ type: 'set', field: 'middleName',     value: v })} placeholder="Ex. Felipe" />
+                <FormInput label="First last name"  value={state.firstLastName}  onChange={v => dispatch({ type: 'set', field: 'firstLastName',  value: v })} placeholder="Ex. Lopez" />
+                <FormInput label="Second last name" value={state.secondLastName} onChange={v => dispatch({ type: 'set', field: 'secondLastName', value: v })} placeholder="Ex. Perez" />
+                <div className="col-span-2">
+                  <FormInput label="Alias" value={state.alias} onChange={v => dispatch({ type: 'set', field: 'alias', value: v })} placeholder="Ex. Rob Main Account" optional />
+                </div>
+              </div>
             </div>
+
+            {/* Bank details */}
+            <div className="flex gap-10 items-start px-5 py-5">
+              <div className="w-[307px] shrink-0">
+                <p className="text-[#486581] text-base font-medium">Bank details</p>
+                <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">{"Provide the recipient's banking information for the transfer"}</p>
+              </div>
+              <div className="flex-1 space-y-4">
+                <FormInput
+                  label="Account Number"
+                  value={state.accountNumber}
+                  onChange={v => { dispatch({ type: 'set', field: 'accountNumber', value: v }); setAccountTouched(true); }}
+                  placeholder="Ex. 734180999000000006"
+                  error={showAccountErr ? 'Please enter a valid number' : undefined}
+                />
+                <div>
+                  <label className="text-[#486581] text-sm font-medium mb-1.5 block">Bank</label>
+                  <BankSelector value={state.bank} onChange={v => dispatch({ type: 'set', field: 'bank', value: v })} />
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-      </div>
+        {/* Botones — afuera del card, alineados a la derecha exacto Figma */}
+        <div className="flex items-center justify-end gap-4">
+          <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
+          <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
+        </div>
 
-      <div className="flex items-center gap-3 mt-6 pt-6 border-t border-base-100">
-        <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
-        <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
-      </div>
       </div>
     </div>
   );
