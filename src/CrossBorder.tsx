@@ -16,7 +16,6 @@ import {
 import LogoDefault from './assets/logo-default.png';
 import { Button } from './components/core/button';
 import { Badge } from './components/core/badge';
-import { Avatar } from './components/core/avatar';
 import { Modal } from './components/core/modal';
 import { DefaultSpinner } from './components/core/spinner/default';
 
@@ -64,7 +63,7 @@ function CurrencyToken({ currency, size = 22 }: { currency: Currency; size?: num
   );
 }
 
-// ─── Stepper ──────────────────────────────────────────────────────────────────
+// ─── Stepper — exacto Figma ───────────────────────────────────────────────────
 type Step = 1 | 2 | 3 | 4;
 const STEPS = [
   { id: 1 as Step, label: 'Quote' },
@@ -75,26 +74,29 @@ const STEPS = [
 
 function Stepper({ current }: { current: Step }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-4">
       {STEPS.map((step, i) => {
         const isActive    = step.id === current;
         const isCompleted = step.id < current;
         return (
-          <div key={step.id} className="flex items-center gap-1.5">
-            <div className="flex items-center gap-2">
-              <div className={`size-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
-                isActive || isCompleted
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-background-soft-100 text-text-200 border border-base-200'
-              }`}>
-                {isCompleted ? <Check size={11} className="text-white" /> : step.id}
-              </div>
-              <span className={`text-sm font-medium transition-colors ${
-                isActive ? 'text-primary-500' : isCompleted ? 'text-title-50' : 'text-text-200'
-              }`}>{step.label}</span>
+          <div key={step.id} className="flex items-center gap-2">
+            {/* Número en círculo */}
+            <div className={`size-6 rounded-full flex items-center justify-center text-sm transition-all ${
+              isActive || isCompleted
+                ? 'bg-primary-500 text-white font-medium'
+                : 'border border-base-100 text-text-100 font-medium'
+            }`}>
+              {isCompleted ? <Check size={11} className="text-white" /> : step.id}
             </div>
+            {/* Label: bold si activo, regular si no */}
+            <span className={`text-sm tracking-tight transition-colors ${
+              isActive    ? 'font-bold text-[#486581]' :
+              isCompleted ? 'font-medium text-title-50' :
+                            'font-normal text-[#486581]'
+            }`}>{step.label}</span>
+            {/* Flecha separadora */}
             {i < STEPS.length - 1 && (
-              <ArrowRight size={14} className={step.id < current ? 'text-primary-500' : 'text-text-200'} />
+              <ArrowRight size={16} className="text-text-200 ml-2" />
             )}
           </div>
         );
@@ -103,66 +105,66 @@ function Stepper({ current }: { current: Step }) {
   );
 }
 
-// ─── Currency Selector con portal ────────────────────────────────────────────
+// ─── Currency Selector — exacto Figma ────────────────────────────────────────
 function CurrencySelector({ value, onChange }: { value: CurrencyCode | null; onChange: (c: CurrencyCode) => void }) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos]   = useState({ top: 0, left: 0 });
+  const [pos, setPos]   = useState({ top: 0, left: 0, width: 0 });
   const btnRef          = useRef<HTMLButtonElement>(null);
   const selected        = CURRENCIES.find(c => c.code === value);
 
   const handleOpen = () => {
     if (btnRef.current) {
       const r = btnRef.current.getBoundingClientRect();
-      setPos({ top: r.bottom + 6, left: r.left });
+      setPos({ top: r.bottom + 4, left: r.left, width: r.width });
     }
     setOpen(v => !v);
   };
 
   return (
     <>
+      {/* Botón outline exacto del Figma: px-4 py-2.5, border #d9e2ec, rounded-lg */}
       <button
         ref={btnRef}
         onClick={handleOpen}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-200 bg-background-50 hover:bg-background-soft-50 transition min-w-[110px]"
+        className="flex items-center gap-1 px-4 py-2.5 rounded-lg border border-[#d9e2ec] bg-white hover:bg-[#f8fafc] transition shrink-0"
       >
         {selected ? (
-          <>
+          <div className="flex items-center gap-2">
             <CurrencyToken currency={selected} size={20} />
-            <span className="text-title-50 text-sm font-semibold">{selected.code}</span>
-          </>
+            <span className="text-[#334e68] text-base font-medium">{selected.code}</span>
+          </div>
         ) : (
-          <span className="text-text-200 text-sm">Select...</span>
+          <span className="text-[#334e68] text-base font-medium">Select...</span>
         )}
-        <ChevronDown size={13} className={`text-text-200 ml-auto transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={20} className="text-[#334e68] ml-1" />
       </button>
 
-      <AnimatePresence>
-        {open && createPortal(
-          <>
-            <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.97 }}
-              transition={{ duration: 0.13 }}
-              style={{ position: 'fixed', top: pos.top, left: pos.left, minWidth: 160, zIndex: 9999 }}
-              className="rounded-xl border border-base-100 bg-background-50 shadow-xl p-1"
-            >
-              {CURRENCIES.map(c => (
-                <button
-                  key={c.code}
-                  onClick={() => { onChange(c.code); setOpen(false); }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition hover:bg-background-soft-50 ${value === c.code ? 'bg-primary-500/5' : ''}`}
-                >
-                  <CurrencyToken currency={c} size={20} />
-                  <span className="text-title-50 text-sm font-medium">{c.code}</span>
-                </button>
-              ))}
-            </motion.div>
-          </>,
-          document.body
-        )}
-      </AnimatePresence>
+      {/* Dropdown via portal — siempre encima del wrapper Mac */}
+      {open && createPortal(
+        <>
+          <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={{ duration: 0.12 }}
+            style={{ position: 'fixed', top: pos.top, left: pos.left, minWidth: Math.max(pos.width, 180), zIndex: 9999 }}
+            className="rounded-xl border border-base-100 bg-white shadow-2xl py-1.5"
+          >
+            {CURRENCIES.map(c => (
+              <button
+                key={c.code}
+                onClick={() => { onChange(c.code); setOpen(false); }}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#f8fafc] ${value === c.code ? 'bg-[#e6f4fa]' : ''}`}
+              >
+                <CurrencyToken currency={c} size={22} />
+                <span className="text-[#334e68] text-sm font-medium">{c.code}</span>
+              </button>
+            ))}
+          </motion.div>
+        </>,
+        document.body
+      )}
     </>
   );
 }
@@ -207,7 +209,7 @@ function reducer(state: FlowState, action: FlowAction): FlowState {
   }
 }
 
-// ─── Quote Screen ─────────────────────────────────────────────────────────────
+// ─── Quote Screen — exacto Figma ─────────────────────────────────────────────
 function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Dispatch<FlowAction> }) {
   const calcTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -250,53 +252,60 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 py-10">
-      <div className="w-full max-w-lg">
-        <h1 className="text-title-50 text-2xl font-bold text-center">Currency Exchange</h1>
-        <p className="text-text-200 text-sm text-center mt-1.5">Type in either field to get a quote.</p>
+      <div className="w-full max-w-[376px] flex flex-col gap-6">
 
-        <div className="mt-8">
-          {/* FROM */}
-          <div className="pb-5">
-            <p className="text-text-200 text-xs font-medium mb-2">From</p>
-            <div className="flex items-center justify-between gap-4">
+        {/* Título */}
+        <div className="text-center">
+          <h1 className="text-[#334e68] text-[22px] font-semibold">Currency Exchange</h1>
+          <p className="text-[#829ab1] text-sm mt-1">Type in either field to get a quote.</p>
+        </div>
+
+        {/* Cards + Swap — contenedor relativo para el Swap flotante */}
+        <div className="flex flex-col gap-3 relative">
+
+          {/* FROM card */}
+          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <p className="text-[#829ab1] text-sm font-normal">From</p>
+            </div>
+            <div className="flex items-center justify-between">
               <input
                 value={state.fromAmount}
                 onChange={e => handleFromChange(e.target.value)}
                 placeholder="0.00"
-                className="flex-1 text-3xl font-bold text-title-50 bg-transparent focus:outline-none placeholder:text-base-200 w-0"
+                className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent focus:outline-none placeholder:text-[#bcccdc] w-0 leading-9"
               />
               <CurrencySelector value={state.from} onChange={v => dispatch({ type: 'set', field: 'from', value: v })} />
             </div>
+            {/* Processing fee */}
             <AnimatePresence>
               {hasAmount && state.toAmount && !state.calculating && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-1.5 mt-2 overflow-hidden"
-                >
-                  <QuestionMarkCircle size={13} className="text-text-200 shrink-0" />
-                  <span className="text-text-200 text-xs">Plus processing fee: ${PROCESSING_FEE_MXN.toFixed(2)} {state.from}</span>
-                </motion.div>
+                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                  className="text-[#829ab1] text-xs overflow-hidden">
+                  Plus processing fee: ${PROCESSING_FEE_MXN.toFixed(2)} {state.from}
+                </motion.p>
               )}
             </AnimatePresence>
           </div>
 
-          {/* SWAP */}
-          <div className="flex justify-center items-center gap-0 border-t border-b border-base-100 py-0 -mt-px">
+          {/* Swap — flotando entre las dos cards, centrado */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={swap}
-              className="flex items-center gap-1.5 text-primary-500 text-xs font-medium px-3 py-2 hover:bg-primary-500/5 rounded-lg transition"
+              className="flex items-center gap-1.5 bg-white border border-[#f8fafc] rounded-lg px-3.5 py-2.5 shadow-sm hover:shadow-md transition-shadow text-[#334e68] text-sm font-medium"
             >
-              <RefreshCircle1Clockwise size={14} className="text-primary-500" />
+              <RefreshCircle1Clockwise size={18} className="text-[#334e68]" />
               Swap
             </motion.button>
           </div>
 
-          {/* TO */}
-          <div className="pt-5">
-            <p className="text-text-200 text-xs font-medium mb-2">To</p>
-            <div className="flex items-center justify-between gap-4">
+          {/* TO card */}
+          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2">
+            <p className="text-[#829ab1] text-sm font-normal">To</p>
+            <div className="flex items-center justify-between">
               {state.calculating ? (
-                <div className="flex-1 flex items-center">
+                <div className="flex-1">
                   <DefaultSpinner size={34} percentage={70} className="animate-spin" />
                 </div>
               ) : (
@@ -304,7 +313,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
                   value={state.toAmount}
                   readOnly
                   placeholder="0.00"
-                  className="flex-1 text-3xl font-bold text-title-50 bg-transparent focus:outline-none placeholder:text-base-200 w-0"
+                  className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent focus:outline-none placeholder:text-[#bcccdc] w-0 leading-9"
                 />
               )}
               <CurrencySelector value={state.to} onChange={handleToSelect} />
@@ -312,13 +321,13 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
           </div>
         </div>
 
-        {/* Alerta dinámica */}
+        {/* Warning dinámica */}
         <AnimatePresence>
           {bothSelected && (
             <motion.div
-              initial={{ opacity: 0, height: 0, marginTop: 0 }}
-              animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
-              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
               <div className="flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
@@ -334,23 +343,29 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
           )}
         </AnimatePresence>
 
-        {/* Continue */}
-        <div className="mt-6">
-          <Button size="lg" disabled={!canContinue} onClick={() => dispatch({ type: 'next' })} className="w-full">
-            Continue
-          </Button>
-        </div>
+        {/* Continue — full width, estilo exacto Figma disabled */}
+        <button
+          disabled={!canContinue}
+          onClick={() => canContinue && dispatch({ type: 'next' })}
+          className={`w-full py-3 rounded-lg text-base font-medium transition-colors ${
+            canContinue
+              ? 'bg-primary-500 text-white hover:bg-primary-600'
+              : 'bg-[#f0f4f8] text-[#9fb3c8] cursor-not-allowed'
+          }`}
+        >
+          Continue
+        </button>
 
-        {/* Currency rate — debajo del botón */}
+        {/* Currency rate debajo del botón */}
         <AnimatePresence>
           {canContinue && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="text-text-200 text-xs text-center mt-3"
-            >
+              className="text-[#829ab1] text-xs text-center -mt-3">
               Currency Rate: ${RATE_MXN_PER_USD.toFixed(2)} MXN = $1 USD
             </motion.p>
           )}
         </AnimatePresence>
+
       </div>
     </div>
   );
@@ -792,57 +807,69 @@ function ConfirmModal({ open, onCancel, onConfirm }: { open: boolean; onCancel: 
   );
 }
 
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
+// ─── Sidebar — exacto Figma ───────────────────────────────────────────────────
 function CBSidebar({ onExit: _onExit }: { onExit: () => void }) {
-  const NAV = [
+  const NAV_MAIN = [
     { label: 'Currency exchange', icon: Doller,        active: true  },
     { label: 'Accounts',          icon: UserMultiple4, active: false },
     { label: 'All transactions',  icon: Layers2,       active: false },
   ];
 
   return (
-    <aside className="h-full w-56 shrink-0 flex flex-col border-r border-base-100 bg-background-50">
-      <div className="flex items-center justify-between border-b border-base-100 px-4 py-3.5">
-        <img src={LogoDefault} alt="monato" className="h-5 w-auto" />
-        <button className="text-text-200 hover:text-title-50 transition opacity-60 text-base">⊟</button>
+    <aside className="h-full w-[280px] shrink-0 flex flex-col bg-white border-r border-[#f8fafc] p-5">
+      {/* Logo + collapse icon */}
+      <div className="flex items-center justify-between h-7 mb-7">
+        <img src={LogoDefault} alt="monato" className="h-[18px] w-auto" />
+        <button className="text-[#829ab1] hover:text-[#334e68] transition size-5 flex items-center justify-center">
+          <Layers2 size={16} className="text-[#829ab1]" />
+        </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-3">
-        <p className="text-text-200 mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-widest">Main menu</p>
-        {NAV.map(({ label, icon: Icon, active }) => (
-          <button key={label} disabled={!active}
-            className={[
-              'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors mb-0.5',
-              active ? 'text-primary-500 font-medium' : 'text-text-200 opacity-50 cursor-not-allowed',
-            ].join(' ')}
-          >
-            {active && (
-              <motion.div layoutId="cb-nav-bg"
-                className="absolute inset-0 rounded-lg bg-primary-500/10"
-                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-              />
-            )}
-            <Icon size={15} className={`relative z-10 ${active ? 'text-primary-500' : 'text-text-200'}`} />
-            <span className="relative z-10">{label}</span>
-          </button>
-        ))}
+      {/* Nav */}
+      <nav className="flex-1 flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <p className="text-[#829ab1] text-xs font-normal leading-4 tracking-tight">Main menu</p>
+          <div className="flex flex-col gap-1">
+            {NAV_MAIN.map(({ label, icon: Icon, active }) => (
+              <button
+                key={label}
+                disabled={!active}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
+                  active
+                    ? 'bg-[#e6f4fa] text-primary-500 font-semibold'
+                    : 'text-[#1e1e22] font-medium cursor-not-allowed opacity-60'
+                }`}
+              >
+                <Icon size={24} className={active ? 'text-primary-500' : 'text-[#1e1e22]'} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </nav>
 
-      <div className="px-3 py-2 space-y-0.5">
-        {[{ label: 'Support', icon: Bell1 }, { label: 'Settings', icon: Gear1 }].map(({ label, icon: Icon }) => (
-          <button key={label} disabled
-            className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-200 opacity-50 cursor-not-allowed">
-            <Icon size={15} className="text-text-200" />
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* Support + Settings + Avatar al fondo */}
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-1">
+          {[{ label: 'Support', icon: Bell1 }, { label: 'Settings', icon: Gear1 }].map(({ label, icon: Icon }) => (
+            <button key={label} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm font-medium text-[#1e1e22] hover:bg-[#f8fafc] transition-colors">
+              <Icon size={24} className="text-[#1e1e22]" />
+              {label}
+            </button>
+          ))}
+        </div>
 
-      <div className="border-t border-base-100 px-4 py-3 flex items-center gap-2.5">
-        <Avatar size="sm" fallback="KM" />
-        <div className="min-w-0 flex-1">
-          <p className="text-title-50 text-xs font-medium truncate">Kathryn Murphy</p>
-          <p className="text-text-200 text-[11px] truncate">murphy.mitc@example.com</p>
+        {/* Avatar footer — exacto Figma: bg skyblue-100, iniciales azul */}
+        <div className="border-t border-[#f8fafc] pt-5 flex items-center gap-3">
+          <div className="size-12 rounded-full bg-[#b2deee] flex items-center justify-center shrink-0">
+            <span className="text-primary-500 text-lg font-semibold">KM</span>
+          </div>
+          <div>
+            <p className="text-[#334e68] text-base font-medium leading-6">Kathryn Murphy</p>
+            <p className="text-[#829ab1] text-sm leading-5">
+              <span className="font-bold">murphy</span>.mitc@example.com
+            </p>
+          </div>
         </div>
       </div>
     </aside>
@@ -896,17 +923,17 @@ function CBApp({ onExit }: { onExit: () => void }) {
           <CBSidebar onExit={onExit} />
 
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Breadcrumb header */}
-            <div className="bg-background-50 border-b border-base-100 px-7 py-4 shrink-0 flex items-center justify-between">
-              <p className="text-text-200 text-sm">
-                <span className="text-title-50 font-medium">Crossborder</span>
-                {' / '}
-                {stepLabels[state.step - 1]}
+            {/* Breadcrumb header — exacto Figma */}
+            <div className="bg-white border-b border-[#f8fafc] px-6 py-4 shrink-0 flex items-center">
+              <p className="text-[#334e68] text-xl font-medium leading-7">
+                <span className="font-medium">Crossborder</span>
+                {' '}
+                <span className="font-normal text-[#334e68]">/ {stepLabels[state.step - 1]}</span>
               </p>
             </div>
 
-            {/* Stepper */}
-            <div className="bg-background-50 border-b border-base-100 px-7 py-3 shrink-0">
+            {/* Stepper — centrado en la pantalla */}
+            <div className="bg-white border-b border-[#f8fafc] px-6 py-4 shrink-0 flex items-center justify-center">
               <Stepper current={state.step} />
             </div>
 
