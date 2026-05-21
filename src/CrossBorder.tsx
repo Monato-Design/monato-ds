@@ -7,7 +7,7 @@ import { useState, useReducer, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Doller, UserMultiple4, ChevronDown, ChevronLeft,
+  Doller, UserMultiple4, ChevronDown,
   ArrowRight, Check, CheckCircle1, RefreshCircle1Clockwise,
   QuestionMarkCircle, Locked3, Layers2,
   Bell1, Gear1,
@@ -251,7 +251,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
   const canContinue  = bothSelected && hasAmount && !!state.toAmount && !state.calculating;
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 py-10">
+    <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 bg-[#f8fafc]">
       <div className="w-full max-w-[376px] flex flex-col gap-6">
 
         {/* Título */}
@@ -264,7 +264,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
         <div className="flex flex-col gap-3 relative">
 
           {/* FROM card */}
-          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2">
+          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
             <div className="flex items-center gap-3">
               <p className="text-[#829ab1] text-sm font-normal">From</p>
             </div>
@@ -273,7 +273,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
                 value={state.fromAmount}
                 onChange={e => handleFromChange(e.target.value)}
                 placeholder="0.00"
-                className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent focus:outline-none placeholder:text-[#bcccdc] w-0 leading-9"
+                className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent outline-none border-none ring-0 placeholder:text-[#bcccdc] w-0 leading-9"
               />
               <CurrencySelector value={state.from} onChange={v => dispatch({ type: 'set', field: 'from', value: v })} />
             </div>
@@ -301,7 +301,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
           </div>
 
           {/* TO card */}
-          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2">
+          <div className="bg-white border border-[#f8fafc] rounded-2xl px-5 py-6 flex flex-col gap-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
             <p className="text-[#829ab1] text-sm font-normal">To</p>
             <div className="flex items-center justify-between">
               {state.calculating ? (
@@ -313,7 +313,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
                   value={state.toAmount}
                   readOnly
                   placeholder="0.00"
-                  className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent focus:outline-none placeholder:text-[#bcccdc] w-0 leading-9"
+                  className="flex-1 text-[30px] font-semibold text-[#334e68] bg-transparent outline-none border-none ring-0 placeholder:text-[#bcccdc] w-0 leading-9"
                 />
               )}
               <CurrencySelector value={state.to} onChange={handleToSelect} />
@@ -494,13 +494,7 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
   const canContinue    = !!(state.firstName && state.firstLastName && accountValid && state.bank);
 
   return (
-    <div className="flex-1 overflow-y-auto px-10 py-8">
-      <motion.button whileHover={{ x: -2 }} onClick={() => dispatch({ type: 'back' })}
-        className="flex items-center gap-1.5 text-primary-500 text-sm mb-6">
-        <ChevronLeft size={16} className="text-primary-500" />
-        Back
-      </motion.button>
-
+    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
       <h2 className="text-title-50 text-xl font-bold mb-8">Who are you going to send it to?</h2>
 
       <div className="divide-y divide-base-100">
@@ -581,12 +575,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
   const fullName = [state.firstName, state.middleName, state.firstLastName, state.secondLastName].filter(Boolean).join(' ');
 
   return (
-    <div className="flex-1 overflow-y-auto px-10 py-8">
-      <motion.button whileHover={{ x: -2 }} onClick={() => dispatch({ type: 'back' })}
-        className="flex items-center gap-1.5 text-primary-500 text-sm mb-6">
-        <ChevronLeft size={16} className="text-primary-500" />
-        Back
-      </motion.button>
+    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
       <h2 className="text-title-50 text-xl font-bold mb-6">Review details</h2>
 
       <div className="max-w-xl space-y-6">
@@ -729,7 +718,7 @@ function FundScreen({ state, dispatch, onExit }: {
   const account  = MONATO_ACCOUNTS.find(a => a.id === state.selectedAccount);
 
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-8 py-10">
+    <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-8 py-10 bg-[#f8fafc]">
       <div className="w-full max-w-sm text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.1 }}
