@@ -251,7 +251,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
   const canContinue  = bothSelected && hasAmount && !!state.toAmount && !state.calculating;
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 bg-[#f8fafc]">
+    <div className="flex-1 flex flex-col items-center justify-center px-8 pt-5 pb-10 bg-[#f8fafc]">
       <div className="w-full max-w-[376px] flex flex-col gap-6">
 
         {/* Título */}
@@ -494,7 +494,8 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
   const canContinue    = !!(state.firstName && state.firstLastName && accountValid && state.bank);
 
   return (
-    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
+    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc] flex justify-center">
+      <div className="w-full max-w-3xl bg-white rounded-2xl border border-[#f0f4f8] shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] px-10 py-8">
       <h2 className="text-title-50 text-xl font-bold mb-8">Who are you going to send it to?</h2>
 
       <div className="divide-y divide-base-100">
@@ -553,6 +554,7 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
       <div className="flex items-center gap-3 mt-6 pt-6 border-t border-base-100">
         <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
         <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
+      </div>
       </div>
     </div>
   );
