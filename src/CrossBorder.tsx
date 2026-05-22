@@ -16,7 +16,6 @@ import {
 import LogoDefault from './assets/logo-default.png';
 import { Button } from './components/core/button';
 import { Badge } from './components/core/badge';
-import { Modal } from './components/core/modal';
 import { DefaultSpinner } from './components/core/spinner/default';
 
 // ─── Tasa de cambio (demo) ────────────────────────────────────────────────────
@@ -251,7 +250,7 @@ function QuoteScreen({ state, dispatch }: { state: FlowState; dispatch: React.Di
   const canContinue  = bothSelected && hasAmount && !!state.toAmount && !state.calculating;
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 bg-[#f8fafc]">
+    <div className="flex-1 flex flex-col items-center justify-start px-8 pt-8 pb-10 bg-[#f8fafc]">
       <div className="w-full max-w-[376px] flex flex-col gap-6">
 
         {/* Título */}
@@ -495,64 +494,75 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
 
   return (
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
-      <h2 className="text-title-50 text-xl font-bold mb-8">Who are you going to send it to?</h2>
+      <div className="max-w-3xl mx-auto flex flex-col gap-6">
 
-      <div className="divide-y divide-base-100">
+        {/* Título afuera del card — exacto Figma */}
+        <h2 className="text-[#151515] text-2xl font-semibold">Who are you going to send it to?</h2>
 
-        {/* Country */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Country of destination</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Select the country where the funds will be received</p>
-          </div>
-          <div className="max-w-sm">
-            <CountrySelector value={state.country} onChange={v => dispatch({ type: 'set', field: 'country', value: v })} />
-          </div>
-        </div>
+        {/* Card blanco — exacto Figma 2694-8279 */}
+        <div className="bg-white rounded-2xl border border-[#f8fafc] shadow-[0_1px_2px_0_rgba(0,0,0,0.04)] p-5 flex flex-col gap-5">
 
-        {/* Personal data */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Personal data</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Enter the recipient's full legal name as it appears on their ID</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 max-w-xl">
-            <FormInput label="First name"       value={state.firstName}      onChange={v => dispatch({ type: 'set', field: 'firstName',      value: v })} placeholder="Ex. Roberto" />
-            <FormInput label="Middle name"      value={state.middleName}     onChange={v => dispatch({ type: 'set', field: 'middleName',     value: v })} placeholder="Ex. Felipe" />
-            <FormInput label="First last name"  value={state.firstLastName}  onChange={v => dispatch({ type: 'set', field: 'firstLastName',  value: v })} placeholder="Ex. Lopez" />
-            <FormInput label="Second last name" value={state.secondLastName} onChange={v => dispatch({ type: 'set', field: 'secondLastName', value: v })} placeholder="Ex. Perez" />
-            <div className="col-span-2">
-              <FormInput label="Alias" value={state.alias} onChange={v => dispatch({ type: 'set', field: 'alias', value: v })} placeholder="Ex. Rob Main Account" optional />
+          {/* Country */}
+          <div className="flex gap-10 items-start">
+            <div className="w-[307px] shrink-0">
+              <p className="text-[#486581] text-base font-medium">Country of destination</p>
+              <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">Select the country where the funds will be received</p>
+            </div>
+            <div className="flex-1">
+              <CountrySelector value={state.country} onChange={v => dispatch({ type: 'set', field: 'country', value: v })} />
             </div>
           </div>
-        </div>
 
-        {/* Bank details */}
-        <div className="grid grid-cols-[260px_1fr] gap-12 py-8">
-          <div>
-            <p className="text-title-50 text-sm font-semibold">Bank details</p>
-            <p className="text-text-200 text-xs mt-1.5 leading-relaxed">Provide the recipient's banking information for the transfer</p>
-          </div>
-          <div className="space-y-4 max-w-xl">
-            <FormInput
-              label="Account Number"
-              value={state.accountNumber}
-              onChange={v => { dispatch({ type: 'set', field: 'accountNumber', value: v }); setAccountTouched(true); }}
-              placeholder="Ex. 734180999000000006"
-              error={showAccountErr ? 'Please enter a valid number' : undefined}
-            />
-            <div>
-              <label className="text-text-50 text-xs font-medium mb-1.5 block">Bank</label>
-              <BankSelector value={state.bank} onChange={v => dispatch({ type: 'set', field: 'bank', value: v })} />
+          <div className="border-t border-[#f8fafc]" />
+
+          {/* Personal data */}
+          <div className="flex gap-10 items-start">
+            <div className="w-[307px] shrink-0">
+              <p className="text-[#486581] text-base font-medium">Personal data</p>
+              <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">{"Enter the recipient's full legal name as it appears on their ID"}</p>
+            </div>
+            <div className="flex-1 grid grid-cols-2 gap-4">
+              <FormInput label="First name"       value={state.firstName}      onChange={v => dispatch({ type: 'set', field: 'firstName',      value: v })} placeholder="Ex. Roberto" />
+              <FormInput label="Middle name"      value={state.middleName}     onChange={v => dispatch({ type: 'set', field: 'middleName',     value: v })} placeholder="Ex. Felipe" />
+              <FormInput label="First last name"  value={state.firstLastName}  onChange={v => dispatch({ type: 'set', field: 'firstLastName',  value: v })} placeholder="Ex. Lopez" />
+              <FormInput label="Second last name" value={state.secondLastName} onChange={v => dispatch({ type: 'set', field: 'secondLastName', value: v })} placeholder="Ex. Perez" />
+              <div className="col-span-2">
+                <FormInput label="Alias" value={state.alias} onChange={v => dispatch({ type: 'set', field: 'alias', value: v })} placeholder="Ex. Rob Main Account" optional />
+              </div>
             </div>
           </div>
+
+          <div className="border-t border-[#f8fafc]" />
+
+          {/* Bank details */}
+          <div className="flex gap-10 items-start">
+            <div className="w-[307px] shrink-0">
+              <p className="text-[#486581] text-base font-medium">Bank details</p>
+              <p className="text-[#9fb3c8] text-xs mt-0.5 leading-relaxed">{"Provide the recipient's banking information for the transfer"}</p>
+            </div>
+            <div className="flex-1 space-y-4">
+              <FormInput
+                label="Account Number"
+                value={state.accountNumber}
+                onChange={v => { dispatch({ type: 'set', field: 'accountNumber', value: v }); setAccountTouched(true); }}
+                placeholder="Ex. 734180999000000006"
+                error={showAccountErr ? 'Please enter a valid number' : undefined}
+              />
+              <div>
+                <label className="text-[#486581] text-sm font-medium mb-1.5 block">Bank</label>
+                <BankSelector value={state.bank} onChange={v => dispatch({ type: 'set', field: 'bank', value: v })} />
+              </div>
+            </div>
+          </div>
+
         </div>
 
-      </div>
+        {/* Botones afuera del card, derecha — exacto Figma */}
+        <div className="flex items-center justify-end gap-4">
+          <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
+          <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
+        </div>
 
-      <div className="flex items-center gap-3 mt-6 pt-6 border-t border-base-100">
-        <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
-        <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
       </div>
     </div>
   );
@@ -560,353 +570,300 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
 
 // ─── Review Screen ────────────────────────────────────────────────────────────
 const MONATO_ACCOUNTS = [
-  { id: 'diego',   name: 'Diego Rivera',     email: 'diego.rivera@gmail.com',     balance: 850.00,    insufficient: true,  initials: 'MXN', bg: '#dde9ff', color: '#465fff' },
-  { id: 'lucia',   name: 'Lucia Morales',    email: 'lucia.morales@gmail.com',    balance: 30.00,     insufficient: true,  initials: 'MXN', bg: '#fdf2fa', color: '#dd2590' },
-  { id: 'carlos',  name: 'Carlos Mendoza',   email: 'carlos.mendoza@gmail.com',   balance: 48200.00,  insufficient: false, initials: 'MXN', bg: '#f0f9ff', color: '#0086c9' },
-  { id: 'jessica', name: 'Jessica Contreras', email: 'jessica.contreras@gmail.com', balance: 8479.00, insufficient: false, initials: 'MXN', bg: '#fafde8', color: '#636709' },
-  { id: 'mateo',   name: 'Mateo Gonzalez',   email: 'mateo.gonzalez@gmail.com',   balance: 8479.00,  insufficient: false, initials: 'MXN', bg: '#fdf4ec', color: '#7e4015' },
+  { id: 'mxn-main',  name: 'MXN Main Account', clabe: '1234', balance: 850.00,   insufficient: true,  color: 'bg-blue-200'   },
+  { id: 'mxn-test',  name: 'Prueba MXN',        clabe: '1234', balance: 30.00,    insufficient: true,  color: 'bg-blue-200'   },
+  { id: 'mxn-ops-1', name: 'MXN Operations',    clabe: '4567', balance: 48200.00, insufficient: false, color: 'bg-primary-500'},
+  { id: 'mxn-wlt',   name: 'Wallet MXN',        clabe: '7890', balance: 8479.00,  insufficient: false, color: 'bg-orange-400' },
+  { id: 'mxn-ops-2', name: 'MXN Operations',    clabe: '7890', balance: 8479.00,  insufficient: false, color: 'bg-green-500'  },
 ];
-
-const ACCOUNTS_PER_PAGE = 5;
 
 function ReviewScreen({ state, dispatch, onConfirm }: {
   state: FlowState; dispatch: React.Dispatch<FlowAction>; onConfirm: () => void;
 }) {
-  const fromCurr  = CURRENCIES.find(c => c.code === state.from)!;
-  const toCurr    = CURRENCIES.find(c => c.code === state.to)!;
-  const fullName  = [state.firstName, state.middleName, state.firstLastName, state.secondLastName].filter(Boolean).join(' ');
-  const amountExchanged = parseFloat(state.fromAmount || '0') - PROCESSING_FEE_MXN;
-  const canContinue = !!(state.fundingMethod && (state.fundingMethod === 'spei' || state.selectedAccount));
-
-  const [accountPage, setAccountPage] = useState(0);
-  const totalPages = Math.ceil(MONATO_ACCOUNTS.length / ACCOUNTS_PER_PAGE);
-  const visibleAccounts = MONATO_ACCOUNTS.slice(accountPage * ACCOUNTS_PER_PAGE, (accountPage + 1) * ACCOUNTS_PER_PAGE);
+  const fromCurr = CURRENCIES.find(c => c.code === state.from)!;
+  const toCurr   = CURRENCIES.find(c => c.code === state.to)!;
+  const fullName = [state.firstName, state.middleName, state.firstLastName, state.secondLastName].filter(Boolean).join(' ');
 
   return (
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
-      {/* Layout 2 columnas exacto Figma */}
-      <div className="flex gap-5 items-start">
+      <h2 className="text-title-50 text-xl font-bold mb-6">Review details</h2>
 
-        {/* ── Columna izquierda — Funding method ── */}
-        <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-2xl border border-[#f8fafc] p-6 flex flex-col gap-6">
-            {/* Título */}
+      <div className="max-w-xl space-y-6">
+        {/* Transfer summary */}
+        <div className="rounded-2xl border border-base-100 p-5 space-y-4">
+          <p className="text-title-50 text-sm font-semibold">Transfer details</p>
+          <div className="text-center space-y-2">
             <div>
-              <p className="text-[#334e68] text-lg font-semibold leading-7">Funding method</p>
-              <p className="text-[#627d98] text-sm mt-0.5">How do you want to pay for it?</p>
+              <p className="text-text-200 text-xs">You pay</p>
+              <div className="flex items-center justify-center gap-2 mt-0.5">
+                <CurrencyToken currency={fromCurr} size={18} />
+                <p className="text-title-50 text-lg font-bold">${state.fromAmount} {state.from}*</p>
+              </div>
             </div>
-
-            {/* Opciones */}
-            <div className="flex flex-col gap-2">
-
-              {/* Monato account */}
-              <div className={`rounded-xl border transition ${state.fundingMethod === 'monato' ? 'border-2 border-[#0894c8]' : 'border border-[#d9e2ec]'}`}>
-                <button
-                  onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'monato' })}
-                  className="w-full flex items-start gap-3 p-3.5 text-left"
-                >
-                  {/* Radio */}
-                  <div className="shrink-0 mt-0.5 size-5 rounded-full border-2 border-[#d4d4d4] flex items-center justify-center bg-white transition">
-                    {state.fundingMethod === 'monato' && (
-                      <div className="size-3 rounded-full bg-[#0894c8]" />
-                    )}
-                  </div>
-                  {/* Icon */}
-                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0">
-                    <Layers2 size={24} className="text-[#627d98]" />
-                  </div>
-                  {/* Text */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[#334e68] text-base font-semibold">Fund from my Monato account</p>
-                      <span className="text-xs font-medium text-[#16894c] bg-[#e9f9f0] px-2 py-0.5 rounded-full">Instant</span>
-                    </div>
-                    <p className="text-[#627d98] text-xs mt-0.5 leading-4">Keep your balance ready by adding funds according to your daily volume needs.</p>
-                    <p className="text-[#0894c8] text-xs font-medium mt-1">Available immediately · No fees</p>
-                  </div>
-                </button>
-
-                {/* Tabla de cuentas — expandible */}
-                <AnimatePresence>
-                  {state.fundingMethod === 'monato' && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.18 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="border-t border-[#f8fafc]">
-                        {visibleAccounts.map(acc => (
-                          <button
-                            key={acc.id}
-                            disabled={acc.insufficient}
-                            onClick={() => !acc.insufficient && dispatch({ type: 'set', field: 'selectedAccount', value: acc.id })}
-                            className={`w-full flex items-center justify-between border-b border-[#f8fafc] px-6 py-4 transition text-left ${
-                              acc.insufficient ? 'cursor-not-allowed' : 'hover:bg-[#f8fafc]'
-                            } ${state.selectedAccount === acc.id && !acc.insufficient ? 'bg-[#f0f9ff]' : ''}`}
-                          >
-                            {/* Avatar + info */}
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="size-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-                                style={{ background: acc.bg, color: acc.color }}
-                              >
-                                {acc.initials}
-                              </div>
-                              <div>
-                                <p className="text-[#486581] text-sm font-medium leading-5">{acc.name}</p>
-                                <p className="text-[#829ab1] text-xs leading-4">{acc.email}</p>
-                              </div>
-                            </div>
-                            {/* Balance */}
-                            <div className="text-right">
-                              {acc.insufficient ? (
-                                <>
-                                  <p className="text-[#9fb3c8] text-sm line-through">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p>
-                                  <p className="text-[#fb3748] text-sm">Insufficient balance</p>
-                                </>
-                              ) : (
-                                <p className="text-[#334e68] text-sm font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p>
-                              )}
-                            </div>
-                          </button>
-                        ))}
-
-                        {/* Paginación */}
-                        <div className="flex items-center justify-center gap-4 py-2.5">
-                          <button
-                            onClick={() => setAccountPage(p => Math.max(0, p - 1))}
-                            disabled={accountPage === 0}
-                            className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition"
-                          >
-                            <ChevronDown size={16} className="text-[#627d98] rotate-90" />
-                          </button>
-                          <p className="text-[#486581] text-sm font-medium">Page {accountPage + 1} of {totalPages}</p>
-                          <button
-                            onClick={() => setAccountPage(p => Math.min(totalPages - 1, p + 1))}
-                            disabled={accountPage === totalPages - 1}
-                            className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition"
-                          >
-                            <ChevronDown size={16} className="text-[#627d98] -rotate-90" />
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            <ChevronDown size={18} className="text-primary-500 mx-auto" />
+            <div>
+              <p className="text-text-200 text-xs">{state.firstName || 'Recipient'} gets</p>
+              <div className="flex items-center justify-center gap-2 mt-0.5">
+                <CurrencyToken currency={toCurr} size={18} />
+                <p className="text-title-50 text-lg font-bold">{state.to} ${state.toAmount}</p>
               </div>
-
-              {/* SPEI */}
-              <div className={`rounded-xl border transition ${state.fundingMethod === 'spei' ? 'border-2 border-[#0894c8]' : 'border border-[#d9e2ec]'}`}>
-                <button
-                  onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'spei' })}
-                  className="w-full flex items-start gap-3 p-3.5 text-left"
-                >
-                  <div className="shrink-0 mt-0.5 size-5 rounded-full border-2 border-[#d4d4d4] flex items-center justify-center bg-white transition">
-                    {state.fundingMethod === 'spei' && (
-                      <div className="size-3 rounded-full bg-[#0894c8]" />
-                    )}
-                  </div>
-                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0">
-                    <Layers2 size={24} className="text-[#627d98]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[#334e68] text-base font-semibold">Fund with external SPEI transfer</p>
-                    <p className="text-[#627d98] text-xs mt-0.5 leading-4">Keep your balance ready by adding funds according to your daily volume needs.</p>
-                    <p className="text-[#0894c8] text-xs font-medium mt-1">Usually 1–2 min · Standard SPEI fees apply</p>
-                  </div>
-                </button>
-              </div>
-
+            </div>
+          </div>
+          <div className="pt-3 border-t border-base-100 space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-text-200">Includes processing fee*</span>
+              <span className="text-title-50">-${PROCESSING_FEE_MXN.toFixed(2)} {state.from}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-text-200">Currency Rate</span>
+              <span className="text-title-50">${RATE_MXN_PER_USD.toFixed(2)} MXN = $1 USD</span>
             </div>
           </div>
         </div>
 
-        {/* ── Columna derecha — Transfer + Recipient ── */}
-        <div className="w-[452px] shrink-0 flex flex-col gap-3">
-
-          {/* Transfer details card — fondo gris con inner blanco */}
-          <div className="bg-[#f0f4f8] rounded-2xl border border-[#f8fafc] overflow-hidden">
-            {/* Inner blanco */}
-            <div className="bg-white rounded-2xl px-6 pt-6 pb-8 flex flex-col gap-5 items-center">
-              {/* Título */}
-              <div className="w-full">
-                <p className="text-[#334e68] text-lg font-semibold">Transfer details</p>
-                <p className="text-[#627d98] text-sm">{"Here's your quote summary"}</p>
-              </div>
-
-              {/* You pay */}
-              <div className="w-full flex flex-col items-center gap-2">
-                <div className="flex flex-col items-center gap-2 w-full">
-                  <p className="text-[#829ab1] text-sm">You pay</p>
-                  <div className="flex items-center gap-4 justify-center">
-                    <CurrencyToken currency={fromCurr} size={24} />
-                    <p className="text-[#334e68] text-3xl font-semibold">${parseFloat(state.fromAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })} {state.from}*</p>
+        {/* Funding */}
+        <div>
+          <p className="text-title-50 text-sm font-semibold mb-3">Funding method</p>
+          <div className="space-y-2.5">
+            <div className={`rounded-2xl border overflow-hidden transition ${state.fundingMethod === 'monato' ? 'border-primary-500' : 'border-base-100'}`}>
+              <button onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'monato' })}
+                className="w-full flex items-start gap-3 p-4 text-left">
+                <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'monato' ? 'border-primary-500 bg-primary-500' : 'border-base-200'}`}>
+                  {state.fundingMethod === 'monato' && <span className="size-1.5 rounded-full bg-white" />}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-title-50 text-sm font-medium">Fund from my Monato account</p>
+                    <Badge color="success" size="sm">INSTANT</Badge>
                   </div>
-                  <p className="text-[#829ab1] text-sm">
-                    Fee <span className="font-semibold">${PROCESSING_FEE_MXN.toFixed(1)} {state.from}</span> included
-                  </p>
+                  <p className="text-text-200 text-xs mt-1">Available immediately · No fees</p>
                 </div>
-
-                {/* Arrow */}
-                <ChevronDown size={20} className="text-[#0894c8]" />
-
-                {/* Recipient gets */}
-                <div className="flex flex-col items-center gap-2 w-full">
-                  <p className="text-[#829ab1] text-sm">{state.firstName || 'Fernando'} gets</p>
-                  <div className="flex items-center gap-4 justify-center">
-                    <CurrencyToken currency={toCurr} size={24} />
-                    <p className="text-[#334e68] text-3xl font-semibold">{state.to} {parseFloat(state.toAmount || '0').toFixed(2)}</p>
-                  </div>
-                </div>
-              </div>
+              </button>
+              <AnimatePresence>
+                {state.fundingMethod === 'monato' && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden border-t border-base-100">
+                    <div className="p-4 space-y-2 bg-background-soft-50/40">
+                      {MONATO_ACCOUNTS.map(acc => (
+                        <button key={acc.id} disabled={acc.insufficient}
+                          onClick={() => dispatch({ type: 'set', field: 'selectedAccount', value: acc.id })}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-left border ${
+                            acc.insufficient ? 'opacity-50 cursor-not-allowed border-transparent' :
+                            state.selectedAccount === acc.id ? 'border-primary-500/30 bg-primary-500/5' : 'border-transparent hover:bg-background-50'
+                          }`}>
+                          <div className={`size-7 rounded-full ${acc.color} flex items-center justify-center text-white text-[9px] font-bold shrink-0`}>MXN</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-title-50 text-xs font-medium">{acc.name}</p>
+                            <p className="text-text-200 text-[10px]">CLABE: **** {acc.clabe}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className={`text-xs font-semibold ${acc.insufficient ? 'line-through text-text-200' : 'text-title-50'}`}>
+                              ${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN
+                            </p>
+                            {acc.insufficient && <p className="text-red-500 text-[10px]">Insufficient balance</p>}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Bottom section — fondo gris */}
-            <div className="px-6 py-5 flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[#627d98] text-xs">Includes processing fee*</span>
-                <span className="text-[#486581] text-sm font-medium">-${PROCESSING_FEE_MXN.toFixed(4)} {state.from}</span>
+            <button onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'spei' })}
+              className={`w-full flex items-start gap-3 p-4 text-left rounded-2xl border transition ${state.fundingMethod === 'spei' ? 'border-primary-500' : 'border-base-100'}`}>
+              <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'spei' ? 'border-primary-500 bg-primary-500' : 'border-base-200'}`}>
+                {state.fundingMethod === 'spei' && <span className="size-1.5 rounded-full bg-white" />}
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#627d98] text-xs">Amount exchanged</span>
-                <span className="text-[#486581] text-sm font-bold">${amountExchanged.toLocaleString('en-US', { minimumFractionDigits: 1 })} {state.from}</span>
+              <div>
+                <p className="text-title-50 text-sm font-medium">Fund with external SPEI transfer</p>
+                <p className="text-text-200 text-xs mt-1">Usually 1–2 min · Standard SPEI fees apply</p>
               </div>
-              <div className="border-t border-[#d9e2ec] my-1" />
-              <div className="flex items-center justify-between">
-                <span className="text-[#627d98] text-xs">Currency Rate</span>
-                <span className="text-[#486581] text-sm font-medium">$1 {state.from} = ${(1 / RATE_MXN_PER_USD).toFixed(3)} {state.to}</span>
-              </div>
-            </div>
+            </button>
           </div>
+        </div>
 
-          {/* Recipient details */}
-          <div className="bg-white rounded-xl p-8 flex flex-col gap-8">
-            <p className="text-[#334e68] text-lg font-semibold">Recipient details</p>
-            <div className="flex flex-col gap-2 text-base text-[#486581]">
-              {[
-                ['Name of the account holder', fullName || 'Fernando Villa Acuña'],
-                ['Recipient Address', '123 Sunshine Blvd...'],
-                ['Account Number', state.accountNumber || '9876543210'],
-                ['Routing Number (ABA)', '021000021'],
-                ['Bank Name', state.bank || 'JPMorgan Chase Bank'],
-              ].map(([label, value]) => (
-                <div key={label} className="flex items-start justify-between gap-6">
-                  <span className="text-[#486581] font-normal">{label}</span>
-                  <span className="text-[#334e68] font-semibold text-right">{value}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Warning alert */}
-            <div className="bg-[#fff3e0] border border-[#ffcc80] rounded-lg px-5 py-4 flex items-start gap-3">
-              <div className="bg-[#ff9800] rounded-lg p-1.5 shrink-0">
-                <QuestionMarkCircle size={16} className="text-white" />
+        {/* Recipient */}
+        <div>
+          <p className="text-title-50 text-sm font-semibold mb-3">Recipient details</p>
+          <div className="space-y-2 text-xs">
+            {[['Name', fullName || '—'], ['Account Number', state.accountNumber || '—'], ['Bank', state.bank || '—']].map(([k, v]) => (
+              <div key={k} className="flex justify-between">
+                <span className="text-text-200">{k}</span>
+                <span className="text-title-50 font-medium">{v}</span>
               </div>
-              <p className="text-[#7e4015] text-sm font-medium leading-5">
-                The exchange rate is dynamic. Once you review details and agree, this quote will expire in 2 hrs.{' '}
-                <a href="#" className="underline font-semibold">Read more about</a> after-hours rates.
-              </p>
-            </div>
+            ))}
           </div>
+        </div>
 
-          {/* Botones */}
-          <div className="flex items-center justify-end gap-6">
-            <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
-            <Button disabled={!canContinue} onClick={onConfirm}>Continue</Button>
-          </div>
+        {/* Lock alert */}
+        <div className="flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
+          <Locked3 size={13} className="text-yellow-600 shrink-0 mt-0.5" />
+          <p className="text-yellow-800 text-xs leading-relaxed">
+            The exchange rate will be locked for 2 hours after you agree.{' '}
+            <a href="#" className="underline font-medium">Read more</a> about after-hours rates.
+          </p>
+        </div>
 
+        <div className="flex gap-3">
+          <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
+          <Button
+            disabled={!state.fundingMethod || (state.fundingMethod === 'monato' && !state.selectedAccount)}
+            onClick={onConfirm}
+          >
+            Continue
+          </Button>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Fund Screen ──────────────────────────────────────────────────────────────
+// ─── Fund Screen — exacto Figma 2753-8116 ────────────────────────────────────
 function FundScreen({ state, dispatch, onExit }: {
   state: FlowState; dispatch: React.Dispatch<FlowAction>; onExit: () => void;
 }) {
   const fromCurr = CURRENCIES.find(c => c.code === state.from)!;
   const toCurr   = CURRENCIES.find(c => c.code === state.to)!;
-  const account  = MONATO_ACCOUNTS.find(a => a.id === state.selectedAccount);
+  const fullName = [state.firstName, state.middleName, state.firstLastName, state.secondLastName].filter(Boolean).join(' ');
+  const amountExchanged = parseFloat(state.fromAmount || '0') - PROCESSING_FEE_MXN;
 
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-8 py-10 bg-[#f8fafc]">
-      <div className="w-full max-w-sm text-center">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.1 }}
-          className="inline-flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-500/30 mb-5"
-        >
-          <CheckCircle1 size={32} className="text-white" />
-        </motion.div>
+    <div className="flex-1 overflow-y-auto px-8 py-8 bg-[#f8fafc] flex justify-center">
+      <div className="w-full max-w-[452px] flex flex-col gap-8 items-center">
 
-        <h2 className="text-title-50 text-xl font-bold">Payment initiated</h2>
-        <p className="text-text-200 text-sm mt-2 leading-relaxed">
-          Your balance has been successfully used to fund this transaction. We are now processing your cross-border payment.
-        </p>
-
-        <div className="mt-7 pt-6 border-t border-base-100 text-left space-y-5">
-          <div>
-            <p className="text-title-50 text-sm font-semibold mb-3">Transfer details</p>
-            <div className="text-center space-y-2">
-              <div>
-                <p className="text-text-200 text-xs">You pay</p>
-                <div className="flex items-center justify-center gap-2 mt-0.5">
-                  <CurrencyToken currency={fromCurr} size={18} />
-                  <p className="text-title-50 font-bold">${state.fromAmount} {state.from}*</p>
-                </div>
-              </div>
-              <ChevronDown size={16} className="text-primary-500 mx-auto" />
-              <div>
-                <p className="text-text-200 text-xs">{state.firstName || 'Recipient'} gets</p>
-                <div className="flex items-center justify-center gap-2 mt-0.5">
-                  <CurrencyToken currency={toCurr} size={18} />
-                  <p className="text-title-50 font-bold">{state.to} ${state.toAmount}</p>
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 pt-3 border-t border-base-100 space-y-1.5 text-xs">
-              <div className="flex justify-between"><span className="text-text-200">Processing fee</span><span className="text-title-50">-${PROCESSING_FEE_MXN.toFixed(2)} {state.from}</span></div>
-              <div className="flex justify-between"><span className="text-text-200">Currency Rate</span><span className="text-title-50">${RATE_MXN_PER_USD.toFixed(2)} MXN = $1 USD</span></div>
-            </div>
+        {/* Header */}
+        <div className="flex flex-col gap-6 items-center text-center w-full">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.1 }}
+            className="size-16 rounded-full bg-[#1cb061] border-[10px] border-[rgba(22,163,74,0.3)] flex items-center justify-center"
+          >
+            <CheckCircle1 size={28} className="text-white" />
+          </motion.div>
+          <div className="flex flex-col gap-2 text-center w-full">
+            <p className="text-[#334e68] text-2xl font-semibold">Payment initiated</p>
+            <p className="text-[#627d98] text-base leading-6">
+              Your balance has been successfully used to fund this transaction. We are now processing your cross-border payment, and it will be completed shortly.
+            </p>
           </div>
-
-          {account && (
-            <div className="pt-4 border-t border-base-100">
-              <p className="text-title-50 text-sm font-semibold mb-3">Funding details</p>
-              <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between"><span className="text-text-200">Account</span><span className="text-title-50">{account.name}</span></div>
-                <div className="flex justify-between"><span className="text-text-200">Account</span><span className="text-title-50">{account?.email ?? '—'}</span></div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-2.5 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-3">
-            <Locked3 size={13} className="text-yellow-600 shrink-0 mt-0.5" />
-            <p className="text-yellow-800 text-xs leading-relaxed">The exchange rate will be locked for 2 hours after details are saved.</p>
-          </div>
-
-          <Button className="w-full" onClick={() => { dispatch({ type: 'reset' }); onExit(); }}>Got it</Button>
         </div>
+
+        {/* Transfer details card */}
+        <div className="bg-[#f0f4f8] rounded-2xl border border-[#f8fafc] overflow-hidden w-full">
+          <div className="bg-white rounded-2xl px-6 py-6 flex flex-col gap-2 items-center">
+            <p className="text-[#829ab1] text-sm">You pay</p>
+            <div className="flex items-center gap-4">
+              <CurrencyToken currency={fromCurr} size={24} />
+              <p className="text-[#334e68] text-3xl font-semibold">${parseFloat(state.fromAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })} {state.from}*</p>
+            </div>
+            <p className="text-[#829ab1] text-sm">Fee <span className="font-semibold">${PROCESSING_FEE_MXN.toFixed(1)} {state.from}</span> included</p>
+            <ChevronDown size={20} className="text-[#0894c8]" />
+            <p className="text-[#829ab1] text-sm">{state.firstName || 'Fernando'} gets</p>
+            <div className="flex items-center gap-4">
+              <CurrencyToken currency={toCurr} size={24} />
+              <p className="text-[#334e68] text-3xl font-semibold">{state.to} {parseFloat(state.toAmount || '0').toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="px-6 py-5 flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[#627d98] text-xs">Includes processing fee*</span>
+              <span className="text-[#486581] text-sm font-medium">-${PROCESSING_FEE_MXN.toFixed(4)} {state.from}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[#627d98] text-xs">Amount exchanged</span>
+              <span className="text-[#486581] text-sm font-bold">${amountExchanged.toLocaleString('en-US', { minimumFractionDigits: 1 })} {state.from}</span>
+            </div>
+            <div className="border-t border-[#d9e2ec] my-1" />
+            <div className="flex items-center justify-between">
+              <span className="text-[#627d98] text-xs">Currency Rate</span>
+              <span className="text-[#486581] text-sm font-medium">$1 {state.from} = ${(1 / RATE_MXN_PER_USD).toFixed(3)} {state.to}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Recipient details */}
+        <div className="bg-white rounded-xl p-8 flex flex-col gap-8 w-full">
+          <p className="text-[#334e68] text-lg font-semibold">Recipient details</p>
+          <div className="flex flex-col gap-2 text-base text-[#486581]">
+            {[
+              ['Name of the account holder', fullName || 'Fernando Villa Acuña'],
+              ['Recipient Address', '123 Sunshine Blvd...'],
+              ['Account Number', state.accountNumber || '9876543210'],
+              ['Routing Number (ABA)', '021000021'],
+              ['Bank Name', state.bank || 'JPMorgan Chase Bank'],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-start justify-between gap-6">
+                <span className="text-[#486581] font-normal">{label}</span>
+                <span className="text-[#334e68] font-semibold text-right">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Got it — full width skyblue */}
+        <button
+          onClick={() => { dispatch({ type: 'reset' }); onExit(); }}
+          className="w-full bg-[#0894c8] hover:bg-[#0787b6] text-white text-base font-medium py-3 rounded-lg transition"
+        >
+          Got it
+        </button>
+
       </div>
     </div>
   );
 }
-
-// ─── Confirm Modal ────────────────────────────────────────────────────────────
+// ─── Confirm Modal — exacto Figma 2752-102300 ─────────────────────────────────
 function ConfirmModal({ open, onCancel, onConfirm }: { open: boolean; onCancel: () => void; onConfirm: () => void }) {
+  if (!open) return null;
   return (
-    <Modal open={open} onClose={onCancel}>
-      <div className="w-full max-w-sm rounded-2xl bg-background-50 shadow-xl p-6 text-center">
-        <h3 className="text-title-50 text-lg font-semibold">Confirm the operation</h3>
-        <p className="text-text-200 text-sm mt-2">Are you sure you want to continue?</p>
-        <div className="mt-6 flex gap-3">
-          <Button appearance="outline" className="flex-1 rounded-full" onClick={onCancel}>Cancel</Button>
-          <Button className="flex-1 rounded-full" onClick={onConfirm}>Confirm</Button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(100,108,133,0.8)]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.15 }}
+        className="bg-white rounded-2xl w-[400px] px-6 pt-7 pb-6 flex flex-col gap-7 items-center relative shadow-2xl"
+      >
+        {/* Close button */}
+        <button
+          onClick={onCancel}
+          className="absolute top-4 right-4 p-2.5 rounded-lg hover:bg-[#f8fafc] transition text-[#829ab1]"
+        >
+          ✕
+        </button>
+
+        {/* Icon — stacked layers como Figma */}
+        <div className="size-20 rounded-full bg-[#e6f4fa] flex items-center justify-center">
+          <div className="size-[34px] rounded-full bg-[#0894c8] flex items-center justify-center">
+            <QuestionMarkCircle size={18} className="text-white" />
+          </div>
         </div>
-      </div>
-    </Modal>
+
+        {/* Content */}
+        <div className="flex flex-col gap-6 items-center w-full">
+          <div className="flex flex-col gap-4 w-full text-center">
+            <p className="text-[#334e68] text-3xl font-semibold">Confirm the operation</p>
+            <p className="text-[#627d98] text-base">Are you sure you want to continue?</p>
+          </div>
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={onCancel}
+              className="flex-1 border border-[#d9e2ec] bg-white rounded-lg px-4 py-2.5 text-base font-medium text-[#334e68] hover:bg-[#f8fafc] transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 bg-[#0ea5e9] rounded-lg px-4 py-2.5 text-base font-medium text-white hover:bg-[#0284c7] transition"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
