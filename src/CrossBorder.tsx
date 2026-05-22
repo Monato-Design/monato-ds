@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Doller, UserMultiple4, ChevronDown,
   ArrowRight, Check, CheckCircle1, RefreshCircle1Clockwise,
-  QuestionMarkCircle, Locked3, Layers2,
+  QuestionMarkCircle, Layers2,
   Bell1, Gear1,
 } from '@tailgrids/icons';
 
@@ -587,7 +587,6 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
   const fullName  = [state.firstName, state.middleName, state.firstLastName, state.secondLastName].filter(Boolean).join(' ');
   const amountExchanged = parseFloat(state.fromAmount || '0') - PROCESSING_FEE_MXN;
   const canContinue = !!(state.fundingMethod && (state.fundingMethod === 'spei' || state.selectedAccount));
-
   const [accountPage, setAccountPage] = useState(0);
   const totalPages = Math.ceil(MONATO_ACCOUNTS.length / ACCOUNTS_PER_PAGE);
   const visibleAccounts = MONATO_ACCOUNTS.slice(accountPage * ACCOUNTS_PER_PAGE, (accountPage + 1) * ACCOUNTS_PER_PAGE);
@@ -596,7 +595,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
       <div className="flex gap-5 items-start">
 
-        {/* ── Col izquierda: Funding method ── */}
+        {/* Col izquierda: Funding method */}
         <div className="flex-1 min-w-0">
           <div className="bg-white rounded-2xl border border-[#f8fafc] p-6 flex flex-col gap-6">
             <div>
@@ -610,9 +609,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
                   <div className={`shrink-0 mt-0.5 size-5 rounded-full border-2 flex items-center justify-center bg-white transition ${state.fundingMethod === 'monato' ? 'border-[#0894c8]' : 'border-[#d9e2ec]'}`}>
                     {state.fundingMethod === 'monato' && <div className="size-3 rounded-full bg-[#0894c8]" />}
                   </div>
-                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0">
-                    <Layers2 size={24} className="text-[#627d98]" />
-                  </div>
+                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0"><Layers2 size={24} className="text-[#627d98]" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="text-[#334e68] text-base font-semibold">Fund from my Monato account</p>
@@ -633,16 +630,15 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
                             <div className="flex items-center gap-3">
                               <div className="size-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0" style={{ background: acc.bg, color: acc.color }}>{acc.initials}</div>
                               <div>
-                                <p className="text-[#486581] text-sm font-medium leading-5">{acc.name}</p>
-                                <p className="text-[#829ab1] text-xs leading-4">{acc.email}</p>
+                                <p className="text-[#486581] text-sm font-medium">{acc.name}</p>
+                                <p className="text-[#829ab1] text-xs">{acc.email}</p>
                               </div>
                             </div>
                             <div className="text-right">
-                              {acc.insufficient ? (
-                                <><p className="text-[#9fb3c8] text-sm line-through">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p><p className="text-[#fb3748] text-sm">Insufficient balance</p></>
-                              ) : (
-                                <p className="text-[#334e68] text-sm font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p>
-                              )}
+                              {acc.insufficient
+                                ? <><p className="text-[#9fb3c8] text-sm line-through">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p><p className="text-[#fb3748] text-sm">Insufficient balance</p></>
+                                : <p className="text-[#334e68] text-sm font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} MXN</p>
+                              }
                             </div>
                           </button>
                         ))}
@@ -666,9 +662,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
                   <div className={`shrink-0 mt-0.5 size-5 rounded-full border-2 flex items-center justify-center bg-white transition ${state.fundingMethod === 'spei' ? 'border-[#0894c8]' : 'border-[#d9e2ec]'}`}>
                     {state.fundingMethod === 'spei' && <div className="size-3 rounded-full bg-[#0894c8]" />}
                   </div>
-                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0">
-                    <Layers2 size={24} className="text-[#627d98]" />
-                  </div>
+                  <div className="border border-[#d9e2ec] rounded-md p-2 shrink-0"><Layers2 size={24} className="text-[#627d98]" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[#334e68] text-base font-semibold">Fund with external SPEI transfer</p>
                     <p className="text-[#627d98] text-xs mt-0.5 leading-4">Keep your balance ready by adding funds according to your daily volume needs.</p>
@@ -680,9 +674,9 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
           </div>
         </div>
 
-        {/* ── Col derecha: Transfer details + Recipient + botones ── */}
+        {/* Col derecha: Transfer details + Recipient + botones */}
         <div className="w-[452px] shrink-0 flex flex-col gap-3">
-          {/* Transfer details */}
+          {/* Transfer details card */}
           <div className="w-full rounded-2xl overflow-hidden border border-[#e8edf2]">
             <div className="bg-white px-6 pt-6 pb-8 flex flex-col gap-2 items-center">
               <div className="w-full">
@@ -789,7 +783,6 @@ function FundScreen({ state, dispatch, onExit }: {
 
         {/* Transfer details card */}
         <div className="w-full rounded-2xl overflow-hidden border border-[#e8edf2]">
-          {/* White top */}
           <div className="bg-white px-6 pt-6 pb-8 flex flex-col gap-2 items-center">
             <p className="text-[#829ab1] text-sm">You pay</p>
             <div className="flex items-center gap-4">
@@ -804,7 +797,6 @@ function FundScreen({ state, dispatch, onExit }: {
               <p className="text-[#334e68] text-3xl font-semibold">{state.to} {parseFloat(state.toAmount || '0').toFixed(2)}</p>
             </div>
           </div>
-          {/* Gray bottom */}
           <div className="bg-[#f0f4f8] px-6 py-5 flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[#627d98] text-xs">Includes processing fee*</span>
