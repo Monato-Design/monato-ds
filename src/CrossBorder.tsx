@@ -877,7 +877,7 @@ function FundScreen({ state, dispatch, onExit }: {
               <p className="text-title-50 text-sm font-semibold mb-3">Funding details</p>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-text-200">Account</span><span className="text-title-50">{account.name}</span></div>
-                <div className="flex justify-between"><span className="text-text-200">CLABE</span><span className="text-title-50">**** {account.clabe}</span></div>
+                <div className="flex justify-between"><span className="text-text-200">Account</span><span className="text-title-50">{account?.email ?? '—'}</span></div>
               </div>
             </div>
           )}
