@@ -386,7 +386,7 @@ function FormInput({ label, value, onChange, placeholder, optional, error }: {
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         className={`w-full h-10 rounded-xl border px-3.5 text-sm text-title-50 bg-background-50 placeholder:text-text-200 focus:outline-none transition ${
-          error ? 'border-red-500' : 'border-base-200 focus:border-primary-500'
+          error ? 'border-red-500' : 'border-[#d9e2ec] focus:border-primary-500'
         }`}
       />
       {error && <p className="text-red-500 text-[11px] mt-1">{error}</p>}
@@ -418,7 +418,7 @@ function CountrySelector({ value, onChange }: { value: string; onChange: (v: str
   return (
     <>
       <button ref={btnRef} onClick={handleOpen}
-        className="w-full h-10 rounded-xl border border-base-200 px-3.5 bg-background-50 flex items-center gap-2.5 text-left hover:border-primary-500/40 transition">
+        className="w-full h-10 rounded-xl border border-[#d9e2ec] px-3.5 bg-white flex items-center gap-2.5 text-left hover:border-primary-500/40 transition">
         {selected && <span className={`fi fi-${selected.flag} rounded-full shrink-0`} style={{ width: 18, height: 18, backgroundSize: 'cover', display: 'inline-block' }} />}
         <span className="flex-1 text-sm text-title-50">{selected?.label}</span>
         <ChevronDown size={13} className={`text-text-200 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -463,7 +463,7 @@ function BankSelector({ value, onChange }: { value: string; onChange: (v: string
   return (
     <>
       <button ref={btnRef} onClick={handleOpen}
-        className="w-full h-10 rounded-xl border border-base-200 px-3.5 bg-background-50 flex items-center text-left hover:border-primary-500/40 transition">
+        className="w-full h-10 rounded-xl border border-[#d9e2ec] px-3.5 bg-white flex items-center text-left hover:border-primary-500/40 transition">
         <span className={`flex-1 text-sm ${value ? 'text-title-50' : 'text-text-200'}`}>{value || 'Select bank'}</span>
         <ChevronDown size={13} className={`text-text-200 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -559,7 +559,7 @@ function DetailsScreen({ state, dispatch }: { state: FlowState; dispatch: React.
 
         {/* Botones afuera del card, derecha — exacto Figma */}
         <div className="flex items-center justify-end gap-4">
-          <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
+          <button onClick={() => dispatch({ type: 'back' })} className="px-5 py-3 rounded-lg border border-[#d9e2ec] bg-white text-base font-medium text-[#334e68] hover:bg-[#f8fafc] transition">Back</button>
           <Button disabled={!canContinue} onClick={() => dispatch({ type: 'next' })}>Continue</Button>
         </div>
 
@@ -628,7 +628,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
             <div className={`rounded-2xl border overflow-hidden transition ${state.fundingMethod === 'monato' ? 'border-primary-500' : 'border-base-100'}`}>
               <button onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'monato' })}
                 className="w-full flex items-start gap-3 p-4 text-left">
-                <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'monato' ? 'border-primary-500 bg-primary-500' : 'border-base-200'}`}>
+                <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'monato' ? 'border-primary-500 bg-primary-500' : 'border-[#d9e2ec]'}`}>
                   {state.fundingMethod === 'monato' && <span className="size-1.5 rounded-full bg-white" />}
                 </div>
                 <div className="flex-1">
@@ -672,7 +672,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
 
             <button onClick={() => dispatch({ type: 'set', field: 'fundingMethod', value: 'spei' })}
               className={`w-full flex items-start gap-3 p-4 text-left rounded-2xl border transition ${state.fundingMethod === 'spei' ? 'border-primary-500' : 'border-base-100'}`}>
-              <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'spei' ? 'border-primary-500 bg-primary-500' : 'border-base-200'}`}>
+              <div className={`size-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center transition ${state.fundingMethod === 'spei' ? 'border-primary-500 bg-primary-500' : 'border-[#d9e2ec]'}`}>
                 {state.fundingMethod === 'spei' && <span className="size-1.5 rounded-full bg-white" />}
               </div>
               <div>
@@ -706,7 +706,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
         </div>
 
         <div className="flex gap-3">
-          <Button appearance="outline" onClick={() => dispatch({ type: 'back' })}>Back</Button>
+          <button onClick={() => dispatch({ type: 'back' })} className="px-5 py-3 rounded-lg border border-[#d9e2ec] bg-white text-base font-medium text-[#334e68] hover:bg-[#f8fafc] transition">Back</button>
           <Button
             disabled={!state.fundingMethod || (state.fundingMethod === 'monato' && !state.selectedAccount)}
             onClick={onConfirm}
