@@ -29,6 +29,7 @@ import { NativeSelect, NativeSelectOption } from './components/core/native-selec
 import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } from './components/core/table';
 import { CLP } from './CLP';
 import { CrossBorderPrototype } from './CrossBorder';
+import { MenuBar } from './components/core/menu-bar';
 // Logo — using PNG for correct rendering on light backgrounds
 import LogoDefault from './assets/logo-default.png';
 
@@ -36,7 +37,8 @@ import LogoDefault from './assets/logo-default.png';
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
   'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' |
-  'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid';
+  'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
+  'menubar';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
 type NavItem = { id: TabId; label: string; icon: React.FC<{size?:number;className?:string;strokeWidth?:number}> };
@@ -87,6 +89,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'toast',      label: 'Toast',      icon: CheckCircle1 },
       { id: 'modal',      label: 'Modal',      icon: Layers2 },
       { id: 'pagination', label: 'Pagination', icon: ChevronBothDirection },
+      { id: 'menubar',    label: 'Menu Bar',   icon: Layout14 },
     ],
   },
   {
@@ -120,6 +123,7 @@ const COMPONENTS = [
   { name: 'DatePicker', variants: 1,  tokens: 8,  status: 'in-progress', category: 'Form' },
   { name: 'OTP Input',  variants: 1,  tokens: 5,  status: 'in-progress', category: 'Form' },
   { name: 'Dropdown',   variants: 1,  tokens: 4,  status: 'planned',     category: 'Form' },
+  { name: 'Menu Bar',  variants: 4,  tokens: 6,  status: 'stable',      category: 'Navigation' },
 ];
 
 const STATUS_COLOR: Record<string, 'success' | 'warning' | 'gray'> = {
@@ -911,6 +915,160 @@ function PrototypesPage() {
   );
 }
 
+// ─── Icon helpers for Menu Bar showcase ──────────────────────────────────────
+
+function IconOpen() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3C5.5 3 3.5 4.5 3.5 6.5V13h4.5V6.5C8 4.5 10 3 12.5 3H8z" /><path d="M8 13V6.5" />
+    </svg>
+  );
+}
+function IconFile() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z" /><path d="M9 2v4h4" /><path d="M5.5 8.5h5M5.5 11h5" />
+    </svg>
+  );
+}
+function IconPrint() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="9" width="8" height="5" rx="0.5" /><path d="M4 9V4h8v5" /><path d="M4 11H2.5A.5.5 0 012 10.5v-4A.5.5 0 012.5 6h11a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H12" />
+    </svg>
+  );
+}
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 4h10M6 4V3a1 1 0 011-1h2a1 1 0 011 1v1M5 4l.5 9h5L11 4" />
+    </svg>
+  );
+}
+
+function MenuBarPage() {
+  const basicMenus = [
+    {
+      label: 'File',
+      sections: [
+        {
+          items: [
+            { label: 'Open' },
+            { label: 'Save' },
+            { label: 'Print', shortcut: '⌘P' },
+          ],
+        },
+        {
+          footer: true,
+          items: [{ label: 'Delete', danger: true }],
+        },
+      ],
+    },
+    { label: 'Edit' },
+    { label: 'View' },
+    { label: 'Help', disabled: true },
+  ];
+
+  const submenuMenus = [
+    {
+      label: 'File',
+      sections: [
+        {
+          items: [
+            { label: 'Open' },
+            { label: 'Save' },
+            { label: 'Print', shortcut: '⌘P' },
+            {
+              label: 'Export',
+              submenu: [{ label: 'PDF' }, { label: 'PNG' }, { label: 'SVG' }],
+            },
+          ],
+        },
+        {
+          footer: true,
+          items: [{ label: 'Delete', danger: true }],
+        },
+      ],
+    },
+    { label: 'Edit' },
+    { label: 'View' },
+    { label: 'Help', disabled: true },
+  ];
+
+  const iconMenus = [
+    {
+      label: 'File',
+      sections: [
+        {
+          items: [
+            { label: 'Open',  icon: <IconOpen /> },
+            { label: 'Save',  icon: <IconFile /> },
+            { label: 'Print', icon: <IconPrint />, shortcut: '⌘P' },
+          ],
+        },
+        {
+          footer: true,
+          items: [{ label: 'Delete', danger: true, icon: <IconTrash /> }],
+        },
+      ],
+    },
+    { label: 'Help', disabled: true },
+  ];
+
+  const checkmarkMenus = [
+    { label: 'File' },
+    {
+      label: 'Options',
+      sections: [
+        {
+          items: [
+            { label: 'Option', checked: true },
+            { label: 'Option' },
+            { label: 'Option' },
+          ],
+        },
+      ],
+    },
+    { label: 'Help', disabled: true },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Menu Bar"
+        sub="Barra de menú con dropdowns, submenús, íconos y checkmarks."
+      />
+
+      <PreviewCard label="Menubar — básico">
+        <MenuBar menus={basicMenus} />
+      </PreviewCard>
+
+      <PreviewCard label="Menubar with Submenu">
+        <MenuBar menus={submenuMenus} />
+      </PreviewCard>
+
+      <PreviewCard label="Menubar with Icon">
+        <MenuBar menus={iconMenus} />
+      </PreviewCard>
+
+      <PreviewCard label="Menubar with Checkmark">
+        <MenuBar menus={checkmarkMenus} />
+      </PreviewCard>
+
+      {/* Anatomy note */}
+      <div className="rounded-xl border border-base-100 bg-background-soft-50 p-4">
+        <p className="text-text-100 text-xs">
+          <span className="font-medium text-title-50">Uso:</span>{' '}
+          <code className="bg-background-soft-100 px-1.5 py-0.5 rounded text-primary-500 text-[11px]">
+            {`import { MenuBar } from './components/core/menu-bar'`}
+          </code>
+          {' · '}Soporta secciones, footer de danger, íconos, shortcuts, submenús y checkmarks.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page map ─────────────────────────────────────────────────────────────────
 const PAGES: Record<TabId, React.FC> = {
   overview: OverviewPage, buttons: ButtonsPage, badges: BadgesPage,
@@ -918,6 +1076,7 @@ const PAGES: Record<TabId, React.FC> = {
   controls: ControlsPage, feedback: FeedbackPage, tabs: TabsPage,
   accordion: AccordionPage, toast: ToastPage, modal: ModalPage,
   pagination: PaginationPage, icons: IconsPage,
+  menubar: MenuBarPage,
   prototypes: PrototypesPage,
   crossborder: CrossBorderPrototype,
   colors: ColorsPage, typography: TypographyPage,
