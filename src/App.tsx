@@ -29,6 +29,7 @@ import { NativeSelect, NativeSelectOption } from './components/core/native-selec
 import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } from './components/core/table';
 import { CLP } from './CLP';
 import { CrossBorderPrototype } from './CrossBorder';
+import { Demo1xbetPrototype } from './1xbet';
 import { MenuBar } from './components/core/menu-bar';
 // Logo — using PNG for correct rendering on light backgrounds
 import LogoDefault from './assets/logo-default.png';
@@ -1069,6 +1070,17 @@ function MenuBarPage() {
   );
 }
 
+// ─── CrossBorder section — dos prototipos apilados ─────────────────────────────
+function CrossBorderSection() {
+  return (
+    <div className="space-y-6">
+      <PageHeader title="CrossBorder" sub="Prototipos navegables sobre el DS" />
+      <CrossBorderPrototype />
+      <Demo1xbetPrototype />
+    </div>
+  );
+}
+
 // ─── Page map ─────────────────────────────────────────────────────────────────
 const PAGES: Record<TabId, React.FC> = {
   overview: OverviewPage, buttons: ButtonsPage, badges: BadgesPage,
@@ -1078,7 +1090,7 @@ const PAGES: Record<TabId, React.FC> = {
   pagination: PaginationPage, icons: IconsPage,
   menubar: MenuBarPage,
   prototypes: PrototypesPage,
-  crossborder: CrossBorderPrototype,
+  crossborder: CrossBorderSection,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
   'border-radius': BorderRadiusPage, grid: GridPage,

@@ -1,0 +1,699 @@
+/* ============================================================
+   1xBet — estilos crudos.
+   NO usa tokens del DS de Monato — todos los valores hardcoded.
+   El contraste con Monato Pay es el argumento de venta.
+   ============================================================ */
+
+.xbet-root {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #abb8c5;
+  color: #1e3a5f;
+  min-height: 100%;
+  font-size: 13px;
+}
+
+.xbet-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+.xbet-header {
+  background: #1e3a5f;
+  color: white;
+}
+
+.xbet-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 64px;
+  gap: 12px;
+}
+
+.xbet-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xbet-header__logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: white;
+}
+
+.xbet-header__flag {
+  font-size: 20px;
+}
+
+.xbet-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xbet-header__icon-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xbet-header__icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.xbet-header__badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #d63232;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 8px;
+  min-width: 14px;
+  text-align: center;
+}
+
+.xbet-header__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 3px;
+  height: 38px;
+}
+
+.xbet-header__avatar {
+  position: relative;
+  font-size: 18px;
+}
+
+.xbet-header__user-info,
+.xbet-header__balance {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.xbet-header__user-sub {
+  opacity: 0.6;
+  font-size: 10px;
+}
+
+.xbet-header__deposit {
+  background: #8fa83f;
+  color: white;
+  border: none;
+  padding: 0 22px;
+  height: 38px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.xbet-header__deposit:hover {
+  background: #7d942f;
+}
+
+.xbet-header__nav {
+  background: #2c4d77;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 40px;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.xbet-header__nav-item {
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.xbet-header__nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.xbet-header__nav-caret {
+  opacity: 0.6;
+  margin-left: 4px;
+  font-size: 9px;
+}
+
+.xbet-header__nav-fruit {
+  color: white;
+  font-size: 11px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ─── HOME ─────────────────────────────────────────────── */
+.xbet-home {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.xbet-hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2c4d77 50%, #3868a8 100%);
+  border-radius: 4px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.xbet-hero__eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #8fa83f;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.xbet-hero__title {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.xbet-hero__amount {
+  color: #8fa83f;
+}
+
+.xbet-hero__subtitle {
+  font-size: 16px;
+  margin: 12px 0 24px;
+  opacity: 0.85;
+}
+
+.xbet-hero__cta {
+  background: #8fa83f;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.xbet-hero__cta:hover {
+  background: #7d942f;
+}
+
+.xbet-hero__visual {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.xbet-hero__ball {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.xbet-hero__ball--1 {
+  width: 100px;
+  height: 100px;
+  top: 0;
+  right: 60px;
+  background: radial-gradient(circle at 30% 30%, white, #ccc);
+}
+
+.xbet-hero__ball--2 {
+  width: 70px;
+  height: 70px;
+  bottom: 30px;
+  left: 0;
+  background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706);
+}
+
+.xbet-hero__ball--3 {
+  width: 60px;
+  height: 60px;
+  bottom: 10px;
+  right: 0;
+  background: radial-gradient(circle at 30% 30%, #ef4444, #991b1b);
+}
+
+.xbet-matches {
+  background: white;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.xbet-matches__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.xbet-matches__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.xbet-matches__link {
+  color: #3868a8;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.xbet-matches__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.xbet-match {
+  background: #f3f5f7;
+  border-radius: 4px;
+  padding: 12px;
+  border-left: 3px solid #3868a8;
+}
+
+.xbet-match__top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #6b7d92;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.xbet-match__league {
+  font-weight: 700;
+}
+
+.xbet-match__teams {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.xbet-match__team {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e3a5f;
+}
+
+.xbet-match__team:last-child {
+  text-align: right;
+}
+
+.xbet-match__vs {
+  font-size: 10px;
+  color: #6b7d92;
+}
+
+.xbet-match__odds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+}
+
+.xbet-match__odd {
+  background: #1e3a5f;
+  color: white;
+  border: none;
+  padding: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.xbet-match__odd:hover:not(:disabled) {
+  background: #2c4d77;
+}
+
+.xbet-match__odd:disabled {
+  background: #a3b1c2;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ─── RECHARGE PAGE ─────────────────────────────────────── */
+.xbet-recharge {
+  display: flex;
+  background: #abb8c5;
+  min-height: calc(100% - 104px);
+}
+
+.xbet-sidebar {
+  width: 250px;
+  background: #2c4d77;
+  color: white;
+  padding: 16px 0;
+  font-size: 12px;
+}
+
+.xbet-sidebar__profile {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.xbet-sidebar__name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.xbet-sidebar__email {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.xbet-sidebar__progress {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #8fa83f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.xbet-sidebar__stats {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xbet-sidebar__stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.xbet-sidebar__section-title {
+  padding: 16px 16px 6px;
+  font-size: 10px;
+  opacity: 0.55;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.xbet-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+}
+
+.xbet-sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.xbet-sidebar__item--active {
+  background: #1e3a5f;
+  border-left: 3px solid #8fa83f;
+  padding-left: 13px;
+}
+
+.xbet-sidebar__item-icon {
+  width: 16px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.xbet-sidebar__alert {
+  margin-left: auto;
+  background: #d63232;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xbet-sidebar__footer {
+  margin-top: 24px;
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xbet-sidebar__logout {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 100%;
+  padding: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.xbet-recharge__main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.xbet-recharge__alert {
+  background: #d4dde6;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #1e3a5f;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+
+.xbet-recharge__alert-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #8fa83f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.xbet-recharge__alert-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #1e3a5f;
+  opacity: 0.6;
+}
+
+.xbet-recharge__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xbet-recharge__copy {
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.xbet-recharge__subtitle {
+  color: #1e3a5f;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.xbet-recharge__banner {
+  background: #d4dde6;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #1e3a5f;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+
+.xbet-recharge__banner a {
+  color: #3868a8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.xbet-recharge__layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+}
+
+.xbet-recharge__tabs {
+  background: white;
+  border-radius: 3px;
+  padding: 4px;
+  height: fit-content;
+}
+
+.xbet-rtab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e3a5f;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  border-radius: 2px;
+  text-align: left;
+}
+
+.xbet-rtab__count {
+  background: #e0e6ed;
+  color: #1e3a5f;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.xbet-rtab--active {
+  background: #3868a8;
+  color: white;
+}
+
+.xbet-rtab--active .xbet-rtab__count {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.xbet-recharge__content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.xbet-recharge__section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e3a5f;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.xbet-recharge__grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+
+.xbet-recharge__grid--with-feature {
+  grid-template-columns: 2fr repeat(6, 1fr);
+}
+
+.xbet-paycard {
+  background: white;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.xbet-paycard:hover {
+  transform: translateY(-1px);
+}
+
+.xbet-paycard__logo-wrap {
+  background: white;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.xbet-paycard__logo {
+  max-height: 32px;
+  max-width: 80%;
+  object-fit: contain;
+}
+
+.xbet-paycard__name {
+  background: #5a7ba0;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px 4px;
+  font-weight: 500;
+}

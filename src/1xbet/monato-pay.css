@@ -1,0 +1,510 @@
+/* ============================================================
+   Monato Pay — usa ÚNICAMENTE tokens del DS.
+   Es el único elemento "limpio" en la pantalla de 1xbet.
+   El contraste es deliberado.
+   ============================================================ */
+
+/* ─── Featured card en la grid de RECOMENDADOS ─────────── */
+.monato-paycard {
+  position: relative;
+  background: var(--color-background-white-primary);
+  border: 1.5px solid var(--primitive-skyblue-500);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  text-align: left;
+  overflow: hidden;
+  grid-row: span 1;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(8, 148, 200, 0.12);
+}
+
+.monato-paycard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(8, 148, 200, 0.25);
+}
+
+.monato-paycard__badge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: var(--primitive-green-500);
+  color: var(--primitive-white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-2-5);
+  border-radius: var(--radius-full);
+  letter-spacing: 0.2px;
+}
+
+.monato-paycard__inner {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+}
+
+.monato-paycard__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+}
+
+.monato-paycard__logo {
+  flex-shrink: 0;
+}
+
+.monato-paycard__name {
+  display: flex;
+  flex-direction: column;
+}
+
+.monato-paycard__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-title);
+  line-height: 1.1;
+}
+
+.monato-paycard__tagline {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.monato-paycard__features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  flex: 1;
+}
+
+.monato-paycard__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-body);
+  line-height: 1.4;
+}
+
+.monato-paycard__check {
+  color: var(--primitive-green-500);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.monato-paycard__cta {
+  background: var(--color-button-primary-background);
+  color: var(--color-button-primary-text);
+  padding: var(--space-2-5) var(--space-3);
+  border-radius: var(--radius-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  margin-top: auto;
+}
+
+.monato-paycard:hover .monato-paycard__cta {
+  background: var(--color-button-primary-hover-background);
+}
+
+/* ─── Modal overlay + container ────────────────────────── */
+.monato-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  font-family: var(--font-family-sans);
+  animation: monato-overlay-in 0.18s ease-out;
+}
+
+@keyframes monato-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.monato-modal {
+  background: var(--color-background-white-primary);
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: monato-modal-in 0.22s ease-out;
+}
+
+@keyframes monato-modal-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.monato-modal__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-text-tertiary-text);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monato-modal__close:hover {
+  background: var(--color-button-close-icon-primary-hover-background);
+  color: var(--color-text-secondary-text);
+}
+
+.monato-modal__header {
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.monato-modal__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.monato-modal__brand-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-title);
+}
+
+.monato-modal__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── Tabs SPEI / Crypto ───────────────────────────────── */
+.monato-modal__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6) 0;
+}
+
+.monato-modal__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: var(--color-tab-background);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  position: relative;
+  transition: all 0.15s;
+}
+
+.monato-modal__tab--active {
+  background: var(--color-tab-secondary-active-background);
+  border-color: var(--primitive-skyblue-500);
+}
+
+.monato-modal__tab-icon {
+  font-size: 20px;
+}
+
+.monato-modal__tab-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-title);
+}
+
+.monato-modal__tab-rec {
+  font-size: 10px;
+  color: var(--primitive-green-700);
+  background: var(--primitive-green-50);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.2px;
+}
+
+/* ─── Body ─────────────────────────────────────────────── */
+.monato-modal__body {
+  padding: var(--space-5) var(--space-6) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ─── Fields ───────────────────────────────────────────── */
+.monato-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.monato-field__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-input-label-text);
+}
+
+.monato-field__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.monato-field__input {
+  width: 100%;
+  padding: var(--space-2-5) var(--space-3);
+  font-size: var(--font-size-md);
+  font-family: var(--font-family-sans);
+  background: var(--color-input-background);
+  border: 1px solid var(--color-border-secondary-alt);
+  border-radius: var(--radius-default);
+  color: var(--color-text-title);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.monato-field__input:focus {
+  outline: none;
+  border-color: var(--color-input-brand-focus-border);
+  box-shadow: 0 0 0 3px var(--primitive-skyblue-a20);
+}
+
+.monato-field__input--readonly {
+  background: var(--color-background-gray-primary);
+  color: var(--color-text-body);
+  cursor: default;
+}
+
+.monato-field__suffix {
+  position: absolute;
+  right: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary-text);
+  font-weight: var(--font-weight-semibold);
+  pointer-events: none;
+}
+
+/* ─── Chips (quick-pick amounts) ───────────────────────── */
+.monato-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
+
+.monato-chip {
+  background: var(--color-background-gray-primary);
+  border: 1px solid var(--color-border-secondary-alt);
+  border-radius: var(--radius-default);
+  padding: var(--space-2);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-body);
+  cursor: pointer;
+}
+
+.monato-chip:hover {
+  background: var(--color-background-gray-secondary);
+}
+
+.monato-chip--active {
+  background: var(--primitive-skyblue-50);
+  border-color: var(--primitive-skyblue-500);
+  color: var(--primitive-skyblue-700);
+}
+
+/* ─── Pills (stablecoin / network selector) ────────────── */
+.monato-pills {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.monato-pill {
+  flex: 1;
+  background: var(--color-background-gray-primary);
+  border: 1px solid var(--color-border-secondary-alt);
+  border-radius: var(--radius-default);
+  padding: var(--space-2-5) var(--space-3);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-body);
+  cursor: pointer;
+}
+
+.monato-pill--active {
+  background: var(--primitive-skyblue-50);
+  border-color: var(--primitive-skyblue-500);
+  color: var(--primitive-skyblue-700);
+}
+
+/* ─── Receive preview ──────────────────────────────────── */
+.monato-receive {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--primitive-skyblue-50);
+  border-radius: var(--radius-default);
+  border-left: 3px solid var(--primitive-skyblue-500);
+}
+
+.monato-receive__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary-text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.monato-receive__rate {
+  font-size: 10px;
+  color: var(--color-text-tertiary-text);
+}
+
+.monato-receive__amount {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--primitive-skyblue-700);
+}
+
+/* ─── Buttons ──────────────────────────────────────────── */
+.monato-btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-default);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  margin-top: var(--space-2);
+  transition: background 0.15s;
+}
+
+.monato-btn--primary {
+  background: var(--color-button-primary-background);
+  color: var(--color-button-primary-text);
+}
+
+.monato-btn--primary:hover {
+  background: var(--color-button-primary-hover-background);
+}
+
+.monato-btn--ghost {
+  background: transparent;
+  color: var(--color-text-body);
+  font-size: var(--font-size-sm);
+}
+
+.monato-btn--ghost:hover {
+  background: var(--color-background-gray-primary);
+}
+
+.monato-disclaimer {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary-text);
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ─── Result step ──────────────────────────────────────── */
+.monato-result {
+  text-align: center;
+  padding: var(--space-2) 0 var(--space-4);
+}
+
+.monato-result__check {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--primitive-green-100);
+  color: var(--primitive-green-700);
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+}
+
+.monato-result__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-title);
+  margin-bottom: var(--space-1);
+}
+
+.monato-result__sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary-text);
+}
+
+.monato-info-card {
+  background: var(--color-background-gray-primary);
+  border-radius: var(--radius-default);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.monato-info-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.monato-info-card__label {
+  color: var(--color-text-secondary-text);
+  flex-shrink: 0;
+}
+
+.monato-info-card__value {
+  color: var(--color-text-title);
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
+.monato-info-card__value--mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--font-size-xs);
+  word-break: break-all;
+}
+
+.monato-qr {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0;
+}
+
+.monato-qr__svg {
+  border: 8px solid var(--color-background-white-primary);
+  background: white;
+}
