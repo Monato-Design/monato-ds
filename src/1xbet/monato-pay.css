@@ -4,111 +4,67 @@
    El contraste es deliberado.
    ============================================================ */
 
-/* ─── Featured card en la grid de RECOMENDADOS ─────────── */
+
+/* ─── Card destacada en la grid de RECOMENDADOS ────────────
+   Mismo tamaño y formato que las demás payment cards.
+   Destacado SUTIL: borde skyblue + nombre en color de marca
+   + badge pequeño. El flujo completo vive en el modal.
+   ─────────────────────────────────────────────────────────── */
 .monato-paycard {
   position: relative;
   background: var(--color-background-white-primary);
   border: 1.5px solid var(--primitive-skyblue-500);
-  border-radius: var(--radius-lg);
-  padding: 0;
+  border-radius: var(--radius-sm);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
   font-family: var(--font-family-sans);
-  text-align: left;
-  overflow: hidden;
-  grid-row: span 1;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 2px 8px rgba(8, 148, 200, 0.12);
+  padding: 0;
+  transition: box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 0 0 3px var(--primitive-skyblue-a10);
 }
 
 .monato-paycard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(8, 148, 200, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px var(--primitive-skyblue-a20), 0 4px 12px var(--primitive-skyblue-a20);
 }
 
 .monato-paycard__badge {
   position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--primitive-green-500);
   color: var(--primitive-white);
-  font-size: var(--font-size-xs);
+  font-size: 9px;
   font-weight: var(--font-weight-semibold);
-  padding: var(--space-1) var(--space-2-5);
+  padding: 2px var(--space-2);
   border-radius: var(--radius-full);
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.monato-paycard__inner {
-  padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  height: 100%;
-}
-
-.monato-paycard__brand {
+.monato-paycard__logo-wrap {
+  background: var(--color-background-white-primary);
+  height: 56px;
   display: flex;
   align-items: center;
-  gap: var(--space-2-5);
-}
-
-.monato-paycard__logo {
-  flex-shrink: 0;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
 .monato-paycard__name {
-  display: flex;
-  flex-direction: column;
-}
-
-.monato-paycard__title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-title);
-  line-height: 1.1;
-}
-
-.monato-paycard__tagline {
+  background: var(--primitive-skyblue-500);
+  color: var(--primitive-white);
   font-size: var(--font-size-xs);
-  color: var(--color-text-secondary-text);
-  font-weight: var(--font-weight-medium);
-}
-
-.monato-paycard__features {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
-  flex: 1;
-}
-
-.monato-paycard__feature {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-body);
-  line-height: 1.4;
-}
-
-.monato-paycard__check {
-  color: var(--primitive-green-500);
-  font-weight: var(--font-weight-bold);
-  flex-shrink: 0;
-}
-
-.monato-paycard__cta {
-  background: var(--color-button-primary-background);
-  color: var(--color-button-primary-text);
-  padding: var(--space-2-5) var(--space-3);
-  border-radius: var(--radius-default);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
   text-align: center;
-  margin-top: auto;
-}
-
-.monato-paycard:hover .monato-paycard__cta {
-  background: var(--color-button-primary-hover-background);
+  padding: var(--space-2) var(--space-1);
+  font-weight: var(--font-weight-semibold);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 }
 
 /* ─── Modal overlay + container ────────────────────────── */

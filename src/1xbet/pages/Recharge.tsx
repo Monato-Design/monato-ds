@@ -116,7 +116,7 @@ export default function Recharge({ onNavigateHome }: Props) {
             <div className="xbet-recharge__content">
               <section>
                 <div className="xbet-recharge__section-title">RECOMENDADOS</div>
-                <div className="xbet-recharge__grid xbet-recharge__grid--with-feature">
+                <div className="xbet-recharge__grid">
                   <MonatoPayCard onClick={() => setModalOpen(true)} />
                   {recommended.map((m) => (
                     <PaymentMethodCard key={m.name} logo={m.logo} name={m.name} />

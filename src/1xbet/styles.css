@@ -654,10 +654,7 @@
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 6px;
-}
-
-.xbet-recharge__grid--with-feature {
-  grid-template-columns: 2fr repeat(6, 1fr);
+  padding-top: 10px;
 }
 
 .xbet-paycard {
