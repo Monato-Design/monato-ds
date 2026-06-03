@@ -694,3 +694,497 @@
   padding: 8px 4px;
   font-weight: 500;
 }
+
+/* ============================================================
+   HOME FIEL-ALTO — layout 3 columnas
+   ============================================================ */
+.xbet-home-real {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px;
+  background: #abb8c5;
+  min-height: calc(100% - 104px);
+}
+
+.xbet-home-real__center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── Sidebar deportes (izquierda) ─────────────────────── */
+.xbet-sports {
+  width: 246px;
+  flex-shrink: 0;
+  background: #1e3a5f;
+  border-radius: 4px;
+  padding: 8px;
+  color: white;
+  font-size: 12px;
+}
+
+.xbet-sports__collapse {
+  font-size: 10px;
+  opacity: 0.5;
+  text-align: center;
+  padding: 4px;
+}
+
+.xbet-sports__group {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c4d77;
+  border: none;
+  color: white;
+  padding: 9px 10px;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.xbet-sports__chevron { opacity: 0.6; }
+
+.xbet-sports__topgame {
+  background: #2c4d77;
+  border-radius: 3px;
+  padding: 8px;
+  margin: 4px 0 8px;
+}
+
+.xbet-sports__topgame-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.xbet-sports__topgame-nav { opacity: 0.6; }
+.xbet-sports__live-label { font-size: 11px; font-weight: 600; }
+.xbet-sports__live-time { font-size: 10px; color: #5ab7da; margin-bottom: 6px; }
+.xbet-sports__live-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 2px 0;
+}
+.xbet-sports__live-odds {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  gap: 4px;
+}
+.xbet-sports__live-odds span {
+  flex: 1;
+  background: #1e3a5f;
+  border-radius: 2px;
+  padding: 4px;
+  font-size: 10px;
+  text-align: center;
+  color: #8dcee6;
+}
+.xbet-sports__live-odds b { color: white; }
+
+.xbet-sports__tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.xbet-sports__tab {
+  flex: 1;
+  background: #2c4d77;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  padding: 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.xbet-sports__tab--active {
+  background: #0894c8;
+  color: white;
+}
+
+.xbet-sports__count {
+  font-size: 11px;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 4px;
+}
+.xbet-sports__top {
+  font-size: 10px;
+  opacity: 0.5;
+  padding: 4px;
+  font-weight: 700;
+}
+
+.xbet-sports__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 7px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.xbet-sports__item-name { flex: 1; text-align: left; }
+.xbet-sports__item-count { opacity: 0.5; font-size: 11px; }
+.xbet-sports__item-chevron { opacity: 0.4; font-size: 10px; }
+
+/* ─── Banner carrusel ──────────────────────────────────── */
+.xbet-banner {
+  border-radius: 4px;
+  padding: 36px 40px;
+  min-height: 240px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+.xbet-banner__content { position: relative; z-index: 2; max-width: 60%; }
+.xbet-banner__title {
+  font-size: 34px;
+  font-weight: 900;
+  margin: 0 0 10px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+}
+.xbet-banner__sub { font-size: 15px; opacity: 0.9; margin: 0 0 22px; }
+.xbet-banner__cta {
+  background: #8fa83f;
+  color: white;
+  border: none;
+  padding: 13px 30px;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.xbet-banner__balls {
+  position: absolute;
+  right: 60px;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 1;
+}
+.xbet-banner__ball {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: inset -8px -8px 18px rgba(0,0,0,0.25);
+}
+.xbet-banner__ball--1 { width: 110px; height: 110px; top: 40px; right: 70px; background: radial-gradient(circle at 32% 30%, #fff, #c5c5c5); }
+.xbet-banner__ball--2 { width: 72px; height: 72px; bottom: 50px; right: 170px; background: radial-gradient(circle at 32% 30%, #fbbf24, #d97706); }
+.xbet-banner__ball--3 { width: 80px; height: 80px; bottom: 40px; right: 30px; background: radial-gradient(circle at 32% 30%, #ef4444, #991b1b); }
+
+.xbet-banner__dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+}
+.xbet-banner__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+  padding: 0;
+}
+.xbet-banner__dot--active { background: white; width: 18px; border-radius: 4px; }
+
+/* ─── Casino row ───────────────────────────────────────── */
+.xbet-casino {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.xbet-casino__game {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.xbet-casino__thumb {
+  height: 90px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+.xbet-casino__name {
+  text-align: center;
+  font-size: 11px;
+  color: #1e3a5f;
+  font-weight: 600;
+  padding: 6px 2px;
+}
+
+/* ─── Live matches table ───────────────────────────────── */
+.xbet-live {
+  background: white;
+  border-radius: 4px;
+  padding: 10px;
+}
+.xbet-live__filters {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #e0e6ed;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+.xbet-live__filter {
+  background: transparent;
+  border: none;
+  color: #6b7d92;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.xbet-live__filter--active { color: #1e3a5f; border-bottom: 2px solid #0894c8; }
+.xbet-live__search {
+  margin-left: auto;
+  font-size: 11px;
+  color: #6b7d92;
+  background: #f3f5f7;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.xbet-live__sports {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.xbet-live__stream-toggle { font-size: 11px; color: #0894c8; font-weight: 600; }
+.xbet-live__sport {
+  background: #f3f5f7;
+  border: none;
+  font-size: 11px;
+  color: #1e3a5f;
+  padding: 5px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.xbet-live__league { margin-bottom: 8px; }
+.xbet-live__league-head {
+  display: flex;
+  justify-content: space-between;
+  background: #eef2f6;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e3a5f;
+  border-radius: 3px;
+}
+.xbet-live__cols { opacity: 0.5; font-size: 11px; }
+.xbet-live__match {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f3f6;
+  gap: 12px;
+}
+.xbet-live__teams { flex: 1; min-width: 0; }
+.xbet-live__team {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #1e3a5f;
+  font-weight: 600;
+  padding: 1px 0;
+}
+.xbet-live__score { color: #0894c8; }
+.xbet-live__time { font-size: 10px; color: #6b7d92; margin-top: 2px; }
+.xbet-live__odds { display: flex; gap: 4px; }
+.xbet-live__odd {
+  background: #1e3a5f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 2px;
+  cursor: pointer;
+  min-width: 52px;
+}
+.xbet-live__odd:disabled { background: #c3cdd9; cursor: default; }
+
+/* ─── Register panel (derecha) ─────────────────────────── */
+.xbet-register {
+  width: 290px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.xbet-register__collapse {
+  font-size: 10px;
+  opacity: 0.5;
+  text-align: center;
+  color: #1e3a5f;
+}
+.xbet-register__card {
+  background: white;
+  border-radius: 4px;
+  padding: 14px;
+}
+.xbet-register__title {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e3a5f;
+  margin-bottom: 12px;
+}
+.xbet-register__method {
+  width: 100%;
+  background: #2c4d77;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.xbet-register__hint { font-size: 11px; color: #6b7d92; margin: 0 0 10px; line-height: 1.4; }
+.xbet-register__phone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d0d9e2;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #1e3a5f;
+}
+.xbet-register__placeholder { color: #a3b1c2; }
+.xbet-register__select {
+  border: 1px solid #d0d9e2;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #1e3a5f;
+  display: flex;
+  justify-content: space-between;
+}
+.xbet-register__send {
+  width: 100%;
+  background: #6b8bb0;
+  color: white;
+  border: none;
+  padding: 11px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.xbet-register__promo {
+  border: 1px solid #d0d9e2;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #a3b1c2;
+}
+.xbet-register__submit {
+  width: 100%;
+  background: #8fa83f;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.xbet-register__bonus {
+  background: #16365c;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.xbet-register__betslip {
+  background: white;
+  border-radius: 4px;
+  padding: 12px;
+}
+.xbet-register__betslip-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.xbet-register__betslip-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7d92;
+  padding: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.xbet-register__betslip-tab--active { background: #8fa83f; color: white; }
+.xbet-register__betslip-empty {
+  text-align: center;
+  font-size: 12px;
+  color: #6b7d92;
+  padding: 20px 10px;
+  line-height: 1.5;
+}
+.xbet-register__betslip-icon { font-size: 28px; margin-bottom: 8px; }
+.xbet-register__app {
+  background: #16365c;
+  border-radius: 4px;
+  padding: 12px;
+  color: white;
+}
+.xbet-register__app-stores {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+.xbet-register__app-stores span {
+  background: rgba(255,255,255,0.1);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+.xbet-register__app-body { display: flex; gap: 10px; align-items: center; }
+.xbet-register__qr { background: white; padding: 4px; border-radius: 4px; line-height: 0; }
+.xbet-register__app-text { display: flex; flex-direction: column; font-size: 11px; gap: 2px; }
+.xbet-register__app-text b { font-size: 15px; }
+.xbet-register__app-dl { color: #8fa83f; font-weight: 700; margin-top: 4px; }
+
+/* ─── Card symbol (Monato official) ────────────────────── */
+.monato-paycard__symbol { max-height: 30px; max-width: 70%; object-fit: contain; }

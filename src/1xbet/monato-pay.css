@@ -129,77 +129,88 @@
 .monato-modal__header {
   padding: var(--space-6) var(--space-6) var(--space-4);
   text-align: center;
-  border-bottom: 1px solid var(--color-border-primary);
 }
 
-.monato-modal__brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
+.monato-modal__logo {
+  height: 30px;
+  width: auto;
+  vertical-align: middle;
 }
 
-.monato-modal__brand-name {
-  font-size: var(--font-size-xl);
+.monato-modal__pay {
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-title);
+  color: var(--primitive-skyblue-500);
+  vertical-align: middle;
+  margin-left: 2px;
 }
 
 .monato-modal__subtitle {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary-text);
-  margin: 0;
+  margin: var(--space-3) 0 0;
   line-height: 1.5;
 }
 
-/* ─── Tabs SPEI / Crypto ───────────────────────────────── */
-.monato-modal__tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-6) 0;
+/* ─── Tab navigator delgado — estilo referencia ────────────
+   Una fila, activo en azul de marca sólido, inactivos gris-azul.
+   ─────────────────────────────────────────────────────────── */
+.monato-tabnav {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-6);
+  background: var(--color-background-white-primary);
+  border-bottom: 1px solid var(--color-border-secondary);
 }
 
-.monato-modal__tab {
+.monato-tabnav__tab {
+  position: relative;
+  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
+  gap: var(--space-1-5);
   padding: var(--space-3) var(--space-2);
-  background: var(--color-tab-background);
-  border: 1px solid transparent;
-  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
   cursor: pointer;
   font-family: var(--font-family-sans);
-  position: relative;
-  transition: all 0.15s;
-}
-
-.monato-modal__tab--active {
-  background: var(--color-tab-secondary-active-background);
-  border-color: var(--primitive-skyblue-500);
-}
-
-.monato-modal__tab-icon {
-  font-size: 20px;
-}
-
-.monato-modal__tab-label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-title);
+  color: var(--color-text-tertiary-text);
+  transition: color 0.15s;
 }
 
-.monato-modal__tab-rec {
-  font-size: 10px;
+.monato-tabnav__tab:hover {
+  color: var(--color-text-body);
+}
+
+.monato-tabnav__tab--active {
+  color: var(--primitive-skyblue-500);
+}
+
+.monato-tabnav__tab svg {
+  flex-shrink: 0;
+}
+
+.monato-tabnav__badge {
+  font-size: 9px;
   color: var(--primitive-green-700);
   background: var(--primitive-green-50);
-  padding: 2px 6px;
+  padding: 1px var(--space-1-5);
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.2px;
+}
+
+.monato-tabnav__underline {
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: -1px;
+  height: 2.5px;
+  background: var(--primitive-skyblue-500);
+  border-radius: var(--radius-full);
 }
 
 /* ─── Body ─────────────────────────────────────────────── */

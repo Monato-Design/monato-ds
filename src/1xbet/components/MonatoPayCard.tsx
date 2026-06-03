@@ -1,18 +1,31 @@
+import { motion } from 'framer-motion';
+import monatoSymbol from '../assets/monato-symbol.svg';
+
 type Props = {
   onClick: () => void;
 };
 
 export default function MonatoPayCard({ onClick }: Props) {
   return (
-    <button className="monato-paycard" onClick={onClick}>
-      <span className="monato-paycard__badge">★ Tu mejor opción</span>
+    <motion.button
+      className="monato-paycard"
+      onClick={onClick}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    >
+      <motion.span
+        className="monato-paycard__badge"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.15, type: 'spring', stiffness: 500, damping: 20 }}
+      >
+        ★ Tu mejor opción
+      </motion.span>
       <div className="monato-paycard__logo-wrap">
-        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="var(--primitive-skyblue-500)" />
-          <path d="M9 22V10l7 8 7-8v12" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        </svg>
+        <img src={monatoSymbol} alt="Monato" className="monato-paycard__symbol" />
       </div>
       <div className="monato-paycard__name">Monato Pay</div>
-    </button>
+    </motion.button>
   );
 }
