@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import monatoSymbol from '../../assets/Symbol.png';
+import speiLogo from '../assets/spei.png';
+import usdcLogo from '../assets/usdc.png';
 
 export type MethodType = 'pay' | 'spei' | 'crypto';
 
@@ -9,7 +11,7 @@ const CONFIG: Record<MethodType, {
   badge: string;
   badgeClass: string;
   accentBg: string;
-  accent: string;
+  secondLogo?: string;
 }> = {
   pay: {
     title: 'Monato Pay',
@@ -17,7 +19,7 @@ const CONFIG: Record<MethodType, {
     badge: '★ Tu mejor opción',
     badgeClass: 'monato-method__badge--green',
     accentBg: '#0894c8',
-    accent: '∞',
+    secondLogo: undefined,
   },
   spei: {
     title: 'Monato SPEI',
@@ -25,7 +27,7 @@ const CONFIG: Record<MethodType, {
     badge: '🏦 Transferencia',
     badgeClass: 'monato-method__badge--blue',
     accentBg: '#2c4d77',
-    accent: '$',
+    secondLogo: speiLogo,
   },
   crypto: {
     title: 'Monato Crypto',
@@ -33,7 +35,7 @@ const CONFIG: Record<MethodType, {
     badge: '◈ Stablecoins',
     badgeClass: 'monato-method__badge--purple',
     accentBg: '#6d28d9',
-    accent: '◈',
+    secondLogo: usdcLogo,
   },
 };
 
@@ -63,13 +65,12 @@ export default function MonatoMethodCard({ type, onClick, index = 0 }: Props) {
       <div className="monato-method__logo-wrap">
         <div className="monato-method__symbol-wrap">
           <img src={monatoSymbol} alt="Monato" className="monato-method__symbol" />
-          {/* accent indicator */}
-          <span
-            className="monato-method__accent"
-            style={{ background: cfg.accentBg }}
-          >
-            {cfg.accent}
-          </span>
+          {cfg.secondLogo ? (
+            <>
+              <span className="monato-method__plus">+</span>
+              <img src={cfg.secondLogo} alt={cfg.title} className="monato-method__second-logo" />
+            </>
+          ) : null}
         </div>
       </div>
 
