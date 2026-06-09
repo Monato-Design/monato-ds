@@ -475,3 +475,222 @@
   border: 8px solid var(--color-background-white-primary);
   background: white;
 }
+
+/* ─── Grupo Monato — los 3 métodos agrupados ────────────── */
+.monato-group {
+  margin-bottom: 12px;
+  border: 1.5px solid var(--primitive-skyblue-200);
+  border-radius: var(--radius-xl);
+  padding: 12px 14px 14px;
+  background: linear-gradient(135deg,
+    var(--color-background-white-primary) 0%,
+    var(--primitive-skyblue-50) 100%
+  );
+  box-shadow: 0 2px 12px var(--primitive-skyblue-a10);
+}
+
+.monato-group__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 10px;
+}
+
+.monato-group__logo {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+}
+
+.monato-group__name {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--primitive-skyblue-500);
+}
+
+.monato-group__desc {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary-text);
+  margin-left: auto;
+}
+
+.monato-group__cards {
+  display: flex;
+  gap: 10px;
+}
+
+/* ─── Monato method card (pay / spei / crypto) ──────────── */
+.monato-method {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background-white-primary);
+  border: 1.5px solid var(--primitive-skyblue-200);
+  border-radius: var(--radius-lg);
+  overflow: visible;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  transition: border-color 0.15s;
+}
+
+.monato-method:hover {
+  border-color: var(--primitive-skyblue-500);
+}
+
+.monato-method--pay  { border-color: var(--primitive-skyblue-400); }
+.monato-method--spei { border-color: var(--primitive-skyblue-200); }
+.monato-method--crypto { border-color: rgba(109, 40, 217, 0.35); }
+
+/* badge */
+.monato-method__badge {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: var(--font-weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  letter-spacing: 0.2px;
+}
+
+.monato-method__badge--green {
+  background: var(--primitive-green-500);
+  color: var(--primitive-white);
+}
+
+.monato-method__badge--blue {
+  background: var(--primitive-skyblue-500);
+  color: var(--primitive-white);
+}
+
+.monato-method__badge--purple {
+  background: #6d28d9;
+  color: var(--primitive-white);
+}
+
+/* logo area */
+.monato-method__logo-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  position: relative;
+}
+
+.monato-method__symbol-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.monato-method__symbol {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.monato-method__accent {
+  position: absolute;
+  bottom: -4px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  border: 1.5px solid white;
+}
+
+/* footer */
+.monato-method__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: var(--space-2) var(--space-2);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  overflow: hidden;
+}
+
+.monato-method__title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--primitive-white);
+  letter-spacing: 0.1px;
+}
+
+.monato-method__subtitle {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ─── Combined card (en grids normales) ─────────────────────
+   Mismas dimensiones que .xbet-paycard pero con doble logo
+   y color de marca en el footer.
+   ─────────────────────────────────────────────────────────── */
+.monato-combined {
+  background: var(--color-background-white-primary);
+  border: 1.5px solid var(--primitive-skyblue-300);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  box-shadow: 0 0 0 2px var(--primitive-skyblue-a10);
+  transition: border-color 0.15s;
+}
+
+.monato-combined__logo-wrap {
+  background: white;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+}
+
+.monato-combined__logo {
+  max-height: 26px;
+  max-width: 38px;
+  object-fit: contain;
+}
+
+.monato-combined__logo--second {
+  max-height: 22px;
+  max-width: 34px;
+}
+
+.monato-combined__plus {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-tertiary-text);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.monato-combined__name {
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-family-sans);
+  text-align: center;
+  padding: 8px 4px;
+  letter-spacing: 0.2px;
+}

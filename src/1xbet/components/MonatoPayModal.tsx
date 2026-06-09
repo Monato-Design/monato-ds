@@ -6,6 +6,7 @@ import monatoLogo from '../../assets/logo-default.png';
 type Props = {
   open: boolean;
   onClose: () => void;
+  defaultTab?: 'spei' | 'crypto';
 };
 
 type Tab = 'spei' | 'crypto';
@@ -13,9 +14,11 @@ type Step = 'form' | 'result';
 
 const USDC_RATE = 16.94;
 
-export default function MonatoPayModal({ open, onClose }: Props) {
-  const [tab, setTab] = useState<Tab>('spei');
+export default function MonatoPayModal({ open, onClose, defaultTab }: Props) {
+  const [tab, setTab] = useState<Tab>(defaultTab ?? 'spei');
   const [step, setStep] = useState<Step>('form');
+
+  const isSingleMethod = defaultTab !== undefined;
 
   const [mxnAmount, setMxnAmount] = useState('500');
   const [firstName] = useState('Alejandro');
@@ -27,11 +30,11 @@ export default function MonatoPayModal({ open, onClose }: Props) {
   const [usdcAmount, setUsdcAmount] = useState('30');
 
   useEffect(() => {
-    if (!open) {
-      const t = setTimeout(() => { setTab('spei'); setStep('form'); }, 250);
-      return () => clearTimeout(t);
+    if (open) {
+      setTab(defaultTab ?? 'spei');
+      setStep('form');
     }
-  }, [open]);
+  }, [open, defaultTab]);
 
   if (!open) return null;
 
@@ -59,14 +62,22 @@ export default function MonatoPayModal({ open, onClose }: Props) {
           <button className="monato-modal__close" onClick={onClose} aria-label="Cerrar">×</button>
 
           <div className="monato-modal__header">
-            <img src={monatoLogo} alt="Monato Pay" className="monato-modal__logo" />
-            <span className="monato-modal__pay">Pay</span>
+            <img src={monatoLogo} alt="Monato" className="monato-modal__logo" />
+            <span className="monato-modal__pay">
+              {isSingleMethod ? (defaultTab === 'spei' ? 'SPEI' : 'Crypto') : 'Pay'}
+            </span>
             <p className="monato-modal__subtitle">
-              Deposita en 1xBet usando SPEI o stablecoins. Acreditación en menos de 5 minutos.
+              {isSingleMethod
+                ? defaultTab === 'spei'
+                  ? 'Deposita en 1xBet via transferencia SPEI. Acreditación en menos de 5 minutos.'
+                  : 'Deposita en 1xBet con USDC o USDT. El mejor tipo de cambio del mercado.'
+                : 'Deposita en 1xBet usando SPEI o stablecoins. Acreditación en menos de 5 minutos.'
+              }
             </p>
           </div>
 
-          {/* Tab navigator delgado — estilo referencia */}
+          {/* Tab nav — solo visible en Monato Pay (las otras van directo al método) */}
+          {!isSingleMethod && (
           <div className="monato-tabnav">
             <button
               className={`monato-tabnav__tab ${tab === 'spei' ? 'monato-tabnav__tab--active' : ''}`}
@@ -86,6 +97,7 @@ export default function MonatoPayModal({ open, onClose }: Props) {
               {tab === 'crypto' && <motion.span layoutId="tabnav-underline" className="monato-tabnav__underline" />}
             </button>
           </div>
+          )}
 
           <AnimatePresence mode="wait">
             <motion.div

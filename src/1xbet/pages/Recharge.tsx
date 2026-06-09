@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Header1xbet from "../components/Header1xbet";
 import Sidebar1xbet from "../components/Sidebar1xbet";
 import PaymentMethodCard from "../components/PaymentMethodCard";
-import MonatoPayCard from "../components/MonatoPayCard";
+import MonatoMethodCard from "../components/MonatoMethodCard";
+import MonatoCombinedCard from "../components/MonatoCombinedCard";
 import MonatoPayModal from "../components/MonatoPayModal";
 
+import monatoSymbol from "../../assets/Symbol.png";
 import spei from "../assets/spei.png";
 import bbva from "../assets/bbva_logo_2025.png";
 import oxxo from "../assets/oxxo_pay.png";
@@ -79,20 +82,66 @@ type Props = {
 
 export default function Recharge({ onNavigateHome }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<'spei' | 'crypto' | undefined>(undefined);
+  const [prominentMode, setProminentMode] = useState(false);
+
+  function openModal(tab?: 'spei' | 'crypto') {
+    setModalTab(tab);
+    setModalOpen(true);
+  }
 
   return (
     <div className="xbet-page xbet-page--recharge">
-      <Header1xbet onDeposit={() => { /* already here */ }} onLogoClick={onNavigateHome} />
+      <Header1xbet onDeposit={() => {}} onLogoClick={onNavigateHome} />
 
       <div className="xbet-recharge">
         <Sidebar1xbet />
 
         <main className="xbet-recharge__main">
-          <div className="xbet-recharge__alert">
-            <span className="xbet-recharge__alert-icon">$</span>
-            <span>Para descubrir el mundo de los juegos y ganar, ¡recargue su cuenta utilizando cualquier método de pago!</span>
-            <button className="xbet-recharge__alert-close">×</button>
-          </div>
+
+          {/* ── Banner toggle ─────────────────────────────────── */}
+          <AnimatePresence mode="wait">
+            {prominentMode ? (
+              <motion.div
+                key="prominent"
+                className="xbet-recharge__alert xbet-recharge__alert--monato"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <img src={monatoSymbol} alt="Monato" className="xbet-recharge__alert-symbol" />
+                <span>
+                  <b>Monato es la mejor opción para depositar en 1xBet.</b>
+                  {' '}SPEI y Stablecoins con el mejor tipo de cambio.
+                </span>
+                <button
+                  className="xbet-recharge__alert-toggle"
+                  onClick={() => setProminentMode(false)}
+                >
+                  Ver como opción estándar ×
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="standard"
+                className="xbet-recharge__alert"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="xbet-recharge__alert-icon">$</span>
+                <span>Para descubrir el mundo de los juegos y ganar, ¡recargue su cuenta utilizando cualquier método de pago!</span>
+                <button
+                  className="xbet-recharge__alert-toggle xbet-recharge__alert-toggle--cta"
+                  onClick={() => setProminentMode(true)}
+                >
+                  ✨ Ver Monato como la mejor opción
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <h1 className="xbet-recharge__title">
             DEPÓSITO 1688885881 <span className="xbet-recharge__copy">📋</span>
@@ -114,16 +163,46 @@ export default function Recharge({ onNavigateHome }: Props) {
             </aside>
 
             <div className="xbet-recharge__content">
+
+              {/* ── RECOMENDADOS ─────────────────────────────── */}
               <section>
                 <div className="xbet-recharge__section-title">RECOMENDADOS</div>
+
+                {/* Grupo prominente — solo cuando prominentMode=true */}
+                <AnimatePresence>
+                  {prominentMode && (
+                    <motion.div
+                      className="monato-group"
+                      initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginBottom: 12 }}
+                      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      transition={{ type: 'spring', stiffness: 280, damping: 28 }}
+                    >
+                      <div className="monato-group__header">
+                        <img src={monatoSymbol} alt="Monato" className="monato-group__logo" />
+                        <span className="monato-group__name">Monato</span>
+                        <span className="monato-group__desc">La opción más inteligente para depositar en 1xBet</span>
+                      </div>
+                      <div className="monato-group__cards">
+                        <MonatoMethodCard type="pay"    index={0} onClick={() => openModal()} />
+                        <MonatoMethodCard type="spei"   index={1} onClick={() => openModal('spei')} />
+                        <MonatoMethodCard type="crypto" index={2} onClick={() => openModal('crypto')} />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Grid: Monato Pay + Monato SPEI + métodos regulares */}
                 <div className="xbet-recharge__grid">
-                  <MonatoPayCard onClick={() => setModalOpen(true)} />
+                  <MonatoCombinedCard type="pay"  onClick={() => openModal()} />
+                  <MonatoCombinedCard type="spei" onClick={() => openModal('spei')} />
                   {recommended.map((m) => (
                     <PaymentMethodCard key={m.name} logo={m.logo} name={m.name} />
                   ))}
                 </div>
               </section>
 
+              {/* ── TARJETAS BANCARIAS ───────────────────────── */}
               <section>
                 <div className="xbet-recharge__section-title">TARJETAS BANCARIAS</div>
                 <div className="xbet-recharge__grid">
@@ -131,6 +210,7 @@ export default function Recharge({ onNavigateHome }: Props) {
                 </div>
               </section>
 
+              {/* ── EN EFECTIVO ──────────────────────────────── */}
               <section>
                 <div className="xbet-recharge__section-title">EN EFECTIVO</div>
                 <div className="xbet-recharge__grid">
@@ -138,6 +218,7 @@ export default function Recharge({ onNavigateHome }: Props) {
                 </div>
               </section>
 
+              {/* ── TRANSFERENCIA BANCARIA ───────────────────── */}
               <section>
                 <div className="xbet-recharge__section-title">TRANSFERENCIA BANCARIA</div>
                 <div className="xbet-recharge__grid">
@@ -145,18 +226,23 @@ export default function Recharge({ onNavigateHome }: Props) {
                 </div>
               </section>
 
+              {/* ── CRIPTOMONEDA: Monato Crypto primero ─────── */}
               <section>
                 <div className="xbet-recharge__section-title">CRIPTOMONEDA</div>
                 <div className="xbet-recharge__grid">
-                  {crypto.map((m, i) => <PaymentMethodCard key={`${m.name}-${i}`} logo={m.logo} name={m.name} />)}
+                  <MonatoCombinedCard type="crypto" onClick={() => openModal('crypto')} />
+                  {crypto.map((m, i) => (
+                    <PaymentMethodCard key={`${m.name}-${i}`} logo={m.logo} name={m.name} />
+                  ))}
                 </div>
               </section>
+
             </div>
           </div>
         </main>
       </div>
 
-      <MonatoPayModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <MonatoPayModal open={modalOpen} onClose={() => setModalOpen(false)} defaultTab={modalTab} />
     </div>
   );
 }
