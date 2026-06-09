@@ -1,3 +1,5 @@
+import logo1xbet from '../assets/logo_1xbet.png';
+
 type Props = {
   onDeposit: () => void;
   onLogoClick?: () => void;
@@ -20,7 +22,7 @@ export default function Header1xbet({ onDeposit, onLogoClick }: Props) {
     <header className="xbet-header">
       <div className="xbet-header__top">
         <div className="xbet-header__brand" onClick={onLogoClick} style={{ cursor: onLogoClick ? "pointer" : "default" }}>
-          <span className="xbet-header__logo">1XBET</span>
+          <img src={logo1xbet} alt="1xBet" className="xbet-header__logo-img" />
           <span className="xbet-header__flag">🇲🇽</span>
         </div>
 

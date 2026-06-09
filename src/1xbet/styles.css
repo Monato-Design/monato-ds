@@ -1231,3 +1231,12 @@
 .xbet-recharge__alert-toggle--cta:hover {
   background: #0787b6;
 }
+
+/* ─── Logo real de 1xBet ────────────────────────────────── */
+.xbet-header__logo-img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  display: block;
+}
