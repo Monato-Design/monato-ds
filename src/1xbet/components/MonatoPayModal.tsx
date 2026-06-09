@@ -189,8 +189,8 @@ export default function MonatoPayModal({ open, onClose, defaultTab }: Props) {
                   </div>
                   <div className="monato-info-card">
                     <div className="monato-info-card__row"><span className="monato-info-card__label">CLABE</span><span className="monato-info-card__value">734180999000000006</span></div>
-                    <div className="monato-info-card__row"><span className="monato-info-card__label">Beneficiario</span><span className="monato-info-card__value">Fincopay</span></div>
-                    <div className="monato-info-card__row"><span className="monato-info-card__label">Banco</span><span className="monato-info-card__value">Fincopay</span></div>
+                    <div className="monato-info-card__row"><span className="monato-info-card__label">Beneficiario</span><span className="monato-info-card__value">Monato Pay México</span></div>
+                    <div className="monato-info-card__row"><span className="monato-info-card__label">Banco</span><span className="monato-info-card__value">FINCOPAY</span></div>
                     <div className="monato-info-card__row"><span className="monato-info-card__label">Concepto</span><span className="monato-info-card__value">1XBET-1688885881</span></div>
                     <div className="monato-info-card__row"><span className="monato-info-card__label">Importe</span><span className="monato-info-card__value">${speiReceive} MXN</span></div>
                   </div>
