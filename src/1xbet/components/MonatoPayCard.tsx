@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import monatoSymbol from '../assets/monato-symbol.svg';
+import monatoSymbol from '../../assets/Symbol.png';
 
 type Props = {
   onClick: () => void;

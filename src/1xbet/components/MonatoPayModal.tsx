@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Doller, Diamonds1 } from '@tailgrids/icons';
-import monatoLogo from '../assets/monato-logo.svg';
+import monatoLogo from '../../assets/logo-default.png';
 
 type Props = {
   open: boolean;
