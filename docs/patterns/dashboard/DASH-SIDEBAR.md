@@ -6,8 +6,8 @@
 | **Category** | Dashboard |
 | **Figma page** | ↪ Sidebar (Vertical Navbar) — `10947:23748` |
 | **Figma node(s)** | Component set `11422:67550` (light) · dark instances in section `11422:89698` |
-| **Code status** | partial — a bespoke sidebar exists in the DS Showcase (`src/App.tsx`) and prototypes; not yet a reusable block |
-| **Code path** | target: `src/blocks/Sidebar/` |
+| **Code status** | ✅ `src/blocks/Sidebar/` — V1 expanded + collapsed, hover/active states, footer promo card |
+| **Code path** | `src/blocks/Sidebar/index.tsx` |
 | **Last reviewed** | 2026-06-10 |
 
 ## Purpose

@@ -107,7 +107,7 @@ Atomic/molecular components. These are the building blocks patterns consume — 
 | Profiles | `10886:10532` | pending |
 | Select Box | `10886:7690` | pending |
 | Settings Pages | `10947:23747` | pending |
-| Sidebar (Vertical Navbar) | `10947:23748` | **specced** → `dashboard/DASH-SIDEBAR.md` |
+| Sidebar (Vertical Navbar) | `10947:23748` | **in-code** → `dashboard/DASH-SIDEBAR.md` · `src/blocks/Sidebar/` |
 
 ### 📢 Marketing UI Blocks — prefix `MKT-`
 
