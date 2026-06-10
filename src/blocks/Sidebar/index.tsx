@@ -70,39 +70,47 @@ export function Sidebar({
       className="relative flex h-full flex-col overflow-hidden border-r border-base-50 bg-background-50"
     >
       {/* ── Header ── */}
-      <div className="flex h-16 shrink-0 items-center justify-between border-b border-base-50 px-5">
-        <div className="flex min-w-0 items-center">
-          <AnimatePresence mode="wait" initial={false}>
-            {collapsed ? (
-              <motion.img
-                key="symbol"
-                src={LogoSymbol}
-                alt="Monato"
-                className="h-7 w-auto shrink-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.12 }}
-              />
-            ) : (
-              <motion.img
-                key="full"
-                src={LogoDefault}
-                alt="Monato"
-                className="h-[26px] w-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.12 }}
-              />
-            )}
-          </AnimatePresence>
-        </div>
+      <div
+        className={[
+          'flex h-16 shrink-0 border-b border-base-50',
+          collapsed
+            ? 'flex-col items-center justify-center gap-1'
+            : 'items-center justify-between px-5',
+        ].join(' ')}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {collapsed ? (
+            <motion.img
+              key="symbol"
+              src={LogoSymbol}
+              alt="Monato"
+              className="h-7 w-7 shrink-0 object-contain"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12 }}
+            />
+          ) : (
+            <motion.img
+              key="full"
+              src={LogoDefault}
+              alt="Monato"
+              className="h-[26px] w-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12 }}
+            />
+          )}
+        </AnimatePresence>
 
         <button
           onClick={() => setCollapsed((c) => !c)}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="ml-2 shrink-0 rounded-lg p-1.5 text-sidebar-nav-icon transition-colors hover:bg-sidebar-nav-hover-background hover:text-sidebar-nav-hover-text"
+          className={[
+            'shrink-0 rounded-lg text-sidebar-nav-icon transition-colors hover:bg-sidebar-nav-hover-background hover:text-sidebar-nav-hover-text',
+            collapsed ? 'p-1' : 'p-1.5',
+          ].join(' ')}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
