@@ -30,16 +30,18 @@ import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } fro
 import { CLP } from './CLP';
 import { CrossBorderPrototype } from './CrossBorder';
 import { Demo1xbetPrototype } from './1xbet';
+import GiftcardsPrototype from './giftcards/Giftcards';
 import { MenuBar } from './components/core/menu-bar';
+import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
 import LogoDefault from './assets/logo-default.png';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' |
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' |
   'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
-  'menubar';
+  'menubar' | 'blocks-sidebar';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
 type NavItem = { id: TabId; label: string; icon: React.FC<{size?:number;className?:string;strokeWidth?:number}> };
@@ -94,10 +96,17 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Blocks',
+    items: [
+      { id: 'blocks-sidebar', label: 'Sidebar', icon: Layout14 },
+    ],
+  },
+  {
     label: 'Prototypes',
     items: [
       { id: 'prototypes',  label: 'CLP v1.0',         icon: Rocket1 },
       { id: 'crossborder', label: 'CrossBorder v1.0', icon: Doller },
+      { id: 'giftcards',   label: 'Giftcards v1.0',   icon: Doller },
     ],
   },
 ];
@@ -125,6 +134,7 @@ const COMPONENTS = [
   { name: 'OTP Input',  variants: 1,  tokens: 5,  status: 'in-progress', category: 'Form' },
   { name: 'Dropdown',   variants: 1,  tokens: 4,  status: 'planned',     category: 'Form' },
   { name: 'Menu Bar',  variants: 4,  tokens: 6,  status: 'stable',      category: 'Navigation' },
+  { name: 'Sidebar',   variants: 2,  tokens: 14, status: 'stable',      category: 'Blocks' },
 ];
 
 const STATUS_COLOR: Record<string, 'success' | 'warning' | 'gray'> = {
@@ -1070,6 +1080,44 @@ function MenuBarPage() {
   );
 }
 
+// ─── Blocks ───────────────────────────────────────────────────────────────────
+
+function SidebarBlockPage() {
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Sidebar"
+        sub="DASH-SIDEBAR V1 — navegación vertical para dashboards. Expandido (290px) y colapsado (92px) con animación spring."
+      />
+
+      <PreviewCard label="Expanded — active: Payments">
+        <div className="h-[520px] w-full overflow-hidden rounded-lg border border-base-100">
+          <Sidebar activeItemId="payments" />
+        </div>
+      </PreviewCard>
+
+      <PreviewCard label="Collapsed">
+        <div className="h-[520px] overflow-hidden rounded-lg border border-base-100">
+          <Sidebar defaultCollapsed activeItemId="payments" />
+        </div>
+      </PreviewCard>
+
+      <div className="rounded-xl border border-base-100 bg-background-soft-50 p-4">
+        <p className="text-text-100 text-xs">
+          <span className="font-medium text-title-50">Uso:</span>{' '}
+          <code className="bg-background-soft-100 px-1.5 py-0.5 rounded text-primary-500 text-[11px]">
+            {`import { Sidebar } from './blocks/Sidebar'`}
+          </code>
+          {' · Props: '}
+          <code className="bg-background-soft-100 px-1.5 py-0.5 rounded text-primary-500 text-[11px]">
+            defaultCollapsed · activeItemId · onItemClick
+          </code>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── CrossBorder section — dos prototipos apilados ─────────────────────────────
 function CrossBorderSection() {
   return (
@@ -1077,6 +1125,16 @@ function CrossBorderSection() {
       <PageHeader title="CrossBorder" sub="Prototipos navegables sobre el DS" />
       <CrossBorderPrototype />
       <Demo1xbetPrototype />
+    </div>
+  );
+}
+
+// ─── Giftcards section ──────────────────────────────────────────────────────
+function GiftcardsSection() {
+  return (
+    <div className="space-y-6">
+      <PageHeader title="Giftcards" sub="Flujo B2C de compra de giftcards (BillPay)" />
+      <GiftcardsPrototype />
     </div>
   );
 }
@@ -1089,8 +1147,10 @@ const PAGES: Record<TabId, React.FC> = {
   accordion: AccordionPage, toast: ToastPage, modal: ModalPage,
   pagination: PaginationPage, icons: IconsPage,
   menubar: MenuBarPage,
+  'blocks-sidebar': SidebarBlockPage,
   prototypes: PrototypesPage,
   crossborder: CrossBorderSection,
+  giftcards: GiftcardsSection,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
   'border-radius': BorderRadiusPage, grid: GridPage,
