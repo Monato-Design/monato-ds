@@ -89,6 +89,9 @@ export const BHN_TERMS: { title: string; body: string }[] = [
   { title: '6. Fraude.',           body: 'Cualquier uso fraudulento del código de la Gift Card será responsabilidad del usuario final. Monato colaborará con BHN en investigaciones de fraude conforme a la normativa aplicable.' },
 ];
 
+// Comisión de servicio (demo) — los T&C BHN exigen mostrarla en el resumen
+export const SERVICE_FEE_MXN = 10;
+
 export const ANTIFRAUD_NOTICE =
   'Monato y sus proveedores nunca te pedirán que compres Gift Cards para pagar deudas, impuestos o multas. Si alguien te solicitó esta compra por teléfono, mensaje o correo, detén la operación y repórtalo. Las Gift Cards no son reembolsables una vez procesadas.';
 

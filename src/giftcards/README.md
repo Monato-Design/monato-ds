@@ -1,22 +1,25 @@
-# Gift Cards v2.0 — Prototipo B2C (BillPay)
+# Gift Cards v3.0 — Marketplace B2C (BillPay)
 
-Shell idéntico a CrossBorder (Mac window + sidebar Monato + breadcrumb + stepper),
-contenido del mockup Finch adaptado al DS: 21 marcas en 4 categorías,
-montos fixed/variable/open, aviso antifraude, T&C BHN y resultado con código de canje.
+Shell CrossBorder + diseño 100% Figma DS Web 2026 (nau30mpaZ43tyBjogqSvMV):
+- Nav de filtros + mega menu (9515-26950) en lugar del stepper
+- "Los más vendidos" = Featured Products V3 (9644-5520)
+- "Más marcas" = Product Grids V6 (9900-8993)
+- Confirmación = Shopping Cart V4 (9964-17551), pago con SALDO ligado
+  a la cuenta (sin tarjeta — decisión de Damaris, "una sola bolsa")
+- Resultado = Order Summaries V3 (9709-2376)
 
 ## Instalación
 ```bash
 rm -rf src/giftcards && cp -r ~/Downloads/update/giftcards src/giftcards
 ```
-El App.tsx ya registrado no cambia (mismo default export `GiftcardsPrototype`).
+App.tsx no cambia (mismo default export).
 
 ## Notas
-- Imports relativos desde src/giftcards/: '../assets/logo-default.png',
-  '../components/core/*' — ojo con la profundidad.
-- Logos reales vía https://logo.clearbit.com/{dominio} con fallback a bloque
-  de color + iniciales (sin binarios en el repo). Requiere internet en el navegador.
-- Simulador de API en la barra del Mac window: 200/400/409/503/timeout.
-  400 y 503 permiten Reintentar (regresa a Confirmación); 409 y timeout no
-  (idempotencia según la doc).
-- Badge color="success" en el estado "Procesado" — si esa variante no existe
-  en tu Badge core, cámbiala por "green" o la equivalente.
+- Flujo: Marketplace → modal de monto → Confirmación → Resultado → portal BHN.
+- Saldo demo: $3,500 MXN (constante BALANCE_MXN). Si el total lo excede,
+  "Confirmar pago" se deshabilita con aviso de saldo insuficiente.
+  Pruébalo con Liverpool > $3,490.
+- Comisión de servicio demo: $10 (SERVICE_FEE_MXN en data.ts) — los T&C
+  BHN exigen mostrarla en el resumen.
+- Simulador API en la barra Mac: 200/400/409/503/timeout.
+- Logos vía Clearbit con fallback a color+iniciales.
