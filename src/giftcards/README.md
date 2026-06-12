@@ -23,3 +23,13 @@ App.tsx no cambia (mismo default export).
   BHN exigen mostrarla en el resumen.
 - Simulador API en la barra Mac: 200/400/409/503/timeout.
 - Logos vía Clearbit con fallback a color+iniciales.
+
+## v3.1 — Motion + banners generados
+- framer-motion (Motion) en todo: stagger de cards, hover con lift+sombra,
+  layout animations al filtrar categorías, modal con spring, título de
+  resultado con spring de celebración. ~52 animaciones.
+- Banners generados: gradiente de marca + glow + logo watermark animado,
+  con nombre y tagline encima. Helper GeneratedBanner.
+- Banners reales (futuro): agrega bannerSrc a la marca en data.ts (igual que
+  logoSrc). El componente lo usa con overlay; si no hay, genera el banner.
+- Taglines por marca en data.ts (campo tagline).

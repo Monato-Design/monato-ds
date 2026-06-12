@@ -15,34 +15,36 @@ export interface Brand {
   amounts?: number[];
   min?: number;
   max?: number;
+  tagline?: string;   // texto del banner generado
+  bannerSrc?: string; // banner real opcional — colócalo en assets/banners/ e impórtalo aquí
 }
 
 export const BRANDS: Brand[] = [
   // ── Gaming ──
-  { id: 'xbox',        name: 'Xbox',           cat: 'gaming',    domain: 'xbox.com',         color: '#107C10', abbr: 'XB',  denomType: 'fixed',    amounts: [200, 500, 1000, 2000] },
-  { id: 'xboxgp',      name: 'Xbox Game Pass', cat: 'gaming',    domain: 'xbox.com',         color: '#107C10', abbr: 'XGP', denomType: 'fixed',    amounts: [299, 599, 1199] },
-  { id: 'playstation', name: 'PlayStation',    cat: 'gaming',    domain: 'playstation.com',  color: '#003791', abbr: 'PS',  denomType: 'fixed',    amounts: [200, 500, 1000, 2000] },
-  { id: 'nintendo',    name: 'Nintendo',       cat: 'gaming',    domain: 'nintendo.com',     color: '#E4000F', abbr: 'NT',  denomType: 'fixed',    amounts: [50, 100, 200, 500] },
-  { id: 'roblox',      name: 'Roblox',         cat: 'gaming',    domain: 'roblox.com',       color: '#E8391D', abbr: 'RB',  denomType: 'fixed',    amounts: [50, 100, 200, 500] },
-  { id: 'blizzard',    name: 'Blizzard',       cat: 'gaming',    domain: 'blizzard.com',     color: '#00AEFF', abbr: 'BZ',  denomType: 'fixed',    amounts: [200, 500, 1000] },
-  { id: 'razer',       name: 'Razer Gold',     cat: 'gaming',    domain: 'razer.com',        color: '#44D62C', abbr: 'RG',  denomType: 'fixed',    amounts: [50, 100, 200, 500] },
+  { id: 'xbox',        name: 'Xbox',           cat: 'gaming',    domain: 'xbox.com',         color: '#107C10', abbr: 'XB',  denomType: 'fixed',    amounts: [200, 500, 1000, 2000], tagline: 'Miles de juegos a un código de distancia' },
+  { id: 'xboxgp',      name: 'Xbox Game Pass', cat: 'gaming',    domain: 'xbox.com',         color: '#107C10', abbr: 'XGP', denomType: 'fixed',    amounts: [299, 599, 1199], tagline: 'Cientos de juegos, una sola suscripción' },
+  { id: 'playstation', name: 'PlayStation',    cat: 'gaming',    domain: 'playstation.com',  color: '#003791', abbr: 'PS',  denomType: 'fixed',    amounts: [200, 500, 1000, 2000], tagline: 'El universo PlayStation, a tu alcance' },
+  { id: 'nintendo',    name: 'Nintendo',       cat: 'gaming',    domain: 'nintendo.com',     color: '#E4000F', abbr: 'NT',  denomType: 'fixed',    amounts: [50, 100, 200, 500], tagline: 'Diversión para toda la familia' },
+  { id: 'roblox',      name: 'Roblox',         cat: 'gaming',    domain: 'roblox.com',       color: '#E8391D', abbr: 'RB',  denomType: 'fixed',    amounts: [50, 100, 200, 500], tagline: 'Robux y experiencias sin límite' },
+  { id: 'blizzard',    name: 'Blizzard',       cat: 'gaming',    domain: 'blizzard.com',     color: '#00AEFF', abbr: 'BZ',  denomType: 'fixed',    amounts: [200, 500, 1000], tagline: 'Tus mundos favoritos te esperan' },
+  { id: 'razer',       name: 'Razer Gold',     cat: 'gaming',    domain: 'razer.com',        color: '#44D62C', abbr: 'RG',  denomType: 'fixed',    amounts: [50, 100, 200, 500], tagline: 'Saldo gamer para lo que sigue' },
   // ── Streaming ──
-  { id: 'netflix',     name: 'Netflix',        cat: 'streaming', domain: 'netflix.com',      color: '#E50914', abbr: 'NF',  denomType: 'fixed',    amounts: [99, 199, 399] },
-  { id: 'spotify',     name: 'Spotify',        cat: 'streaming', domain: 'spotify.com',      color: '#1DB954', abbr: 'SP',  denomType: 'fixed',    amounts: [99, 199, 399] },
-  { id: 'prime',       name: 'Amazon Prime',   cat: 'streaming', domain: 'primevideo.com',   color: '#00A8E1', abbr: 'PR',  denomType: 'fixed',    amounts: [99, 199, 599] },
+  { id: 'netflix',     name: 'Netflix',        cat: 'streaming', domain: 'netflix.com',      color: '#E50914', abbr: 'NF',  denomType: 'fixed',    amounts: [99, 199, 399], tagline: 'Series y películas sin interrupciones' },
+  { id: 'spotify',     name: 'Spotify',        cat: 'streaming', domain: 'spotify.com',      color: '#1DB954', abbr: 'SP',  denomType: 'fixed',    amounts: [99, 199, 399], tagline: 'Tu música, sin anuncios' },
+  { id: 'prime',       name: 'Amazon Prime',   cat: 'streaming', domain: 'primevideo.com',   color: '#00A8E1', abbr: 'PR',  denomType: 'fixed',    amounts: [99, 199, 599], tagline: 'Entretenimiento y envíos en uno' },
   // ── Tiendas ──
-  { id: 'amazon',      name: 'Amazon',         cat: 'tiendas',   domain: 'amazon.com',       color: '#FF9900', abbr: 'AM',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 50,  max: 5000 },
-  { id: 'google',      name: 'Google Play',    cat: 'tiendas',   domain: 'play.google.com',  color: '#DB4437', abbr: 'GP',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 20,  max: 3000 },
-  { id: 'itunes',      name: 'iTunes / Apple', cat: 'tiendas',   domain: 'apple.com',        color: '#FC3C44', abbr: 'IT',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 50,  max: 5000 },
-  { id: 'liverpool',   name: 'Liverpool',      cat: 'tiendas',   domain: 'liverpool.com.mx', color: '#E91E8C', abbr: 'LV',  denomType: 'variable', min: 100, max: 10000 },
-  { id: 'soriana',     name: 'Soriana',        cat: 'tiendas',   domain: 'soriana.com',      color: '#ED1C24', abbr: 'SO',  denomType: 'variable', min: 50,  max: 5000 },
-  { id: 'gandhi',      name: 'Gandhi',         cat: 'tiendas',   domain: 'gandhi.com.mx',    color: '#8B0000', abbr: 'GH',  denomType: 'variable', min: 100, max: 5000 },
-  { id: 'innovasport', name: 'Innovasport',    cat: 'tiendas',   domain: 'innovasport.com',  color: '#FF6B00', abbr: 'IS',  denomType: 'variable', min: 200, max: 5000 },
+  { id: 'amazon',      name: 'Amazon',         cat: 'tiendas',   domain: 'amazon.com',       color: '#FF9900', abbr: 'AM',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 50,  max: 5000, tagline: 'Todo lo que buscas, en un solo lugar' },
+  { id: 'google',      name: 'Google Play',    cat: 'tiendas',   domain: 'play.google.com',  color: '#DB4437', abbr: 'GP',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 20,  max: 3000, tagline: 'Apps, juegos y más en Google Play' },
+  { id: 'itunes',      name: 'iTunes / Apple', cat: 'tiendas',   domain: 'apple.com',        color: '#FC3C44', abbr: 'IT',  denomType: 'open',     amounts: [50, 100, 200, 500], min: 50,  max: 5000, tagline: 'Música, apps y servicios Apple' },
+  { id: 'liverpool',   name: 'Liverpool',      cat: 'tiendas',   domain: 'liverpool.com.mx', color: '#E91E8C', abbr: 'LV',  denomType: 'variable', min: 100, max: 10000, tagline: 'Es parte de tu vida' },
+  { id: 'soriana',     name: 'Soriana',        cat: 'tiendas',   domain: 'soriana.com',      color: '#ED1C24', abbr: 'SO',  denomType: 'variable', min: 50,  max: 5000, tagline: 'Todo para tu despensa y hogar' },
+  { id: 'gandhi',      name: 'Gandhi',         cat: 'tiendas',   domain: 'gandhi.com.mx',    color: '#8B0000', abbr: 'GH',  denomType: 'variable', min: 100, max: 5000, tagline: 'Leer es vivir más' },
+  { id: 'innovasport', name: 'Innovasport',    cat: 'tiendas',   domain: 'innovasport.com',  color: '#FF6B00', abbr: 'IS',  denomType: 'variable', min: 200, max: 5000, tagline: 'Equípate para rendir al máximo' },
   // ── Experiencias ──
-  { id: 'starbucks',   name: 'Starbucks',      cat: 'exp',       domain: 'starbucks.com',    color: '#00704A', abbr: 'SB',  denomType: 'variable', min: 50,  max: 2000 },
-  { id: 'cinepolis',   name: 'Cinépolis',      cat: 'exp',       domain: 'cinepolis.com',    color: '#E31837', abbr: 'CI',  denomType: 'variable', min: 50,  max: 2000 },
-  { id: 'airbnb',      name: 'Airbnb',         cat: 'exp',       domain: 'airbnb.com',       color: '#FF5A5F', abbr: 'AB',  denomType: 'variable', min: 500, max: 10000 },
-  { id: 'enviaflores', name: 'enviaflores',    cat: 'exp',       domain: 'enviaflores.com',  color: '#E91E8C', abbr: 'EF',  denomType: 'variable', min: 200, max: 5000 },
+  { id: 'starbucks',   name: 'Starbucks',      cat: 'exp',       domain: 'starbucks.com',    color: '#00704A', abbr: 'SB',  denomType: 'variable', min: 50,  max: 2000, tagline: 'Tu café favorito, listo para regalar' },
+  { id: 'cinepolis',   name: 'Cinépolis',      cat: 'exp',       domain: 'cinepolis.com',    color: '#E31837', abbr: 'CI',  denomType: 'variable', min: 50,  max: 2000, tagline: 'La magia del cine en sus manos' },
+  { id: 'airbnb',      name: 'Airbnb',         cat: 'exp',       domain: 'airbnb.com',       color: '#FF5A5F', abbr: 'AB',  denomType: 'variable', min: 500, max: 10000, tagline: 'Estancias y experiencias únicas' },
+  { id: 'enviaflores', name: 'enviaflores',    cat: 'exp',       domain: 'enviaflores.com',  color: '#E91E8C', abbr: 'EF',  denomType: 'variable', min: 200, max: 5000, tagline: 'Sorprende con flores y regalos' },
 ];
 
 export const CATS: { id: CategoryId; label: string }[] = [
