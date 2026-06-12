@@ -57,6 +57,16 @@ function BrandLogo({ brand, size = 48 }: { brand: Brand; size?: number }) {
   );
 }
 
+// Aclara/oscurece un hex (-1..1) — debe ir antes de GeneratedBanner
+function shade(hex: string, amt: number) {
+  const h = hex.replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, p = Math.abs(amt);
+  r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
+  return `rgb(${r},${g},${b})`;
+}
+
 // ─── Banner generado — gradiente de marca + glow + logo watermark ────────────
 // Si brand.bannerSrc existe (asset real), lo usa; si no, genera el banner.
 function GeneratedBanner({ brand, className = '', rounded = 'rounded-lg', children }: { brand: Brand; className?: string; rounded?: string; children?: React.ReactNode }) {
@@ -88,16 +98,6 @@ function GeneratedBanner({ brand, className = '', rounded = 'rounded-lg', childr
       {children}
     </div>
   );
-}
-
-// Aclara/oscurece un hex (-1..1)
-function shade(hex: string, amt: number) {
-  const h = hex.replace('#', '');
-  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
-  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  const t = amt < 0 ? 0 : 255, p = Math.abs(amt);
-  r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
-  return `rgb(${r},${g},${b})`;
 }
 
 // ─── Variants de Motion compartidos ──────────────────────────────────────────
