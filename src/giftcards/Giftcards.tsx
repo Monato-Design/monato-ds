@@ -11,6 +11,7 @@
 
 import { useState, useReducer, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
   Doller, UserMultiple4, ChevronDown,
   ArrowRight, RefreshCircle1Clockwise,
@@ -101,15 +102,15 @@ function GeneratedBanner({ brand, className = '', rounded = 'rounded-lg', childr
 }
 
 // ─── Variants de Motion compartidos ──────────────────────────────────────────
-const containerStagger = {
+const containerStagger: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
 };
-const itemRise = {
+const itemRise: Variants = {
   hidden: { opacity: 0, y: 18 },
   show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 380, damping: 30 } },
 };
-const cardHover = {
+const cardHover: Variants = {
   rest:  { y: 0, boxShadow: '0 1px 2px rgba(16,24,40,0.04)' },
   hover: { y: -5, boxShadow: '0 18px 40px -12px rgba(16,24,40,0.22)' },
 };
