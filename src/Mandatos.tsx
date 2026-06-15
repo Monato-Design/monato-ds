@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './components/core/button';
 import { Input } from './components/core/input';
 import { Badge } from './components/core/badge';
-import { Modal } from './components/core/modal';
 import Alert from './components/core/alert';
 import OtpInput from './components/core/otp-input';
 import { TabRoot, TabList, TabTrigger, TabContent } from './components/core/tabs';
@@ -128,23 +127,6 @@ function StepIndicator({ current }: { current: number }) {
           )}
         </div>
       ))}
-    </div>
-  );
-}
-
-// ─── Mobile frame ─────────────────────────────────────────────────────────────
-
-function MobileFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-center w-full h-full">
-      <div
-        className="relative bg-white rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden flex flex-col"
-        style={{ width: 390, height: 'min(820px, calc(100% - 32px))' }}
-      >
-        {/* Notch */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#1e1e1e] rounded-b-2xl z-10" />
-        <div className="flex-1 overflow-y-auto">{children}</div>
-      </div>
     </div>
   );
 }
@@ -794,7 +776,7 @@ function PortalDetailScreen({
   const [cancelDone, setCancelDone] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-full pt-8">
+    <div className="flex flex-col min-h-full pt-8 relative">
       {/* Header */}
       <div className="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-base-100">
         <button onClick={onBack} className="p-1 -ml-1 text-text-200 hover:text-text-50 transition">
@@ -865,34 +847,37 @@ function PortalDetailScreen({
         )}
       </div>
 
-      {/* Modal: aclaración */}
-      <Modal open={aclaracionOpen} onClose={() => setAclaracionOpen(false)}>
-        <div className="bg-white rounded-2xl p-6 flex flex-col gap-4">
-          <h3 className="text-text-50 font-semibold text-base">Solicitar aclaración</h3>
-          <p className="text-text-200 text-sm">
-            Se registrará una solicitud de aclaración para el mandato <strong>{m.id}</strong>.
-            Nuestro equipo se pondrá en contacto contigo en un plazo de 5 días hábiles.
-          </p>
-          <div className="flex gap-3">
-            <Button variant="ghost" className="flex-1" onClick={() => setAclaracionOpen(false)}>
-              Cancelar
-            </Button>
-            <Button
-              className="flex-1"
-              onClick={() => {
-                setAclaracionOpen(false);
-                setAclaracionDone(true);
-              }}
-            >
-              Confirmar
-            </Button>
+      {/* Inline modal: aclaración */}
+      {aclaracionOpen && (
+        <div className="absolute inset-0 z-20 flex items-end justify-center bg-black/40 rounded-[2.5rem]">
+          <div className="bg-white rounded-t-2xl p-6 w-full flex flex-col gap-4 shadow-2xl">
+            <h3 className="text-text-50 font-semibold text-base">Solicitar aclaración</h3>
+            <p className="text-text-200 text-sm">
+              Se registrará una solicitud de aclaración para el mandato <strong>{m.id}</strong>.
+              Nuestro equipo se pondrá en contacto contigo en un plazo de 5 días hábiles.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="ghost" className="flex-1" onClick={() => setAclaracionOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => {
+                  setAclaracionOpen(false);
+                  setAclaracionDone(true);
+                }}
+              >
+                Confirmar
+              </Button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
 
-      {/* Modal: cancelación */}
-      <Modal open={cancelOpen} onClose={() => setCancelOpen(false)}>
-        <div className="bg-white rounded-2xl p-6 flex flex-col gap-4">
+      {/* Inline modal: cancelación */}
+      {cancelOpen && (
+        <div className="absolute inset-0 z-20 flex items-end justify-center bg-black/40 rounded-[2.5rem]">
+          <div className="bg-white rounded-t-2xl p-6 w-full flex flex-col gap-4 shadow-2xl">
           <div className="flex items-center gap-2">
             <Check size={20} className="text-badge-error-text" />
             <h3 className="text-text-50 font-semibold text-base">Cancelar mandato</h3>
@@ -917,7 +902,8 @@ function PortalDetailScreen({
             </Button>
           </div>
         </div>
-      </Modal>
+        </div>
+      )}
     </div>
   );
 }
@@ -935,7 +921,7 @@ function Row({ label, value }: { label: string; value: string }) {
 
 // ─── Mac desktop wrapper ──────────────────────────────────────────────────────
 
-function MacDesktop({ onExit }: { onExit: () => void }) {
+function PhoneWindow({ onExit }: { onExit: () => void }) {
   const [screen, setScreen] = useState<Screen>('checkout-info');
   const [selectedMandato, setSelectedMandato] = useState<string>('');
   const [flow, setFlow] = useState<FlowData>({
@@ -964,22 +950,43 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
   };
 
   const screenTitle = () => {
-    if (screen.startsWith('checkout')) return 'Autorización de mandato';
-    if (screen === 'portal-list') return 'Portal de mandatos';
-    return 'Detalle del mandato';
+    if (screen.startsWith('checkout')) return 'Mandatos · Autorización';
+    if (screen === 'portal-list') return 'Mandatos · Portal';
+    return 'Mandatos · Detalle';
   };
 
+  const screenContent = (
+    <>
+      {screen === 'checkout-info' && <CheckoutInfoScreen onNext={goNext} />}
+      {screen === 'checkout-auth' && <CheckoutAuthScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />}
+      {screen === 'checkout-otp' && <CheckoutOtpScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />}
+      {screen === 'checkout-clabe' && <CheckoutClabeScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />}
+      {screen === 'checkout-transfer' && <CheckoutTransferScreen onNext={goNext} onBack={goBack} />}
+      {screen === 'checkout-confirm' && <CheckoutConfirmScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />}
+      {screen === 'checkout-success' && <CheckoutSuccessScreen data={flow} onPortal={() => setScreen('portal-list')} />}
+      {screen === 'portal-list' && (
+        <PortalListScreen
+          userContact={flow.contact || 'usuario@monato.com'}
+          onDetail={(id) => { setSelectedMandato(id); setScreen('portal-detail'); }}
+        />
+      )}
+      {screen === 'portal-detail' && (
+        <PortalDetailScreen mandatoId={selectedMandato} onBack={() => setScreen('portal-list')} />
+      )}
+    </>
+  );
+
   return (
-    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 p-6">
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 16 }}
+        initial={{ opacity: 0, scale: 0.94, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10 relative"
-        style={{ height: 'min(900px, calc(100vh - 32px))' }}
+        transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+        className="flex flex-col items-center gap-3"
+        style={{ height: 'min(860px, calc(100vh - 48px))' }}
       >
-        {/* Mac title bar */}
-        <div className="h-9 bg-[#1e1e1e] flex items-center px-4 gap-2 shrink-0">
+        {/* Window controls bar — above the phone */}
+        <div className="flex items-center w-full px-1 gap-2">
           <button
             onClick={onExit}
             className="size-3 rounded-full bg-red-500 hover:bg-red-400 transition flex items-center justify-center group"
@@ -989,56 +996,64 @@ function MacDesktop({ onExit }: { onExit: () => void }) {
           </button>
           <div className="size-3 rounded-full bg-yellow-500" />
           <div className="size-3 rounded-full bg-green-500" />
-          <div className="flex-1 flex justify-center">
-            <span className="text-white/40 text-[11px]">Mandatos — Monato · {screenTitle()}</span>
-          </div>
+          <span className="text-white/30 text-[11px] ml-2">{screenTitle()}</span>
         </div>
 
-        {/* Desktop background + mobile frame */}
-        <div className="flex-1 overflow-hidden bg-gradient-to-br from-slate-700 to-slate-800">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={screen}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="w-full h-full"
-            >
-              <MobileFrame>
-                {screen === 'checkout-info' && (
-                  <CheckoutInfoScreen onNext={goNext} />
-                )}
-                {screen === 'checkout-auth' && (
-                  <CheckoutAuthScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />
-                )}
-                {screen === 'checkout-otp' && (
-                  <CheckoutOtpScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />
-                )}
-                {screen === 'checkout-clabe' && (
-                  <CheckoutClabeScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />
-                )}
-                {screen === 'checkout-transfer' && (
-                  <CheckoutTransferScreen onNext={goNext} onBack={goBack} />
-                )}
-                {screen === 'checkout-confirm' && (
-                  <CheckoutConfirmScreen data={flow} onChange={updateFlow} onNext={goNext} onBack={goBack} />
-                )}
-                {screen === 'checkout-success' && (
-                  <CheckoutSuccessScreen data={flow} onPortal={() => setScreen('portal-list')} />
-                )}
-                {screen === 'portal-list' && (
-                  <PortalListScreen
-                    userContact={flow.contact || 'usuario@monato.com'}
-                    onDetail={(id) => { setSelectedMandato(id); setScreen('portal-detail'); }}
-                  />
-                )}
-                {screen === 'portal-detail' && (
-                  <PortalDetailScreen mandatoId={selectedMandato} onBack={() => setScreen('portal-list')} />
-                )}
-              </MobileFrame>
-            </motion.div>
-          </AnimatePresence>
+        {/* Phone shell */}
+        <div
+          className="relative bg-[#111] rounded-[3rem] shadow-2xl border-[6px] border-[#2a2a2a] flex flex-col overflow-hidden"
+          style={{ width: 390, flex: 1 }}
+        >
+          {/* Side buttons (decorative) */}
+          <div className="absolute -left-[8px] top-24 w-[4px] h-8 bg-[#3a3a3a] rounded-l-sm" />
+          <div className="absolute -left-[8px] top-36 w-[4px] h-12 bg-[#3a3a3a] rounded-l-sm" />
+          <div className="absolute -left-[8px] top-52 w-[4px] h-12 bg-[#3a3a3a] rounded-l-sm" />
+          <div className="absolute -right-[8px] top-32 w-[4px] h-16 bg-[#3a3a3a] rounded-r-sm" />
+
+          {/* Status bar */}
+          <div className="h-12 bg-white flex items-end justify-between px-6 pb-1 shrink-0">
+            <span className="text-[11px] font-semibold text-text-50">9:41</span>
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-[#111] rounded-b-2xl" />
+            <div className="flex items-center gap-1">
+              <div className="flex gap-0.5 items-end h-3">
+                {[2, 3, 4, 5].map((h, i) => (
+                  <div key={i} className="w-1 bg-text-50 rounded-sm" style={{ height: h * 3 }} />
+                ))}
+              </div>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" className="text-text-50">
+                <path d="M8 2.4C10.4 2.4 12.56 3.44 14.08 5.12L15.2 3.84C13.36 1.84 10.8 0.64 8 0.64C5.2 0.64 2.64 1.84 0.8 3.84L1.92 5.12C3.44 3.44 5.6 2.4 8 2.4Z" fill="currentColor"/>
+                <path d="M8 5.6C9.6 5.6 11.04 6.24 12.16 7.28L13.28 6C11.84 4.64 9.92 3.84 8 3.84C6.08 3.84 4.16 4.64 2.72 6L3.84 7.28C4.96 6.24 6.4 5.6 8 5.6Z" fill="currentColor"/>
+                <circle cx="8" cy="10" r="1.5" fill="currentColor"/>
+              </svg>
+              <div className="flex items-center gap-0.5">
+                <div className="h-2.5 w-5 rounded-sm border border-text-50/60 p-px">
+                  <div className="h-full w-3/4 bg-text-50 rounded-[2px]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Screen content */}
+          <div className="flex-1 bg-white overflow-hidden relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={screen}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
+                className="absolute inset-0 overflow-y-auto"
+              >
+                {screenContent}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Home indicator */}
+          <div className="h-6 bg-white flex items-center justify-center shrink-0">
+            <div className="w-28 h-1 bg-text-50/20 rounded-full" />
+          </div>
         </div>
       </motion.div>
     </div>
@@ -1102,7 +1117,7 @@ export function MandatosPrototype() {
       {open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
           <div className="absolute inset-4 rounded-xl overflow-hidden">
-            <MacDesktop onExit={() => setOpen(false)} />
+            <PhoneWindow onExit={() => setOpen(false)} />
           </div>
         </div>
       )}
