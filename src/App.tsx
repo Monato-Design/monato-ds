@@ -31,6 +31,7 @@ import { CLP } from './CLP';
 import { CrossBorderPrototype } from './CrossBorder';
 import { Demo1xbetPrototype } from './1xbet';
 import GiftcardsPrototype from './giftcards/Giftcards';
+import { MandatosPrototype } from './Mandatos';
 import { MenuBar } from './components/core/menu-bar';
 import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
@@ -39,7 +40,7 @@ import LogoDefault from './assets/logo-default.png';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' |
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'mandatos' |
   'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
   'menubar' | 'blocks-sidebar';
 
@@ -107,6 +108,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'prototypes',  label: 'CLP v1.0',         icon: Rocket1 },
       { id: 'crossborder', label: 'CrossBorder v1.0', icon: Doller },
       { id: 'giftcards',   label: 'Giftcards v1.0',   icon: Doller },
+      { id: 'mandatos',    label: 'Mandatos v1.0',    icon: Rocket1 },
     ],
   },
 ];
@@ -1151,6 +1153,7 @@ const PAGES: Record<TabId, React.FC> = {
   prototypes: PrototypesPage,
   crossborder: CrossBorderSection,
   giftcards: GiftcardsSection,
+  mandatos: () => <div className="space-y-6"><PageHeader title="Mandatos" sub="Flujo de aceptación de mandatos para débito automático (CLABE)" /><MandatosPrototype /></div>,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
   'border-radius': BorderRadiusPage, grid: GridPage,
