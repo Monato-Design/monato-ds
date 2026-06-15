@@ -1240,3 +1240,228 @@
   mix-blend-mode: screen;
   display: block;
 }
+
+/* ============================================================
+   SPEI NATIVO — replica del flujo real de 1xBet (sin marca Monato)
+   ============================================================ */
+.spei-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 58, 95, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.spei-modal {
+  background: #eaeef2;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 380px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.spei-modal--wide { max-width: 680px; background: #f4f7fa; }
+
+.spei-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #6b7d92;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+}
+
+.spei-modal__logo-head {
+  background: white;
+  border-radius: 8px 8px 0 0;
+  padding: 22px;
+  display: flex;
+  justify-content: center;
+}
+.spei-modal__logo { height: 40px; width: auto; }
+
+/* ── Formulario ── */
+.spei-form { padding: 18px 22px 22px; }
+.spei-form__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.spei-form__label {
+  font-size: 14px;
+  color: #1e3a5f;
+  font-weight: 700;
+  flex: 1;
+}
+.spei-form__input {
+  flex: 1.4;
+  border: 1px solid #c3cedb;
+  background: white;
+  border-radius: 3px;
+  padding: 9px 10px;
+  font-size: 14px;
+  color: #2c6cb0;
+  text-align: right;
+}
+.spei-form__input--amount { color: #2c6cb0; font-weight: 600; }
+.spei-form__field { flex: 1.4; display: flex; flex-direction: column; gap: 2px; }
+.spei-form__field .spei-form__input { flex: none; width: 100%; }
+.spei-form__error { font-size: 11px; color: #d63232; text-align: left; }
+
+.spei-form__chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.spei-form__chip {
+  border: 1px solid #c3cedb;
+  background: white;
+  border-radius: 3px;
+  padding: 9px 4px;
+  font-size: 14px;
+  color: #1e3a5f;
+  cursor: pointer;
+  font-weight: 600;
+}
+.spei-form__chip:hover { border-color: #2c6cb0; }
+
+.spei-form__note {
+  font-size: 14px;
+  color: #1e3a5f;
+  line-height: 1.45;
+  margin: 6px 0 16px;
+}
+.spei-form__confirm {
+  width: 100%;
+  background: #8fa83f;
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 3px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.spei-form__confirm:hover { background: #7d942f; }
+
+/* ── Cargando ── */
+.spei-loading {
+  background: white;
+  border-radius: 8px;
+  padding: 60px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.spei-loading__spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #e0e6ed;
+  border-top-color: #2c6cb0;
+  border-radius: 50%;
+  animation: spei-spin 0.8s linear infinite;
+}
+@keyframes spei-spin { to { transform: rotate(360deg); } }
+.spei-loading__text { font-size: 14px; color: #1e3a5f; font-weight: 600; }
+
+/* ── Detalles del pedido ── */
+.spei-order { background: white; border-radius: 8px; overflow: hidden; }
+.spei-order__head {
+  background: #e8f1fb;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  color: #2c6cb0;
+  font-weight: 600;
+}
+.spei-order__brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 2px solid #2c6cb0;
+}
+.spei-order__xbet { font-size: 22px; font-weight: 900; color: #1a2c4e; font-style: italic; letter-spacing: -1px; }
+.spei-order__cart {
+  border: 1px solid #c3cedb;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: #1e3a5f;
+  font-weight: 600;
+}
+.spei-order__pago { padding: 16px 24px; font-size: 18px; color: #2c6cb0; font-weight: 700; }
+
+.spei-order__total {
+  background: #d4e4f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+}
+.spei-order__spei { height: 28px; background: white; padding: 6px 10px; border-radius: 4px; }
+.spei-order__total-right { text-align: right; display: flex; flex-direction: column; }
+.spei-order__total-label { font-size: 12px; color: #6b7d92; }
+.spei-order__total-amount { font-size: 24px; font-weight: 800; color: #1a2c4e; }
+
+.spei-order__account {
+  background: #e8f1fb;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 24px;
+}
+.spei-order__account-col { display: flex; flex-direction: column; gap: 3px; }
+.spei-order__account-col--right { text-align: right; }
+.spei-order__account-label { font-size: 12px; color: #6b7d92; }
+.spei-order__account-value { font-size: 14px; color: #1a2c4e; font-weight: 700; }
+
+.spei-order__body { padding: 24px; text-align: center; }
+.spei-order__due { font-size: 16px; color: #1a2c4e; font-weight: 700; }
+.spei-order__due-label { font-size: 13px; color: #6b7d92; margin-bottom: 18px; }
+.spei-order__instr-title { font-size: 14px; color: #6b7d92; margin-bottom: 10px; }
+.spei-order__instr {
+  text-align: left;
+  display: inline-block;
+  font-size: 13px;
+  color: #1e3a5f;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  padding-left: 18px;
+}
+.spei-order__back {
+  display: block;
+  margin: 0 auto;
+  background: #3b82d4;
+  color: white;
+  border: none;
+  padding: 13px 60px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.spei-order__back:hover { background: #2c6cb0; }
+
+.spei-order__notes {
+  background: #e8f1fb;
+  padding: 14px 24px;
+  font-size: 12px;
+  color: #1e3a5f;
+}
+.spei-order__notes-title { font-weight: 700; margin-bottom: 6px; }
+.spei-order__notes ul { margin: 0; padding-left: 18px; }

@@ -6,6 +6,7 @@ import PaymentMethodCard from "../components/PaymentMethodCard";
 import MonatoMethodCard from "../components/MonatoMethodCard";
 import MonatoCombinedCard from "../components/MonatoCombinedCard";
 import MonatoPayModal from "../components/MonatoPayModal";
+import SpeiNativeModal from "../components/SpeiNativeModal";
 
 import monatoSymbol from "../../assets/Symbol.png";
 import spei from "../assets/spei.png";
@@ -26,6 +27,8 @@ import tron from "../assets/tron.png";
 import usdc from "../assets/usdc.png";
 import usdtbsc from "../assets/usdtbsc.png";
 import usdttrx from "../assets/usdttrx.png";
+
+export type ViewMode = 'pay' | 'plus' | 'spei';
 
 const recommended = [
   { logo: spei, name: "SPEI" },
@@ -78,17 +81,22 @@ const tabs = [
 
 type Props = {
   onNavigateHome: () => void;
+  viewMode: ViewMode;
 };
 
-export default function Recharge({ onNavigateHome }: Props) {
+export default function Recharge({ onNavigateHome, viewMode }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'spei' | 'crypto' | undefined>(undefined);
-  const [prominentMode, setProminentMode] = useState(false);
+  const [speiNativeOpen, setSpeiNativeOpen] = useState(false);
 
   function openModal(tab?: 'spei' | 'crypto') {
     setModalTab(tab);
     setModalOpen(true);
   }
+
+  const showMonatoBrand = viewMode === 'pay' || viewMode === 'plus';
+  const showProminent = viewMode === 'plus';
+  const speiMode = viewMode === 'spei';
 
   return (
     <div className="xbet-page xbet-page--recharge">
@@ -99,49 +107,11 @@ export default function Recharge({ onNavigateHome }: Props) {
 
         <main className="xbet-recharge__main">
 
-          {/* ── Banner toggle ─────────────────────────────────── */}
-          <AnimatePresence mode="wait">
-            {prominentMode ? (
-              <motion.div
-                key="prominent"
-                className="xbet-recharge__alert xbet-recharge__alert--monato"
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-              >
-                <img src={monatoSymbol} alt="Monato" className="xbet-recharge__alert-symbol" />
-                <span>
-                  <b>Monato es la mejor opción para depositar en 1xBet.</b>
-                  {' '}SPEI y Stablecoins con el mejor tipo de cambio.
-                </span>
-                <button
-                  className="xbet-recharge__alert-toggle"
-                  onClick={() => setProminentMode(false)}
-                >
-                  Ver como opción estándar ×
-                </button>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="standard"
-                className="xbet-recharge__alert"
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="xbet-recharge__alert-icon">$</span>
-                <span>Para descubrir el mundo de los juegos y ganar, ¡recargue su cuenta utilizando cualquier método de pago!</span>
-                <button
-                  className="xbet-recharge__alert-toggle xbet-recharge__alert-toggle--cta"
-                  onClick={() => setProminentMode(true)}
-                >
-                  ✨ Ver Monato como la mejor opción
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="xbet-recharge__alert">
+            <span className="xbet-recharge__alert-icon">$</span>
+            <span>Para descubrir el mundo de los juegos y ganar, ¡recargue su cuenta utilizando cualquier método de pago!</span>
+            <button className="xbet-recharge__alert-close">×</button>
+          </div>
 
           <h1 className="xbet-recharge__title">
             DEPÓSITO 1688885881 <span className="xbet-recharge__copy">📋</span>
@@ -168,9 +138,9 @@ export default function Recharge({ onNavigateHome }: Props) {
               <section>
                 <div className="xbet-recharge__section-title">RECOMENDADOS</div>
 
-                {/* Grupo prominente — solo cuando prominentMode=true */}
+                {/* Grupo prominente — solo en modo Plus */}
                 <AnimatePresence>
-                  {prominentMode && (
+                  {showProminent && (
                     <motion.div
                       className="monato-group"
                       initial={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -192,13 +162,27 @@ export default function Recharge({ onNavigateHome }: Props) {
                   )}
                 </AnimatePresence>
 
-                {/* Grid: Monato Pay + Monato SPEI + métodos regulares */}
+                {/* Grid de recomendados */}
                 <div className="xbet-recharge__grid">
-                  <MonatoCombinedCard type="pay"  onClick={() => openModal()} />
-                  <MonatoCombinedCard type="spei" onClick={() => openModal('spei')} />
-                  {recommended.map((m) => (
-                    <PaymentMethodCard key={m.name} logo={m.logo} name={m.name} />
-                  ))}
+                  {/* En modo Pay/Plus: combined cards de marca Monato */}
+                  {showMonatoBrand && (
+                    <>
+                      <MonatoCombinedCard type="pay"  onClick={() => openModal()} />
+                      <MonatoCombinedCard type="spei" onClick={() => openModal('spei')} />
+                    </>
+                  )}
+                  {recommended.map((m) => {
+                    // En modo SPEI, la card SPEI abre el flujo nativo (con Fincopay por detrás)
+                    const isSpei = m.name === "SPEI";
+                    return (
+                      <PaymentMethodCard
+                        key={m.name}
+                        logo={m.logo}
+                        name={m.name}
+                        onClick={speiMode && isSpei ? () => setSpeiNativeOpen(true) : undefined}
+                      />
+                    );
+                  })}
                 </div>
               </section>
 
@@ -222,15 +206,27 @@ export default function Recharge({ onNavigateHome }: Props) {
               <section>
                 <div className="xbet-recharge__section-title">TRANSFERENCIA BANCARIA</div>
                 <div className="xbet-recharge__grid">
-                  {transfer.map((m) => <PaymentMethodCard key={m.name} logo={m.logo} name={m.name} />)}
+                  {transfer.map((m) => {
+                    const isSpei = m.name === "SPEI";
+                    return (
+                      <PaymentMethodCard
+                        key={m.name}
+                        logo={m.logo}
+                        name={m.name}
+                        onClick={speiMode && isSpei ? () => setSpeiNativeOpen(true) : undefined}
+                      />
+                    );
+                  })}
                 </div>
               </section>
 
-              {/* ── CRIPTOMONEDA: Monato Crypto primero ─────── */}
+              {/* ── CRIPTOMONEDA ─────────────────────────────── */}
               <section>
                 <div className="xbet-recharge__section-title">CRIPTOMONEDA</div>
                 <div className="xbet-recharge__grid">
-                  <MonatoCombinedCard type="crypto" onClick={() => openModal('crypto')} />
+                  {showMonatoBrand && (
+                    <MonatoCombinedCard type="crypto" onClick={() => openModal('crypto')} />
+                  )}
                   {crypto.map((m, i) => (
                     <PaymentMethodCard key={`${m.name}-${i}`} logo={m.logo} name={m.name} />
                   ))}
@@ -243,6 +239,7 @@ export default function Recharge({ onNavigateHome }: Props) {
       </div>
 
       <MonatoPayModal open={modalOpen} onClose={() => setModalOpen(false)} defaultTab={modalTab} />
+      <SpeiNativeModal open={speiNativeOpen} onClose={() => setSpeiNativeOpen(false)} />
     </div>
   );
 }

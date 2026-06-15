@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Demo 1xBet — Prototipo navegable (sección CrossBorder)
-// Simula el sitio de recarga de 1xBet con Monato Pay como mejor opción de fondeo.
-// Mismo patrón de entry-card + Mac window que CrossBorder.tsx
+// Simula el sitio de recarga de 1xBet con Monato como opción de fondeo.
+// Selector de modo en el frame (estilo selector de API de CB).
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react';
@@ -9,15 +9,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../components/core/button';
 import { Badge } from '../components/core/badge';
 import Home from './pages/Home';
-import Recharge from './pages/Recharge';
+import Recharge, { type ViewMode } from './pages/Recharge';
 import './styles.css';
 import './monato-pay.css';
 
 type View = 'home' | 'recharge';
 
-// ─── App con Mac window embebido — igual que CB ──────────────────────────────
+const MODES: { id: ViewMode; label: string }[] = [
+  { id: 'pay', label: 'Monato Pay' },
+  { id: 'plus', label: 'Monato Plus' },
+  { id: 'spei', label: 'SPEI' },
+];
+
+// ─── App con Mac window embebido ─────────────────────────────────────────────
 function Xbet1App({ onExit }: { onExit: () => void }) {
   const [view, setView] = useState<View>('home');
+  const [mode, setMode] = useState<ViewMode>('pay');
   const url = view === 'home' ? '1-x.mx/es' : '1-x.mx/es/office/recharge';
 
   return (
@@ -40,9 +47,32 @@ function Xbet1App({ onExit }: { onExit: () => void }) {
           </button>
           <div className="size-3 rounded-full bg-yellow-500" />
           <div className="size-3 rounded-full bg-green-500" />
+
           <div className="flex-1 flex justify-center">
             <span className="text-white/40 text-[11px]">🔒 {url}</span>
           </div>
+
+          {/* Selector de modo — solo visible en recharge */}
+          {view === 'recharge' ? (
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="text-white/30 text-[10px] mr-1 uppercase tracking-wider">Modo:</span>
+              {MODES.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setMode(m.id)}
+                  className={`text-[11px] px-2 py-0.5 rounded transition ${
+                    mode === m.id
+                      ? 'bg-white/15 text-white font-medium'
+                      : 'text-white/40 hover:text-white/70'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="w-[50px] shrink-0" />
+          )}
         </div>
 
         {/* App content */}
@@ -51,7 +81,7 @@ function Xbet1App({ onExit }: { onExit: () => void }) {
             {view === 'home' ? (
               <Home onDeposit={() => setView('recharge')} />
             ) : (
-              <Recharge onNavigateHome={() => setView('home')} />
+              <Recharge onNavigateHome={() => setView('home')} viewMode={mode} />
             )}
           </div>
         </div>
@@ -60,7 +90,7 @@ function Xbet1App({ onExit }: { onExit: () => void }) {
   );
 }
 
-// ─── Entry card en el catálogo — igual que CrossBorderPrototype ──────────────
+// ─── Entry card en el catálogo ───────────────────────────────────────────────
 export function Demo1xbetPrototype() {
   const [open, setOpen] = useState(false);
 
@@ -68,21 +98,17 @@ export function Demo1xbetPrototype() {
     <div>
       <div className="rounded-xl border border-base-100 bg-background-50 overflow-hidden">
         <div className="border-b border-base-100 bg-background-soft-50 px-4 py-2.5 flex items-center justify-between">
-          <span className="text-text-200 text-[11px] font-medium uppercase tracking-widest">Demo 1xBet — Fondeo con Monato Pay</span>
+          <span className="text-text-200 text-[11px] font-medium uppercase tracking-widest">Demo 1xBet — Fondeo con Monato</span>
           <Badge color="primary" size="sm">Prototype</Badge>
         </div>
         <div className="p-6 flex items-center gap-6">
-          {/* Thumbnail mockup — grid de pago con card destacada */}
           <div className="relative w-72 h-44 rounded-lg overflow-hidden border border-base-100 bg-[#abb8c5] shrink-0">
             <div className="absolute inset-0 flex flex-col">
-              {/* header azul oscuro */}
               <div className="h-5 bg-[#1e3a5f] flex items-center px-2 gap-1">
                 <div className="h-1.5 w-8 bg-white/80 rounded-sm" />
                 <div className="ml-auto h-2 w-12 bg-[#8fa83f] rounded-sm" />
               </div>
-              {/* grid */}
               <div className="flex-1 p-2 grid grid-cols-4 gap-1.5">
-                {/* monato pay destacado */}
                 <div className="col-span-2 row-span-2 rounded bg-white border border-[#0894c8] flex flex-col p-1.5 gap-1 relative">
                   <div className="absolute top-1 right-1 h-1.5 w-6 bg-[#22c55e] rounded-full" />
                   <div className="size-3 rounded-full bg-[#0894c8]" />
@@ -101,11 +127,11 @@ export function Demo1xbetPrototype() {
 
           <div className="flex-1 space-y-3">
             <div>
-              <h3 className="text-title-50 text-base font-semibold">Demo 1xBet — Recarga con Monato Pay</h3>
-              <p className="text-text-100 text-sm mt-1">Simulación del sitio de recarga de 1xBet con Monato Pay integrado como mejor opción. Flujo de fondeo SPEI + Stablecoins sobre la UI del cliente.</p>
+              <h3 className="text-title-50 text-base font-semibold">Demo 1xBet — Recarga con Monato</h3>
+              <p className="text-text-100 text-sm mt-1">Simulación del sitio de recarga de 1xBet. Tres modos: Monato Pay, Monato Plus (destacado) y SPEI nativo (Monato como back, sin marca).</p>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {['Home', 'Recharge', 'Monato Pay', 'SPEI', 'Crypto', 'Tu mejor opción'].map(tag => (
+              {['Home', 'Recharge', 'Monato Pay', 'Monato Plus', 'SPEI nativo', 'Fincopay'].map(tag => (
                 <Badge key={tag} color="gray" size="sm">{tag}</Badge>
               ))}
             </div>
