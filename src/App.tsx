@@ -32,6 +32,8 @@ import { CrossBorderPrototype } from './CrossBorder';
 import { Demo1xbetPrototype } from './1xbet';
 import GiftcardsPrototype from './giftcards/Giftcards';
 import { MandatosPrototype } from './Mandatos';
+import { CustomerPlatformPrototype } from './CustomerPlatform';
+import { GeolocalizacionPrototype } from './Geolocalizacion';
 import { MenuBar } from './components/core/menu-bar';
 import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
@@ -40,7 +42,7 @@ import LogoDefault from './assets/logo-default.png';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'mandatos' |
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'mandatos' | 'customer-platform' |
   'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
   'menubar' | 'blocks-sidebar';
 
@@ -109,6 +111,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'crossborder', label: 'CrossBorder v1.0', icon: Doller },
       { id: 'giftcards',   label: 'Giftcards v1.0',   icon: Doller },
       { id: 'mandatos',    label: 'Mandatos v1.0',    icon: Rocket1 },
+      { id: 'customer-platform', label: 'Customer Platform v1.0', icon: Rocket1 },
     ],
   },
 ];
@@ -1154,6 +1157,7 @@ const PAGES: Record<TabId, React.FC> = {
   crossborder: CrossBorderSection,
   giftcards: GiftcardsSection,
   mandatos: () => <div className="space-y-6"><PageHeader title="Mandatos" sub="Flujo de aceptación de mandatos para débito automático (CLABE)" /><MandatosPrototype /></div>,
+  'customer-platform': () => <div className="space-y-6"><PageHeader title="Customer Platform" sub="Portal de administración FINCOPAY — login, 2FA, dashboard y validación de contexto de sesión" /><CustomerPlatformPrototype /><GeolocalizacionPrototype /></div>,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
   'border-radius': BorderRadiusPage, grid: GridPage,
