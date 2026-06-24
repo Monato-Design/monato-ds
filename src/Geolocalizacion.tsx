@@ -1095,7 +1095,15 @@ function ScreensGallery() {
 
 // ─── Mac desktop wrapper ────────────────────────────────────────────────────────────
 
-function GeoMacDesktop({ onExit }: { onExit: () => void }) {
+function GeoMacDesktop({
+  onExit,
+  initialMode = 'flow',
+  initialGuide = null,
+}: {
+  onExit: () => void;
+  initialMode?: 'flow' | 'screens';
+  initialGuide?: Deliverable | null;
+}) {
   const [screen, setScreen] = useState<Screen>('login-email');
   const [email, setEmail] = useState('');
   const [show2FA, setShow2FA] = useState(false);
@@ -1108,8 +1116,9 @@ function GeoMacDesktop({ onExit }: { onExit: () => void }) {
   const [silentCapture, setSilentCapture] = useState(false);
   const [scenario, setScenario] = useState<GeoScenario>('real');
   const [recurringMode, setRecurringMode] = useState(false);
-  const [guide, setGuide] = useState<Deliverable | null>(null);
-  const [mode, setMode] = useState<'flow' | 'screens'>('flow');
+  const [guide, setGuide] = useState<Deliverable | null>(initialGuide);
+  const [mode, setMode] = useState<'flow' | 'screens'>(initialMode);
+  const [copied, setCopied] = useState(false);
 
   const tickRef = useRef<number | null>(null);
 
@@ -1165,6 +1174,29 @@ function GeoMacDesktop({ onExit }: { onExit: () => void }) {
       runCapture(true);
     } else {
       setGeoPhase('priming');
+    }
+  };
+
+  // Deep-link: configure the requested flow once on mount.
+  useEffect(() => {
+    if (initialGuide) selectFlow(initialGuide);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep the URL hash in sync with the current view so it can be shared.
+  // replaceState is silent (no hashchange event) → no feedback loop.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const h = mode === 'screens' ? 'geo/screens' : guide ? `geo/flow/${guide}` : 'geo/flow';
+    if (window.location.hash !== `#${h}`) window.history.replaceState(null, '', `#${h}`);
+  }, [mode, guide]);
+
+  const copyLink = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      });
     }
   };
 
@@ -1303,6 +1335,15 @@ function GeoMacDesktop({ onExit }: { onExit: () => void }) {
                 onTriggerContext={(reason) => setTermination(reason)}
               />
             )}
+
+            {/* Shareable deep-link to the current view */}
+            <button
+              onClick={copyLink}
+              className="flex items-center gap-1 text-white/50 hover:text-white text-[11px] border border-white/15 hover:border-white/30 rounded px-2 py-0.5 transition"
+              title="Copiar link a esta vista"
+            >
+              {copied ? '¡Copiado!' : 'Copiar link'}
+            </button>
           </div>
         </div>
 
@@ -1382,6 +1423,42 @@ function GeoMacDesktop({ onExit }: { onExit: () => void }) {
 
 export function GeolocalizacionPrototype() {
   const [open, setOpen] = useState(false);
+  const [initial, setInitial] = useState<{ mode: 'flow' | 'screens'; guide: Deliverable | null }>({ mode: 'flow', guide: null });
+
+  // Deep-link: open the proto in the view encoded in the URL hash.
+  //   #geo/screens           → screens gallery
+  //   #geo/flow              → flow mockup
+  //   #geo/flow/E1..E4       → flow with that deliverable preselected
+  useEffect(() => {
+    const applyFromHash = () => {
+      if (typeof window === 'undefined') return;
+      const h = window.location.hash;
+      if (!h.startsWith('#geo')) return;
+      const parts = h.replace(/^#geo\/?/, '').split('/').filter(Boolean);
+      let mode: 'flow' | 'screens' = 'flow';
+      let guide: Deliverable | null = null;
+      if (parts[0] === 'screens') mode = 'screens';
+      else if (parts[0] === 'flow' && ['E1', 'E2', 'E3', 'E4'].includes(parts[1] ?? '')) guide = parts[1] as Deliverable;
+      setInitial({ mode, guide });
+      setOpen(true);
+    };
+    applyFromHash();
+    window.addEventListener('hashchange', applyFromHash);
+    return () => window.removeEventListener('hashchange', applyFromHash);
+  }, []);
+
+  const handleOpen = () => {
+    setInitial({ mode: 'flow', guide: null });
+    setOpen(true);
+    if (typeof window !== 'undefined') window.history.replaceState(null, '', '#geo/flow');
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#geo')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -1417,7 +1494,7 @@ export function GeolocalizacionPrototype() {
         </div>
         <div className="border-t border-base-100 px-6 py-3 flex justify-end">
           <button
-            onClick={() => setOpen(true)}
+            onClick={handleOpen}
             className="px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 transition"
           >
             Abrir prototipo
@@ -1428,7 +1505,12 @@ export function GeolocalizacionPrototype() {
       {open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
           <div className="absolute inset-4 rounded-xl overflow-hidden">
-            <GeoMacDesktop onExit={() => setOpen(false)} />
+            <GeoMacDesktop
+              key={`${initial.mode}:${initial.guide}`}
+              onExit={handleClose}
+              initialMode={initial.mode}
+              initialGuide={initial.guide}
+            />
           </div>
         </div>
       )}

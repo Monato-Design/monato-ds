@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as TailgridsIcons from '@tailgrids/icons';
 import {
@@ -1234,6 +1234,19 @@ function PrimitivesDropdown({ label, items, active, onSelect }: {
 export function App() {
   const [active, setActive] = useState<TabId>('overview');
   const PageComponent = PAGES[active];
+
+  // Deep-link: a #geo* hash lands on the Customer Platform page (where the
+  // Geolocalización proto lives and reads the rest of the hash).
+  useEffect(() => {
+    const sync = () => {
+      if (typeof window !== 'undefined' && window.location.hash.startsWith('#geo')) {
+        setActive('customer-platform');
+      }
+    };
+    sync();
+    window.addEventListener('hashchange', sync);
+    return () => window.removeEventListener('hashchange', sync);
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-background-soft-50 font-sans">
