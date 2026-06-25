@@ -588,6 +588,7 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
   const amountExchanged = parseFloat(state.fromAmount || '0') - PROCESSING_FEE_MXN;
   const canContinue = !!(state.fundingMethod && (state.fundingMethod === 'spei' || state.selectedAccount));
   const [accountPage, setAccountPage] = useState(0);
+  const [accountStatus, setAccountStatus] = useState<'verified' | 'unverified' | 'pending' | 'error'>('unverified');
   const totalPages = Math.ceil(MONATO_ACCOUNTS.length / ACCOUNTS_PER_PAGE);
   const visibleAccounts = MONATO_ACCOUNTS.slice(accountPage * ACCOUNTS_PER_PAGE, (accountPage + 1) * ACCOUNTS_PER_PAGE);
 
@@ -729,6 +730,28 @@ function ReviewScreen({ state, dispatch, onConfirm }: {
                 </div>
               ))}
             </div>
+
+            {/* CB-202 — Warning de verificación de la cuenta destino */}
+            <AccountVerificationWarning status={accountStatus} />
+
+            {/* Demo: selector de estatus de la cuenta (solo prototipo) */}
+            <div className="flex items-center gap-2 flex-wrap border-t border-[#f0f4f8] pt-4">
+              <span className="text-[#9fb3c8] text-xs">Demo · account status:</span>
+              {(['verified', 'unverified', 'pending', 'error'] as const).map(s => (
+                <button
+                  key={s}
+                  onClick={() => setAccountStatus(s)}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition ${
+                    accountStatus === s
+                      ? 'border-primary-500 bg-[#e6f4fa] text-primary-500 font-medium'
+                      : 'border-[#d9e2ec] text-[#627d98] hover:bg-[#f8fafc]'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
             <div className="bg-[#fff3e0] border border-[#ffcc80] rounded-lg px-5 py-4 flex items-start gap-3">
               <div className="bg-[#ff9800] rounded-lg p-1.5 shrink-0">
                 <QuestionMarkCircle size={16} className="text-white" />
@@ -894,6 +917,71 @@ function ConfirmModal({ open, onCancel, onConfirm }: { open: boolean; onCancel: 
           </div>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+// ─── Account Verification Warning (CB-202) ───────────────────────────────────
+// Warning en Review según el estatus de verificación de la cuenta destino.
+// No bloquea la transacción — solo informa. verified no muestra nada.
+function AccountVerificationWarning({ status }: { status: 'verified' | 'unverified' | 'pending' | 'error' }) {
+  if (status === 'verified') return null;
+
+  if (status === 'pending') {
+    return (
+      <div className="bg-[#e6f4fa] border border-[#8dcee6] rounded-lg px-5 py-4 flex items-start gap-3">
+        <div className="bg-primary-500 rounded-lg p-1.5 shrink-0">
+          <RefreshCircle1Clockwise size={16} className="text-white" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-[#06698e] text-sm font-semibold leading-5">Verification in progress</p>
+          <p className="text-[#06698e] text-sm font-medium leading-5">
+            We're validating this account with the banking network. You can continue — the status will update automatically.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'unverified') {
+    return (
+      <div className="bg-[#fff3e0] border border-[#ffcc80] rounded-lg px-5 py-4 flex items-start gap-3">
+        <div className="bg-[#ff9800] rounded-lg p-1.5 shrink-0">
+          <QuestionMarkCircle size={16} className="text-white" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[#7e4015] text-sm font-semibold leading-5">Account not verified yet</p>
+          <p className="text-[#7e4015] text-sm font-medium leading-5">
+            This account hasn't been verified. You can continue, but we recommend verifying it first to avoid returns.
+          </p>
+          <a href="#" className="text-[#7e4015] text-sm font-semibold underline flex items-center gap-1 w-fit">
+            Verify this account <ArrowRight size={13} />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // error
+  return (
+    <div className="bg-[#ffebed] border border-[#fc7984] rounded-lg px-5 py-4 flex items-start gap-3">
+      <div className="bg-[#e43242] rounded-lg p-1.5 shrink-0">
+        <QuestionMarkCircle size={16} className="text-white" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <p className="text-[#69171e] text-sm font-semibold leading-5">Account verification failed</p>
+        <p className="text-[#69171e] text-sm font-medium leading-5">
+          We couldn't verify this account — the banking network returned an error. Sending may result in a return. You can retry or continue at your own risk.
+        </p>
+        <div className="flex items-center gap-4 mt-0.5">
+          <a href="#" className="text-[#b22733] text-sm font-semibold underline flex items-center gap-1">
+            Retry verification <RefreshCircle1Clockwise size={13} />
+          </a>
+          <a href="#" className="text-[#b22733] text-sm font-semibold underline flex items-center gap-1">
+            View account <ArrowRight size={13} />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
