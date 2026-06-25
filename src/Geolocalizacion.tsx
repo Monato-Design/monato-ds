@@ -21,7 +21,7 @@ type Screen =
   | 'loading'
   | 'dashboard';
 
-type BrowserKey = 'chrome' | 'firefox' | 'safari' | 'edge';
+type BrowserKey = 'chrome' | 'firefox' | 'safari' | 'edge' | 'generic';
 
 // E2 / D4 — two distinct error states, same layout, different copy.
 type GeoErrorKind = 'denied' | 'unavailable';
@@ -104,7 +104,7 @@ function detectBrowser(): BrowserKey {
   if (/Firefox\//.test(ua)) return 'firefox';
   if (/Chrome\//.test(ua)) return 'chrome';
   if (/Safari\//.test(ua)) return 'safari';
-  return 'chrome';
+  return 'generic';
 }
 
 const BROWSER_STEPS: Record<BrowserKey, { label: string; steps: string[] }> = {
@@ -138,6 +138,15 @@ const BROWSER_STEPS: Record<BrowserKey, { label: string; steps: string[] }> = {
       'Haz clic en el candado a la izquierda de la barra de direcciones.',
       'Abre «Permisos del sitio» y localiza «Ubicación».',
       'Cámbiala a «Permitir» y recarga la página.',
+    ],
+  },
+  // Fallback for browsers we don't specifically contemplate — kept very generic.
+  generic: {
+    label: 'tu navegador',
+    steps: [
+      'Abre la configuración de permisos del sitio en tu navegador.',
+      'Busca el permiso de «Ubicación» para este sitio.',
+      'Cámbialo a «Permitir» y recarga la página.',
     ],
   },
 };
@@ -323,7 +332,7 @@ function LoginPasswordScreen({
 
 function GeoPrimingModal({ onAllow, onClose }: { onAllow: () => void; onClose: () => void }) {
   return (
-    <div className="absolute inset-0 z-40 bg-black/40 flex items-center justify-center backdrop-blur-sm p-4">
+    <div className="absolute inset-0 z-40 bg-black/20 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -364,7 +373,7 @@ function GeoPrimingModal({ onAllow, onClose }: { onAllow: () => void; onClose: (
 
 function GeoLocatingOverlay() {
   return (
-    <div className="absolute inset-0 z-40 bg-black/30 flex items-center justify-center backdrop-blur-[1px]">
+    <div className="absolute inset-0 z-40 bg-black/20 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-2xl px-8 py-7 flex flex-col items-center gap-3">
         <Spinner size={30} />
         <p className="text-[#374151] text-sm font-medium">Obteniendo ubicación…</p>
@@ -377,17 +386,22 @@ function GeoLocatingOverlay() {
 // No ✕, no click-outside, no Esc. Differentiated copy by kind (D4). Browser
 // instructions auto-detect the current browser, with manual tabs as fallback.
 
-function GeoBlockedModal({ kind, onRetry }: { kind: GeoErrorKind; onRetry: () => void }) {
-  const [browser, setBrowser] = useState<BrowserKey>(() => detectBrowser());
+// `browser` is normally derived from detection; the gallery passes it explicitly
+// to render one screen per browser. Per-browser steps show only for 'denied'
+// (a permission block); 'unavailable' is a device/connection issue, no steps.
+function GeoBlockedModal({ kind, browser, onRetry }: { kind: GeoErrorKind; browser?: BrowserKey; onRetry: () => void }) {
+  const detected = browser ?? detectBrowser();
   const copy = GEO_BLOCKED_COPY[kind];
+  const b = BROWSER_STEPS[detected];
+  const showSteps = kind === 'denied';
 
   return (
-    <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm p-4">
+    <div className="absolute inset-0 z-50 bg-black/20 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-        className="bg-white rounded-2xl shadow-2xl w-[480px] max-h-full overflow-y-auto p-8"
+        className="bg-white rounded-2xl shadow-2xl w-[440px] max-h-full overflow-y-auto p-8"
       >
         <div className="size-16 rounded-2xl bg-[#fef2f2] flex items-center justify-center mx-auto mb-5">
           <GeoPinIcon size={30} color="#dc2626" />
@@ -396,34 +410,21 @@ function GeoBlockedModal({ kind, onRetry }: { kind: GeoErrorKind; onRetry: () =>
         <h2 className="text-xl font-semibold text-[#111827] text-center mb-2">{copy.title}</h2>
         <p className="text-[#6b7280] text-sm leading-relaxed text-center mb-6">{copy.message}</p>
 
-        {/* Browser selector — relevant browser pre-selected via detection */}
-        <div className="flex gap-1 p-1 bg-[#f3f4f6] rounded-lg mb-3">
-          {(Object.keys(BROWSER_STEPS) as BrowserKey[]).map((key) => (
-            <button
-              key={key}
-              onClick={() => setBrowser(key)}
-              className={`flex-1 py-1.5 rounded-md text-[13px] font-medium transition-colors ${
-                browser === key ? 'bg-white text-[#111827] shadow-sm' : 'text-[#6b7280] hover:text-[#374151]'
-              }`}
-            >
-              {BROWSER_STEPS[key].label}
-            </button>
-          ))}
-        </div>
-
-        {/* Steps */}
-        <div className="bg-[#f9fafb] border border-[#eef1f4] rounded-lg p-4 mb-6">
-          <ol className="space-y-2.5">
-            {BROWSER_STEPS[browser].steps.map((step, i) => (
-              <li key={i} className="flex gap-3 text-[13px] text-[#374151] leading-relaxed">
-                <span className="size-5 shrink-0 rounded-full bg-[#0f172a] text-white text-[11px] font-semibold flex items-center justify-center">
-                  {i + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
-        </div>
+        {showSteps && (
+          <div className="bg-[#f9fafb] border border-[#eef1f4] rounded-lg p-4 mb-6">
+            <p className="text-[13px] text-[#374151] mb-3">Sigue estos pasos para habilitar la ubicación:</p>
+            <ol className="space-y-2.5">
+              {b.steps.map((step, i) => (
+                <li key={i} className="flex gap-3 text-[13px] text-[#374151] leading-relaxed">
+                  <span className="size-5 shrink-0 rounded-full bg-[#0f172a] text-white text-[11px] font-semibold flex items-center justify-center">
+                    {i + 1}
+                  </span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
 
         <button
           onClick={onRetry}
@@ -446,7 +447,7 @@ function TwoFAModal({ onVerify, onClose }: { onVerify: () => void; onClose: () =
   };
 
   return (
-    <div className="absolute inset-0 z-20 bg-black/40 flex items-center justify-center">
+    <div className="absolute inset-0 z-20 bg-black/20 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -658,7 +659,7 @@ function SessionExpiryBanner({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="absolute inset-0 z-30 bg-black/25 backdrop-blur-sm pointer-events-none"
+        className="absolute inset-0 z-30 bg-black/20 pointer-events-none"
       />
 
       <motion.div
@@ -721,7 +722,7 @@ function SessionEndedModal({ reason, onRestart }: { reason: TerminationReason; o
   const isSecurity = reason !== 'inactivity_timeout';
 
   return (
-    <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+    <div className="absolute inset-0 z-50 bg-black/20 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -973,7 +974,11 @@ type ScreenKind =
   | 'login-password'
   | 'geo-priming'
   | 'geo-locating'
-  | 'geo-blocked-denied'
+  | 'geo-blocked-chrome'
+  | 'geo-blocked-firefox'
+  | 'geo-blocked-safari'
+  | 'geo-blocked-edge'
+  | 'geo-blocked-generic'
   | 'geo-blocked-unavailable'
   | 'twofa'
   | 'loading'
@@ -988,7 +993,11 @@ const SCREENS: { kind: ScreenKind; label: string; tag: string }[] = [
   { kind: 'login-password', label: 'Login · contraseña', tag: 'Login' },
   { kind: 'geo-priming', label: 'Permiso de ubicación', tag: 'E1' },
   { kind: 'geo-locating', label: 'Obteniendo ubicación', tag: 'E1·E3' },
-  { kind: 'geo-blocked-denied', label: 'Bloqueado · denegado', tag: 'E2' },
+  { kind: 'geo-blocked-chrome', label: 'Bloqueado · denegado · Chrome', tag: 'E2' },
+  { kind: 'geo-blocked-firefox', label: 'Bloqueado · denegado · Firefox', tag: 'E2' },
+  { kind: 'geo-blocked-safari', label: 'Bloqueado · denegado · Safari', tag: 'E2' },
+  { kind: 'geo-blocked-edge', label: 'Bloqueado · denegado · Edge', tag: 'E2' },
+  { kind: 'geo-blocked-generic', label: 'Bloqueado · denegado · genérico', tag: 'E2' },
   { kind: 'geo-blocked-unavailable', label: 'Bloqueado · no disponible', tag: 'E2' },
   { kind: 'twofa', label: 'Verificación 2FA', tag: 'Login' },
   { kind: 'loading', label: 'Cargando', tag: 'Login' },
@@ -1045,10 +1054,10 @@ function StaticScreen({ kind }: { kind: ScreenKind }) {
       <GeoPrimingModal onAllow={noop} onClose={noop} />
     ) : kind === 'geo-locating' ? (
       <GeoLocatingOverlay />
-    ) : kind === 'geo-blocked-denied' ? (
-      <GeoBlockedModal kind="denied" onRetry={noop} />
     ) : kind === 'geo-blocked-unavailable' ? (
       <GeoBlockedModal kind="unavailable" onRetry={noop} />
+    ) : kind.startsWith('geo-blocked-') ? (
+      <GeoBlockedModal kind="denied" browser={kind.replace('geo-blocked-', '') as BrowserKey} onRetry={noop} />
     ) : kind === 'twofa' ? (
       <TwoFAModal onVerify={noop} onClose={noop} />
     ) : null;
