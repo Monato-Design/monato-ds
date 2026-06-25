@@ -921,7 +921,7 @@ const TYPE_LABELS: Record<AccountType, string> = { private: 'Private', receiving
 const STATUS_CFG: Record<VerificationStatus, { label: string; color: 'success' | 'warning' | 'primary' | 'error' }> = {
   verified:   { label: 'Verified',            color: 'success' },
   unverified: { label: 'Not verified',        color: 'warning' },
-  pending:    { label: 'Verification pending', color: 'primary' },
+  pending:    { label: 'Pending',             color: 'primary' },
   error:      { label: 'Verification error',   color: 'error'   },
 };
 
