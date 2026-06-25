@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Doller, UserMultiple4, ChevronDown,
   ArrowRight, Check, CheckCircle1, RefreshCircle1Clockwise,
-  QuestionMarkCircle, Layers2,
+  QuestionMarkCircle, Layers2, Search1,
   Bell1, Gear1,
 } from '@tailgrids/icons';
 
@@ -898,12 +898,168 @@ function ConfirmModal({ open, onCancel, onConfirm }: { open: boolean; onCancel: 
   );
 }
 
+// ─── Accounts View (CB-99) ────────────────────────────────────────────────────
+type AccountType = 'private' | 'receiving' | 'centralizing';
+type VerificationStatus = 'verified' | 'unverified' | 'pending' | 'error';
+type RegisteredAccount = {
+  id: string; holder: string; clabe: string; bank: string;
+  currency: 'MXN' | 'USD' | 'EUR'; type: AccountType; status: VerificationStatus;
+};
+
+const REGISTERED_ACCOUNTS: RegisteredAccount[] = [
+  { id: '1', holder: 'Fernando Villa Acuña',  clabe: '734180999000000006', bank: 'Fincopay',   currency: 'MXN', type: 'receiving',    status: 'verified'   },
+  { id: '2', holder: 'Diego Rivera',          clabe: '012180012345678901', bank: 'BBVA',       currency: 'MXN', type: 'private',      status: 'unverified' },
+  { id: '3', holder: 'Lucia Morales',         clabe: '014180987654321098', bank: 'Santander',  currency: 'MXN', type: 'receiving',    status: 'pending'    },
+  { id: '4', holder: 'Monato Pay México',     clabe: '734180999000000123', bank: 'Fincopay',   currency: 'MXN', type: 'centralizing', status: 'verified'   },
+  { id: '5', holder: 'Carlos Mendoza',        clabe: '021180456789012345', bank: 'HSBC',       currency: 'USD', type: 'receiving',    status: 'error'      },
+  { id: '6', holder: 'Jessica Contreras',     clabe: '036180111122223333', bank: 'Inbursa',    currency: 'MXN', type: 'private',      status: 'verified'   },
+  { id: '7', holder: 'Mateo Gonzalez',        clabe: '044180999988887777', bank: 'Scotiabank', currency: 'EUR', type: 'receiving',    status: 'unverified' },
+  { id: '8', holder: 'Operaciones Centrales', clabe: '734180999000000456', bank: 'Fincopay',   currency: 'USD', type: 'centralizing', status: 'verified'   },
+];
+
+const TYPE_LABELS: Record<AccountType, string> = { private: 'Private', receiving: 'Receiving', centralizing: 'Centralizing' };
+const STATUS_CFG: Record<VerificationStatus, { label: string; color: 'success' | 'warning' | 'primary' | 'error' }> = {
+  verified:   { label: 'Verified',            color: 'success' },
+  unverified: { label: 'Not verified',        color: 'warning' },
+  pending:    { label: 'Verification pending', color: 'primary' },
+  error:      { label: 'Verification error',   color: 'error'   },
+};
+
+const ACCOUNTS_LIST_PER_PAGE = 5;
+
+function AccountStatusBadge({ status }: { status: VerificationStatus }) {
+  const cfg = STATUS_CFG[status];
+  const icon =
+    status === 'verified' ? <CheckCircle1 size={12} /> :
+    status === 'pending'  ? <RefreshCircle1Clockwise size={12} /> :
+    <QuestionMarkCircle size={12} />;
+  return <Badge color={cfg.color} size="sm"><span className="flex items-center gap-1">{icon}{cfg.label}</span></Badge>;
+}
+
+function AccountsFilterDropdown<T extends string>({ value, options, labels, allLabel, onChange }: {
+  value: T | 'all'; options: T[]; labels: Record<string, string>; allLabel: string; onChange: (v: T | 'all') => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const label = value === 'all' ? allLabel : (labels[value] ?? value);
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(v => !v)}
+        className="h-10 px-3.5 rounded-lg border border-[#d9e2ec] bg-white flex items-center gap-2 text-sm text-[#334e68] hover:bg-[#f8fafc] transition min-w-[150px] justify-between">
+        {label}
+        <ChevronDown size={16} className="text-[#627d98]" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
+          <div className="absolute z-[9999] mt-1 w-full rounded-lg border border-[#d9e2ec] bg-white shadow-lg overflow-hidden">
+            <button onClick={() => { onChange('all'); setOpen(false); }}
+              className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === 'all' ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
+              {allLabel}
+            </button>
+            {options.map(opt => (
+              <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
+                className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === opt ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
+                {labels[opt] ?? opt}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function AccountsView() {
+  const [search, setSearch] = useState('');
+  const [currencyFilter, setCurrencyFilter] = useState<'MXN' | 'USD' | 'EUR' | 'all'>('all');
+  const [typeFilter, setTypeFilter] = useState<AccountType | 'all'>('all');
+  const [page, setPage] = useState(0);
+
+  const filtered = REGISTERED_ACCOUNTS.filter(acc => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch = !q || acc.holder.toLowerCase().includes(q) || acc.clabe.includes(q);
+    const matchesCurrency = currencyFilter === 'all' || acc.currency === currencyFilter;
+    const matchesType = typeFilter === 'all' || acc.type === typeFilter;
+    return matchesSearch && matchesCurrency && matchesType;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ACCOUNTS_LIST_PER_PAGE));
+  const safePage = Math.min(page, totalPages - 1);
+  const visible = filtered.slice(safePage * ACCOUNTS_LIST_PER_PAGE, (safePage + 1) * ACCOUNTS_LIST_PER_PAGE);
+
+  return (
+    <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
+        <div>
+          <h1 className="text-[#151515] text-2xl font-semibold">Registered accounts</h1>
+          <p className="text-[#627d98] text-sm mt-1">View your registered private, receiving and centralizing accounts.</p>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search1 size={18} className="text-[#9fb3c8] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
+              placeholder="Search by name or CLABE"
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-[#d9e2ec] bg-white text-sm text-[#334e68] placeholder:text-[#9fb3c8] focus:border-primary-500 focus:outline-none transition" />
+          </div>
+          <AccountsFilterDropdown value={typeFilter} options={['private', 'receiving', 'centralizing']} labels={TYPE_LABELS} allLabel="All types" onChange={v => { setTypeFilter(v); setPage(0); }} />
+          <AccountsFilterDropdown value={currencyFilter} options={['MXN', 'USD', 'EUR']} labels={{ MXN: 'MXN', USD: 'USD', EUR: 'EUR' }} allLabel="All currencies" onChange={v => { setCurrencyFilter(v); setPage(0); }} />
+        </div>
+
+        <div className="bg-white rounded-2xl border border-[#e8edf2] overflow-hidden">
+          <div className="grid grid-cols-[1.6fr_1.6fr_1fr_0.8fr_0.9fr_1.1fr] gap-4 px-6 py-3.5 border-b border-[#e8edf2] bg-[#f8fafc]">
+            {['Account holder', 'CLABE', 'Bank', 'Currency', 'Type', 'Status'].map(h => (
+              <span key={h} className="text-[#627d98] text-xs font-medium uppercase tracking-wide">{h}</span>
+            ))}
+          </div>
+          {visible.length === 0 ? (
+            <div className="px-6 py-16 text-center text-[#9fb3c8] text-sm">No accounts match your search.</div>
+          ) : (
+            visible.map(acc => (
+              <div key={acc.id} className="grid grid-cols-[1.6fr_1.6fr_1fr_0.8fr_0.9fr_1.1fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition">
+                <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
+                <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
+                <span className="text-[#486581] text-sm">{acc.bank}</span>
+                <span className="text-[#486581] text-sm">{acc.currency}</span>
+                <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
+                <div><AccountStatusBadge status={acc.status} /></div>
+              </div>
+            ))
+          )}
+          {filtered.length > 0 && (
+            <div className="flex items-center justify-between px-6 py-3.5">
+              <span className="text-[#627d98] text-sm">
+                Showing {safePage * ACCOUNTS_LIST_PER_PAGE + 1}–{Math.min((safePage + 1) * ACCOUNTS_LIST_PER_PAGE, filtered.length)} of {filtered.length}
+              </span>
+              <div className="flex items-center gap-4">
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={safePage === 0}
+                  className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
+                  <ChevronDown size={16} className="text-[#627d98] rotate-90" />
+                </button>
+                <span className="text-[#486581] text-sm font-medium">Page {safePage + 1} of {totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={safePage === totalPages - 1}
+                  className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
+                  <ChevronDown size={16} className="text-[#627d98] -rotate-90" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Sidebar — exacto Figma ───────────────────────────────────────────────────
-function CBSidebar({ onExit: _onExit }: { onExit: () => void }) {
+function CBSidebar({ onExit: _onExit, activeView, onNavigate }: {
+  onExit: () => void;
+  activeView: 'flow' | 'accounts';
+  onNavigate: (v: 'flow' | 'accounts') => void;
+}) {
   const NAV_MAIN = [
-    { label: 'Currency exchange', icon: Doller,        active: true  },
-    { label: 'Accounts',          icon: UserMultiple4, active: false },
-    { label: 'All transactions',  icon: Layers2,       active: false },
+    { label: 'Currency exchange', icon: Doller,        view: 'flow'     as const, enabled: true  },
+    { label: 'Accounts',          icon: UserMultiple4, view: 'accounts' as const, enabled: true  },
+    { label: 'All transactions',  icon: Layers2,       view: null,                enabled: false },
   ];
 
   return (
@@ -921,20 +1077,26 @@ function CBSidebar({ onExit: _onExit }: { onExit: () => void }) {
         <div className="flex flex-col gap-3">
           <p className="text-[#829ab1] text-xs font-normal leading-4 tracking-tight">Main menu</p>
           <div className="flex flex-col gap-1">
-            {NAV_MAIN.map(({ label, icon: Icon, active }) => (
-              <button
-                key={label}
-                disabled={!active}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
-                  active
-                    ? 'bg-[#e6f4fa] text-primary-500 font-semibold'
-                    : 'text-[#1e1e22] font-medium cursor-not-allowed opacity-60'
-                }`}
-              >
-                <Icon size={24} className={active ? 'text-primary-500' : 'text-[#1e1e22]'} />
-                {label}
-              </button>
-            ))}
+            {NAV_MAIN.map(({ label, icon: Icon, view, enabled }) => {
+              const active = enabled && view === activeView;
+              return (
+                <button
+                  key={label}
+                  disabled={!enabled}
+                  onClick={() => enabled && view && onNavigate(view)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
+                    active
+                      ? 'bg-[#e6f4fa] text-primary-500 font-semibold'
+                      : enabled
+                        ? 'text-[#1e1e22] font-medium hover:bg-[#f8fafc]'
+                        : 'text-[#1e1e22] font-medium cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  <Icon size={24} className={active ? 'text-primary-500' : 'text-[#1e1e22]'} />
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </nav>
@@ -971,8 +1133,10 @@ function CBSidebar({ onExit: _onExit }: { onExit: () => void }) {
 function CBApp({ onExit }: { onExit: () => void }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [view, setView] = useState<'flow' | 'accounts'>('flow');
 
   const stepLabels = ['Currency Exchange', 'Details', 'Review', 'Fund'];
+  const breadcrumbLabel = view === 'accounts' ? 'Accounts' : stepLabels[state.step - 1];
 
   const ScreenComponent = (() => {
     switch (state.step) {
@@ -1005,13 +1169,13 @@ function CBApp({ onExit }: { onExit: () => void }) {
           <div className="size-3 rounded-full bg-yellow-500" />
           <div className="size-3 rounded-full bg-green-500" />
           <div className="flex-1 flex justify-center">
-            <span className="text-white/40 text-[11px]">CrossBorder — Monato · {stepLabels[state.step - 1]}</span>
+            <span className="text-white/40 text-[11px]">CrossBorder — Monato · {breadcrumbLabel}</span>
           </div>
         </div>
 
         {/* App content */}
         <div className="flex-1 flex overflow-hidden bg-background-50">
-          <CBSidebar onExit={onExit} />
+          <CBSidebar onExit={onExit} activeView={view} onNavigate={setView} />
 
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Breadcrumb header — exacto Figma */}
@@ -1019,30 +1183,49 @@ function CBApp({ onExit }: { onExit: () => void }) {
               <p className="text-[#334e68] text-xl font-medium leading-7">
                 <span className="font-medium">Crossborder</span>
                 {' '}
-                <span className="font-normal text-[#334e68]">/ {stepLabels[state.step - 1]}</span>
+                <span className="font-normal text-[#334e68]">/ {breadcrumbLabel}</span>
               </p>
             </div>
 
-            {/* Stepper — centrado en la pantalla */}
-            <div className="bg-white border-b border-[#f8fafc] px-6 py-4 shrink-0 flex items-center justify-center">
-              <Stepper current={state.step} />
-            </div>
+            {view === 'flow' ? (
+              <>
+                {/* Stepper — centrado en la pantalla */}
+                <div className="bg-white border-b border-[#f8fafc] px-6 py-4 shrink-0 flex items-center justify-center">
+                  <Stepper current={state.step} />
+                </div>
 
-            {/* Screens */}
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={state.step}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.16, ease: 'easeOut' }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  {ScreenComponent}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                {/* Screens */}
+                <div className="flex-1 overflow-hidden flex flex-col">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={state.step}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.16, ease: 'easeOut' }}
+                      className="flex-1 flex flex-col h-full"
+                    >
+                      {ScreenComponent}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key="accounts"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                    className="flex-1 flex flex-col h-full"
+                  >
+                    <AccountsView />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
