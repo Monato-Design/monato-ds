@@ -1,7 +1,7 @@
 /* ============================================================
-   Login screen — Monato DS · v2
-   Figma node 8549-1899 (DS Web 2026), reordered:
-   form → divider → socials (coming soon)
+   Login screen — Monato DS · v3 (with motion)
+   Figma node 8549-1899 (DS Web 2026)
+   Adds: Symbol intro, cascaded form, loading overlay
    ============================================================ */
 
 .monato-login-screen {
@@ -13,11 +13,11 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--space-28) var(--space-8) var(--space-12);
+  padding: var(--space-20) var(--space-8) var(--space-12);
   overflow: hidden;
 }
 
-/* Glow blob — recreates Figma's gradient mesh with pure CSS */
+/* Glow blob */
 .monato-login-glow {
   position: absolute;
   top: -190px;
@@ -48,8 +48,17 @@
 .monato-login-header {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--space-4);
   text-align: center;
+}
+
+.monato-login-symbol {
+  width: 64px;
+  height: auto;
+  margin-bottom: var(--space-2);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .monato-login-title {
@@ -223,6 +232,13 @@
   cursor: not-allowed;
 }
 
+/* Tail group (divider + socials + sign-up) */
+.monato-login-tail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
 /* Divider */
 .monato-login-divider {
   display: flex;
@@ -284,11 +300,6 @@
   filter: grayscale(0.3);
 }
 
-.monato-login-social-label {
-  display: inline-block;
-}
-
-/* "Soon" badge on disabled social buttons */
 .monato-login-soon-badge {
   display: inline-flex;
   align-items: center;
@@ -324,15 +335,61 @@
   text-decoration: underline;
 }
 
+/* ─── Loading overlay ────────────────────────────────────────────────────── */
+
+.monato-login-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  background: var(--color-background-white-primary);
+  /* slight tint for depth */
+  background-image:
+    radial-gradient(closest-side at 50% 40%, rgba(186, 230, 253, 0.25), transparent 70%);
+}
+
+.monato-login-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--color-border-secondary);
+  border-top-color: var(--color-button-primary-background);
+  border-right-color: var(--color-button-primary-background);
+}
+
+.monato-login-loading-text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-title);
+  letter-spacing: -0.2px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .monato-login-spinner {
+    animation: none;
+  }
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .monato-login-screen {
-    padding: var(--space-16) var(--space-5) var(--space-8);
+    padding: var(--space-12) var(--space-5) var(--space-8);
   }
 
   .monato-login-title {
     font-size: var(--font-size-4xl);
     line-height: var(--font-line-height-4xl);
+  }
+
+  .monato-login-symbol {
+    width: 52px;
   }
 
   .monato-login-social-btn {
