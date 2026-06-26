@@ -1,9 +1,103 @@
 import { useState, type FormEvent } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from 'framer-motion';
+import Symbol from '../../assets/Symbol.png';
 import './styles.css';
 
 interface LoginProps {
   onSuccess: () => void;
 }
+
+// ─── Animation variants ──────────────────────────────────────────────────────
+// Typed explicitly to avoid framer-motion AnimationGeneratorType inference errors
+
+/**
+ * Header group: starts visually in the form's area (translateY +220px),
+ * then slides up to its final position at the top.
+ *
+ * Why translateY: it offsets visually without moving in flow.
+ * The form below keeps its slot (with opacity 0) so when the header
+ * arrives at y:0, the form area is ready to fade in.
+ */
+const headerVariants: Variants = {
+  hidden: { y: 220 },
+  visible: {
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.32, 0.72, 0, 1], // ease-out with subtle overshoot feel
+      delay: 1.2, // wait for children (symbol, title, subtitle) to fade in
+    },
+  },
+};
+
+const symbolVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.4, ease: 'easeOut' }, // 0.0 – 0.4s
+  },
+};
+
+const titleVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: 'easeOut', delay: 0.4 }, // 0.4 – 0.75s
+  },
+};
+
+const subtitleVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.35, ease: 'easeOut', delay: 0.8 }, // 0.8 – 1.15s
+  },
+};
+
+// Form: starts AFTER the header has slid up (~2.0s)
+const formContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 2.0,
+      staggerChildren: 0.07,
+    },
+  },
+};
+
+const formItemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
+
+// Tail (divider + socials + sign-up): appears last
+const tailVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.4, ease: 'easeOut', delay: 2.5 },
+  },
+};
+
+// Loading overlay
+const overlayVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.25 } },
+};
+
+// ─── Helper ──────────────────────────────────────────────────────────────────
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function Login({ onSuccess }: LoginProps) {
   const [email, setEmail] = useState('');
@@ -18,22 +112,26 @@ export function Login({ onSuccess }: LoginProps) {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ password }),
-      });
+      const [res] = await Promise.all([
+        fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password }),
+        }),
+        sleep(1200), // min perceived feedback
+      ]);
 
       if (res.ok) {
+        await sleep(200);
         onSuccess();
       } else {
         const data = await res.json().catch(() => ({}));
         setError(data.error ?? 'Error al iniciar sesión');
+        setLoading(false);
       }
     } catch {
       setError('Error de conexión');
-    } finally {
       setLoading(false);
     }
   };
@@ -42,18 +140,41 @@ export function Login({ onSuccess }: LoginProps) {
     <div className="monato-login-screen">
       <div className="monato-login-glow" aria-hidden="true" />
 
-      <div className="monato-login-content">
-        <header className="monato-login-header">
-          <h1 className="monato-login-title">Welcome back</h1>
-          <p className="monato-login-subtitle">
+      <motion.div
+        className="monato-login-content"
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Header — starts in form area, slides up */}
+        <motion.header className="monato-login-header" variants={headerVariants}>
+          <motion.img
+            src={Symbol}
+            alt="Monato"
+            className="monato-login-symbol"
+            variants={symbolVariants}
+          />
+          <motion.h1
+            className="monato-login-title"
+            variants={titleVariants}
+          >
+            Welcome back
+          </motion.h1>
+          <motion.p
+            className="monato-login-subtitle"
+            variants={subtitleVariants}
+          >
             Login to continue your journey with us.
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         <div className="monato-login-form-wrap">
-          {/* Email form — FIRST */}
-          <form className="monato-login-form" onSubmit={handleSubmit}>
-            <label className="monato-login-field">
+          {/* Email form — staggered cascade */}
+          <motion.form
+            className="monato-login-form"
+            onSubmit={handleSubmit}
+            variants={formContainerVariants}
+          >
+            <motion.label className="monato-login-field" variants={formItemVariants}>
               <span className="monato-login-label">Email</span>
               <input
                 type="email"
@@ -63,9 +184,9 @@ export function Login({ onSuccess }: LoginProps) {
                 placeholder="Enter your email"
                 className="monato-login-input"
               />
-            </label>
+            </motion.label>
 
-            <label className="monato-login-field">
+            <motion.label className="monato-login-field" variants={formItemVariants}>
               <span className="monato-login-label">Password</span>
               <input
                 type="password"
@@ -77,9 +198,9 @@ export function Login({ onSuccess }: LoginProps) {
                 required
                 autoFocus
               />
-            </label>
+            </motion.label>
 
-            <div className="monato-login-row">
+            <motion.div className="monato-login-row" variants={formItemVariants}>
               <label className="monato-login-remember">
                 <input
                   type="checkbox"
@@ -96,65 +217,108 @@ export function Login({ onSuccess }: LoginProps) {
               >
                 Forgot password?
               </a>
-            </div>
+            </motion.div>
 
-            {error && <div className="monato-login-error">{error}</div>}
+            {error && (
+              <motion.div
+                className="monato-login-error"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {error}
+              </motion.div>
+            )}
 
-            <button
+            <motion.button
               type="submit"
               disabled={loading || !password}
               className="monato-login-button"
+              variants={formItemVariants}
+              whileTap={!loading && password ? { scale: 0.98 } : undefined}
             >
-              {loading ? 'Verificando...' : 'Sign in'}
-            </button>
-          </form>
+              Sign in
+            </motion.button>
+          </motion.form>
 
-          {/* Divider */}
-          <div className="monato-login-divider">
-            <span className="monato-login-divider-line" />
-            <span className="monato-login-divider-text">Or sign in with your accounts</span>
-            <span className="monato-login-divider-line" />
-          </div>
+          {/* Tail — divider + socials + sign-up */}
+          <motion.div
+            className="monato-login-tail"
+            variants={tailVariants}
+          >
+            <div className="monato-login-divider">
+              <span className="monato-login-divider-line" />
+              <span className="monato-login-divider-text">Or sign in with your accounts</span>
+              <span className="monato-login-divider-line" />
+            </div>
 
-          {/* Social buttons — disabled, "Coming soon" */}
-          <div className="monato-login-socials">
-            <button
-              type="button"
-              className="monato-login-social-btn"
-              disabled
-              title="Coming soon"
-              aria-label="Sign in with Google — coming soon"
-            >
-              <GoogleIcon />
-              <span className="monato-login-social-label">Sign in with Google</span>
-              <span className="monato-login-soon-badge">Soon</span>
-            </button>
-            <button
-              type="button"
-              className="monato-login-social-btn"
-              disabled
-              title="Coming soon"
-              aria-label="Sign in with Facebook — coming soon"
-            >
-              <FacebookIcon />
-              <span className="monato-login-social-label">Sign in with Facebook</span>
-              <span className="monato-login-soon-badge">Soon</span>
-            </button>
-          </div>
+            <div className="monato-login-socials">
+              <button
+                type="button"
+                className="monato-login-social-btn"
+                disabled
+                title="Coming soon"
+                aria-label="Sign in with Google — coming soon"
+              >
+                <GoogleIcon />
+                <span className="monato-login-social-label">Sign in with Google</span>
+                <span className="monato-login-soon-badge">Soon</span>
+              </button>
+              <button
+                type="button"
+                className="monato-login-social-btn"
+                disabled
+                title="Coming soon"
+                aria-label="Sign in with Facebook — coming soon"
+              >
+                <FacebookIcon />
+                <span className="monato-login-social-label">Sign in with Facebook</span>
+                <span className="monato-login-soon-badge">Soon</span>
+              </button>
+            </div>
 
-          {/* Sign up footer */}
-          <p className="monato-login-signup">
-            Don't have an account?{' '}
-            <a
-              href="#"
-              onClick={e => e.preventDefault()}
-              className="monato-login-signup-link"
-            >
-              Sign Up
-            </a>
-          </p>
+            <p className="monato-login-signup">
+              Don't have an account?{' '}
+              <a
+                href="#"
+                onClick={e => e.preventDefault()}
+                className="monato-login-signup-link"
+              >
+                Sign Up
+              </a>
+            </p>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* ─── Loading overlay ─────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            className="monato-login-loading-overlay"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            role="status"
+            aria-live="polite"
+          >
+            <motion.div
+              className="monato-login-spinner"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            />
+            <motion.p
+              className="monato-login-loading-text"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              Iniciando sesión...
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
