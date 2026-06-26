@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type MouseEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import './styles.css';
 
 interface LoginProps {
@@ -38,8 +38,6 @@ export function Login({ onSuccess }: LoginProps) {
     }
   };
 
-  const noop = (e: MouseEvent) => e.preventDefault();
-
   return (
     <div className="monato-login-screen">
       <div className="monato-login-glow" aria-hidden="true" />
@@ -53,33 +51,7 @@ export function Login({ onSuccess }: LoginProps) {
         </header>
 
         <div className="monato-login-form-wrap">
-          <div className="monato-login-socials">
-            <button
-              type="button"
-              className="monato-login-social-btn"
-              onClick={noop}
-              title="Demo — usa el formulario de abajo"
-            >
-              <GoogleIcon />
-              <span>Sign in with Google</span>
-            </button>
-            <button
-              type="button"
-              className="monato-login-social-btn"
-              onClick={noop}
-              title="Demo — usa el formulario de abajo"
-            >
-              <FacebookIcon />
-              <span>Sign in with Facebook</span>
-            </button>
-          </div>
-
-          <div className="monato-login-divider">
-            <span className="monato-login-divider-line" />
-            <span className="monato-login-divider-text">Or sign in with email</span>
-            <span className="monato-login-divider-line" />
-          </div>
-
+          {/* Email form — FIRST */}
           <form className="monato-login-form" onSubmit={handleSubmit}>
             <label className="monato-login-field">
               <span className="monato-login-label">Email</span>
@@ -119,7 +91,7 @@ export function Login({ onSuccess }: LoginProps) {
               </label>
               <a
                 href="#"
-                onClick={noop}
+                onClick={e => e.preventDefault()}
                 className="monato-login-forgot"
               >
                 Forgot password?
@@ -135,14 +107,52 @@ export function Login({ onSuccess }: LoginProps) {
             >
               {loading ? 'Verificando...' : 'Sign in'}
             </button>
-
-            <p className="monato-login-signup">
-              Don't have an account?{' '}
-              <a href="#" onClick={noop} className="monato-login-signup-link">
-                Sign Up
-              </a>
-            </p>
           </form>
+
+          {/* Divider */}
+          <div className="monato-login-divider">
+            <span className="monato-login-divider-line" />
+            <span className="monato-login-divider-text">Or sign in with your accounts</span>
+            <span className="monato-login-divider-line" />
+          </div>
+
+          {/* Social buttons — disabled, "Coming soon" */}
+          <div className="monato-login-socials">
+            <button
+              type="button"
+              className="monato-login-social-btn"
+              disabled
+              title="Coming soon"
+              aria-label="Sign in with Google — coming soon"
+            >
+              <GoogleIcon />
+              <span className="monato-login-social-label">Sign in with Google</span>
+              <span className="monato-login-soon-badge">Soon</span>
+            </button>
+            <button
+              type="button"
+              className="monato-login-social-btn"
+              disabled
+              title="Coming soon"
+              aria-label="Sign in with Facebook — coming soon"
+            >
+              <FacebookIcon />
+              <span className="monato-login-social-label">Sign in with Facebook</span>
+              <span className="monato-login-soon-badge">Soon</span>
+            </button>
+          </div>
+
+          {/* Sign up footer */}
+          <p className="monato-login-signup">
+            Don't have an account?{' '}
+            <a
+              href="#"
+              onClick={e => e.preventDefault()}
+              className="monato-login-signup-link"
+            >
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
     </div>

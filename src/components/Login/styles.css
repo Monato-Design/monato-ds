@@ -1,7 +1,7 @@
 /* ============================================================
-   Login screen — Monato DS
-   Figma node 8549-1899 (DS Web 2026)
-   Uses semantic tokens exclusively (no hardcoded colors)
+   Login screen — Monato DS · v2
+   Figma node 8549-1899 (DS Web 2026), reordered:
+   form → divider → socials (coming soon)
    ============================================================ */
 
 .monato-login-screen {
@@ -74,65 +74,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-}
-
-/* Social buttons */
-.monato-login-socials {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.monato-login-social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-3) var(--space-20);
-  border: 1px solid var(--color-button-primary-outline-stroke);
-  border-radius: var(--radius-lg);
-  background: var(--color-button-primary-outline-background);
-  color: var(--color-button-primary-outline-text);
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-md);
-  line-height: var(--font-line-height-md);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: -0.2px;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
-}
-
-.monato-login-social-btn:hover {
-  background: var(--color-button-primary-outline-hover-background);
-  color: var(--color-button-primary-outline-hover-text);
-}
-
-.monato-login-social-btn svg {
-  flex-shrink: 0;
-}
-
-/* Divider */
-.monato-login-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.monato-login-divider-line {
-  flex: 1;
-  height: 1px;
-  background: var(--color-border-secondary);
-}
-
-.monato-login-divider-text {
-  font-size: var(--font-size-sm);
-  line-height: var(--font-line-height-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary-text);
-  letter-spacing: -0.2px;
-  white-space: nowrap;
 }
 
 /* Form */
@@ -282,10 +223,91 @@
   cursor: not-allowed;
 }
 
+/* Divider */
+.monato-login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.monato-login-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-secondary);
+}
+
+.monato-login-divider-text {
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary-text);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+/* Social buttons — disabled state */
+.monato-login-socials {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.monato-login-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  border: 1px dashed var(--color-button-primary-outline-stroke);
+  border-radius: var(--radius-lg);
+  background: var(--color-button-primary-outline-background);
+  color: var(--color-button-primary-outline-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.2px;
+  cursor: not-allowed;
+  opacity: 0.55;
+  position: relative;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.monato-login-social-btn:hover {
+  opacity: 0.7;
+}
+
+.monato-login-social-btn svg {
+  flex-shrink: 0;
+  filter: grayscale(0.3);
+}
+
+.monato-login-social-label {
+  display: inline-block;
+}
+
+/* "Soon" badge on disabled social buttons */
+.monato-login-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-badges-gray-background);
+  color: var(--color-badges-gray-text);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  margin-left: var(--space-1);
+}
+
 /* Sign up footer */
 .monato-login-signup {
-  margin: var(--space-2) 0 0;
-  text-align: left;
+  margin: 0;
+  text-align: center;
   font-size: var(--font-size-md);
   line-height: var(--font-line-height-md);
   color: var(--color-text-secondary-text);
@@ -315,5 +337,9 @@
 
   .monato-login-social-btn {
     padding: var(--space-3);
+  }
+
+  .monato-login-soon-badge {
+    margin-left: auto;
   }
 }
