@@ -38,6 +38,7 @@ import { MenuBar } from './components/core/menu-bar';
 import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
 import LogoDefault from './assets/logo-default.png';
+import { AuthGate } from './components/AuthGate';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
@@ -1249,7 +1250,8 @@ export function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-background-soft-50 font-sans">
+    <AuthGate>
+      <div className="flex min-h-screen bg-background-soft-50 font-sans">
 
       {/* ── Sidebar ─────────────────────────────────────────────────────────── */}
       <aside className="sticky top-0 h-screen w-60 shrink-0 flex flex-col border-r border-base-100 bg-background-50">
@@ -1358,6 +1360,7 @@ export function App() {
           </AnimatePresence>
         </div>
       </main>
-    </div>
+      </div>
+    </AuthGate>
   );
 }

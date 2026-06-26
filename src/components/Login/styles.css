@@ -1,0 +1,319 @@
+/* ============================================================
+   Login screen — Monato DS
+   Figma node 8549-1899 (DS Web 2026)
+   Uses semantic tokens exclusively (no hardcoded colors)
+   ============================================================ */
+
+.monato-login-screen {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-background-white-primary);
+  font-family: var(--font-family-sans);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-28) var(--space-8) var(--space-12);
+  overflow: hidden;
+}
+
+/* Glow blob — recreates Figma's gradient mesh with pure CSS */
+.monato-login-glow {
+  position: absolute;
+  top: -190px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 548px;
+  height: 386px;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 30% 50%, rgba(186, 230, 253, 0.55), transparent 70%),
+    radial-gradient(closest-side at 70% 40%, rgba(216, 180, 254, 0.5), transparent 70%),
+    radial-gradient(closest-side at 50% 60%, rgba(244, 114, 182, 0.35), transparent 70%);
+  filter: blur(40px);
+  opacity: 0.9;
+}
+
+.monato-login-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-9);
+}
+
+/* Header */
+.monato-login-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.monato-login-title {
+  margin: 0;
+  font-size: var(--font-size-5xl);
+  line-height: var(--font-line-height-5xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-title);
+  letter-spacing: -0.01em;
+}
+
+.monato-login-subtitle {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  color: var(--color-text-secondary-text);
+  letter-spacing: -0.2px;
+}
+
+/* Form wrapper */
+.monato-login-form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Social buttons */
+.monato-login-socials {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.monato-login-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-20);
+  border: 1px solid var(--color-button-primary-outline-stroke);
+  border-radius: var(--radius-lg);
+  background: var(--color-button-primary-outline-background);
+  color: var(--color-button-primary-outline-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.monato-login-social-btn:hover {
+  background: var(--color-button-primary-outline-hover-background);
+  color: var(--color-button-primary-outline-hover-text);
+}
+
+.monato-login-social-btn svg {
+  flex-shrink: 0;
+}
+
+/* Divider */
+.monato-login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.monato-login-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-secondary);
+}
+
+.monato-login-divider-text {
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary-text);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+/* Form */
+.monato-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.monato-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.monato-login-label {
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-input-label-text);
+  letter-spacing: -0.2px;
+}
+
+.monato-login-input {
+  width: 100%;
+  padding: var(--space-2-5) var(--radius-2xl);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--radius-lg);
+  background: var(--color-input-background);
+  color: var(--color-text-body);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  letter-spacing: -0.2px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.monato-login-input::placeholder {
+  color: var(--color-input-placeholder-text);
+}
+
+.monato-login-input:focus {
+  border-color: var(--color-input-brand-focus-border);
+  box-shadow: 0 0 0 3px var(--primitive-skyblue-a15);
+}
+
+/* Remember + forgot row */
+.monato-login-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.monato-login-remember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  color: var(--color-text-body);
+  letter-spacing: -0.2px;
+  cursor: pointer;
+}
+
+.monato-login-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1.25px solid var(--color-border-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--color-checkbox-background);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.monato-login-checkbox:checked {
+  background: var(--color-checkbox-checked-background);
+  border-color: var(--color-checkbox-checked-border);
+}
+
+.monato-login-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--color-checkbox-checked);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.monato-login-forgot {
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-title);
+  letter-spacing: -0.2px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.monato-login-forgot:hover {
+  text-decoration: underline;
+}
+
+/* Error */
+.monato-login-error {
+  padding: var(--space-3);
+  border: 1px solid var(--color-alerts-danger-border);
+  background: var(--color-alerts-danger-background);
+  color: var(--color-alerts-danger-description);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: var(--font-line-height-sm);
+}
+
+/* Sign in button */
+.monato-login-button {
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-button-primary-background);
+  color: var(--color-button-primary-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  margin-top: var(--space-1);
+}
+
+.monato-login-button:hover:not(:disabled) {
+  background: var(--color-button-primary-hover-background);
+}
+
+.monato-login-button:disabled {
+  background: var(--color-button-disabled-primary-background);
+  color: var(--color-button-disabled-primary-text);
+  cursor: not-allowed;
+}
+
+/* Sign up footer */
+.monato-login-signup {
+  margin: var(--space-2) 0 0;
+  text-align: left;
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-md);
+  color: var(--color-text-secondary-text);
+  letter-spacing: -0.2px;
+}
+
+.monato-login-signup-link {
+  color: var(--color-text-title);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+
+.monato-login-signup-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .monato-login-screen {
+    padding: var(--space-16) var(--space-5) var(--space-8);
+  }
+
+  .monato-login-title {
+    font-size: var(--font-size-4xl);
+    line-height: var(--font-line-height-4xl);
+  }
+
+  .monato-login-social-btn {
+    padding: var(--space-3);
+  }
+}
