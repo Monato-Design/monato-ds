@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import Symbol from '../../assets/Symbol.png';
+import { setUserEmail, isMonatoEmail } from '../../lib/user';
 import './styles.css';
 
 interface LoginProps {
@@ -9,24 +10,15 @@ interface LoginProps {
 }
 
 // ─── Animation variants ──────────────────────────────────────────────────────
-// Typed explicitly to avoid framer-motion AnimationGeneratorType inference errors
 
-/**
- * Header group: starts visually in the form's area (translateY +220px),
- * then slides up to its final position at the top.
- *
- * Why translateY: it offsets visually without moving in flow.
- * The form below keeps its slot (with opacity 0) so when the header
- * arrives at y:0, the form area is ready to fade in.
- */
 const headerVariants: Variants = {
   hidden: { y: 220 },
   visible: {
     y: 0,
     transition: {
       duration: 0.7,
-      ease: [0.32, 0.72, 0, 1], // ease-out with subtle overshoot feel
-      delay: 1.2, // wait for children (symbol, title, subtitle) to fade in
+      ease: [0.32, 0.72, 0, 1],
+      delay: 1.2,
     },
   },
 };
@@ -36,7 +28,7 @@ const symbolVariants: Variants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: 'easeOut' }, // 0.0 – 0.4s
+    transition: { duration: 0.4, ease: 'easeOut' },
   },
 };
 
@@ -45,7 +37,7 @@ const titleVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: 'easeOut', delay: 0.4 }, // 0.4 – 0.75s
+    transition: { duration: 0.35, ease: 'easeOut', delay: 0.4 },
   },
 };
 
@@ -53,11 +45,10 @@ const subtitleVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.35, ease: 'easeOut', delay: 0.8 }, // 0.8 – 1.15s
+    transition: { duration: 0.35, ease: 'easeOut', delay: 0.8 },
   },
 };
 
-// Form: starts AFTER the header has slid up (~2.0s)
 const formContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -78,7 +69,6 @@ const formItemVariants: Variants = {
   },
 };
 
-// Tail (divider + socials + sign-up): appears last
 const tailVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -87,14 +77,12 @@ const tailVariants: Variants = {
   },
 };
 
-// Loading overlay
 const overlayVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.2 } },
   exit: { opacity: 0, transition: { duration: 0.25 } },
 };
 
-// ─── Helper ──────────────────────────────────────────────────────────────────
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -109,6 +97,13 @@ export function Login({ onSuccess }: LoginProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Frontend domain validation (UX) — backend re-validates for security
+    if (!isMonatoEmail(email)) {
+      setError('Usa tu correo @monato.com');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -117,12 +112,16 @@ export function Login({ onSuccess }: LoginProps) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'same-origin',
-          body: JSON.stringify({ password }),
+          body: JSON.stringify({ email, password }),
         }),
         sleep(1200), // min perceived feedback
       ]);
 
       if (res.ok) {
+        // Persist email before transitioning into the app
+        const data = await res.json().catch(() => ({}));
+        const persistedEmail = typeof data.email === 'string' ? data.email : email;
+        setUserEmail(persistedEmail);
         await sleep(200);
         onSuccess();
       } else {
@@ -145,7 +144,6 @@ export function Login({ onSuccess }: LoginProps) {
         initial="hidden"
         animate="visible"
       >
-        {/* Header — starts in form area, slides up */}
         <motion.header className="monato-login-header" variants={headerVariants}>
           <motion.img
             src={Symbol}
@@ -168,7 +166,6 @@ export function Login({ onSuccess }: LoginProps) {
         </motion.header>
 
         <div className="monato-login-form-wrap">
-          {/* Email form — staggered cascade */}
           <motion.form
             className="monato-login-form"
             onSubmit={handleSubmit}
@@ -181,8 +178,9 @@ export function Login({ onSuccess }: LoginProps) {
                 autoComplete="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="tu.nombre@monato.com"
                 className="monato-login-input"
+                required
               />
             </motion.label>
 
@@ -196,7 +194,6 @@ export function Login({ onSuccess }: LoginProps) {
                 placeholder="Enter your password"
                 className="monato-login-input"
                 required
-                autoFocus
               />
             </motion.label>
 
@@ -232,16 +229,15 @@ export function Login({ onSuccess }: LoginProps) {
 
             <motion.button
               type="submit"
-              disabled={loading || !password}
+              disabled={loading || !password || !email}
               className="monato-login-button"
               variants={formItemVariants}
-              whileTap={!loading && password ? { scale: 0.98 } : undefined}
+              whileTap={!loading && password && email ? { scale: 0.98 } : undefined}
             >
               Sign in
             </motion.button>
           </motion.form>
 
-          {/* Tail — divider + socials + sign-up */}
           <motion.div
             className="monato-login-tail"
             variants={tailVariants}
@@ -291,7 +287,6 @@ export function Login({ onSuccess }: LoginProps) {
         </div>
       </motion.div>
 
-      {/* ─── Loading overlay ─────────────────────────────────────────────── */}
       <AnimatePresence>
         {loading && (
           <motion.div

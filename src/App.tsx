@@ -39,6 +39,7 @@ import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
 import LogoDefault from './assets/logo-default.png';
 import { AuthGate } from './components/AuthGate';
+import { getUserDisplay, clearUserEmail } from './lib/user';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
@@ -1231,9 +1232,45 @@ function PrimitivesDropdown({ label, items, active, onSelect }: {
   );
 }
 
+// ─── External resources ───────────────────────────────────────────────────────
+const FIGMA_DS_URL = 'https://www.figma.com/design/nau30mpaZ43tyBjogqSvMV/DS-Web-2026--new-?node-id=1112-920';
+
+// ─── Logout icon (inline SVG, no @tailgrids dependency) ───────────────────────
+function LogoutIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 export function App() {
   const [active, setActive] = useState<TabId>('overview');
+  const userDisplay = useMemo(() => getUserDisplay(), []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+    } finally {
+      clearUserEmail();
+      window.location.reload();
+    }
+  };
+
   const PageComponent = PAGES[active];
 
   // Deep-link: a #geo* hash lands on the Customer Platform page (where the
@@ -1316,9 +1353,14 @@ export function App() {
 
         {/* Footer */}
         <div className="border-t border-base-100 px-4 py-3 flex items-center gap-3">
-          <Avatar size="sm" fallback="ML" />
+          <Avatar size="sm" fallback={userDisplay.initials} />
           <div className="min-w-0">
-            <p className="text-title-50 truncate text-xs font-medium">Monato Design</p>
+            <p
+              className="text-title-50 truncate text-xs font-medium"
+              title={`${userDisplay.greeting} ${userDisplay.name}`}
+            >
+              {userDisplay.greeting} {userDisplay.name}
+            </p>
             <p className="text-text-200 truncate text-xs">v0.1 · 13 may 2026</p>
           </div>
         </div>
@@ -1334,13 +1376,17 @@ export function App() {
             <span className="text-title-50 font-medium capitalize">{active}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" appearance="outline">
+            <Button
+              size="sm"
+              appearance="outline"
+              onClick={() => window.open(FIGMA_DS_URL, '_blank', 'noopener,noreferrer')}
+            >
               <Globe2 size={13} />
               Figma
             </Button>
-            <Button size="sm">
-              <Code1 size={13} />
-              Usar componente
+            <Button size="sm" onClick={handleLogout}>
+              <LogoutIcon size={13} />
+              Cerrar sesión
             </Button>
           </div>
         </div>
