@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createCookieValue, buildSetCookie, getPassword } from './_lib/auth';
+import { createCookieValue, buildSetCookie, getPassword } from './_lib/auth.js';
 import crypto from 'crypto';
 
 const MONATO_DOMAIN_RE = /^[^\s@]+@monato\.com$/i;
