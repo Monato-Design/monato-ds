@@ -992,25 +992,28 @@ type VerificationStatus = 'verified' | 'unverified' | 'pending' | 'error';
 type RegisteredAccount = {
   id: string; holder: string; clabe: string; bank: string;
   currency: 'MXN' | 'USD' | 'EUR'; type: AccountType; status: VerificationStatus;
+  balance?: number; // solo poblado para centralizadoras
 };
 
 const REGISTERED_ACCOUNTS: RegisteredAccount[] = [
   { id: '1', holder: 'Fernando Villa Acuña',  clabe: '734180999000000006', bank: 'Fincopay',   currency: 'MXN', type: 'receiving',    status: 'verified'   },
   { id: '2', holder: 'Diego Rivera',          clabe: '012180012345678901', bank: 'BBVA',       currency: 'MXN', type: 'private',      status: 'unverified' },
-  { id: '3', holder: 'Lucia Morales',         clabe: '014180987654321098', bank: 'Santander',  currency: 'MXN', type: 'receiving',    status: 'pending'    },
-  { id: '4', holder: 'Monato Pay México',     clabe: '734180999000000123', bank: 'Fincopay',   currency: 'MXN', type: 'centralizing', status: 'verified'   },
+  { id: '3', holder: 'Lucia Morales',         clabe: '014180987654321098', bank: 'Santander',  currency: 'MXN', type: 'receiving',    status: 'unverified' },
+  { id: '4', holder: 'Monato Pay México',     clabe: '734180999000000123', bank: 'Fincopay',   currency: 'MXN', type: 'centralizing', status: 'verified', balance: 1284500.00 },
   { id: '5', holder: 'Carlos Mendoza',        clabe: '021180456789012345', bank: 'HSBC',       currency: 'USD', type: 'receiving',    status: 'error'      },
   { id: '6', holder: 'Jessica Contreras',     clabe: '036180111122223333', bank: 'Inbursa',    currency: 'MXN', type: 'private',      status: 'verified'   },
   { id: '7', holder: 'Mateo Gonzalez',        clabe: '044180999988887777', bank: 'Scotiabank', currency: 'EUR', type: 'receiving',    status: 'unverified' },
-  { id: '8', holder: 'Operaciones Centrales', clabe: '734180999000000456', bank: 'Fincopay',   currency: 'USD', type: 'centralizing', status: 'verified'   },
+  { id: '8', holder: 'Operaciones Centrales', clabe: '734180999000000456', bank: 'Fincopay',   currency: 'USD', type: 'centralizing', status: 'verified', balance: 458200.00 },
+  { id: '9', holder: 'Sofía Ramírez',         clabe: '058180222233334444', bank: 'Banregio',   currency: 'USD', type: 'receiving',    status: 'verified'   },
+  { id: '10', holder: 'EU Operations Hub',    clabe: '062180555566667777', bank: 'Fincopay',   currency: 'EUR', type: 'centralizing', status: 'verified', balance: 92750.00 },
 ];
 
 const TYPE_LABELS: Record<AccountType, string> = { private: 'Private', receiving: 'Receiving', centralizing: 'Centralizing' };
 const STATUS_CFG: Record<VerificationStatus, { label: string; color: 'success' | 'warning' | 'primary' | 'error' }> = {
-  verified:   { label: 'Verified',            color: 'success' },
-  unverified: { label: 'Not verified',        color: 'warning' },
-  pending:    { label: 'Pending',             color: 'primary' },
-  error:      { label: 'Verification error',   color: 'error'   },
+  verified:   { label: 'Verified',     color: 'success' },
+  unverified: { label: 'Not verified', color: 'warning' },
+  pending:    { label: 'Pending',      color: 'primary' },
+  error:      { label: 'Error',        color: 'error'   },
 };
 
 const ACCOUNTS_LIST_PER_PAGE = 5;
@@ -1063,7 +1066,11 @@ function AccountsView() {
   const [typeFilter, setTypeFilter] = useState<AccountType | 'all'>('all');
   const [page, setPage] = useState(0);
 
-  const filtered = REGISTERED_ACCOUNTS.filter(acc => {
+  // Estado local de cuentas — permite mutar el status al verificar (demo del flujo CB-205)
+  const [accounts, setAccounts] = useState<RegisteredAccount[]>(REGISTERED_ACCOUNTS);
+  const [verifyTarget, setVerifyTarget] = useState<RegisteredAccount | null>(null);
+
+  const filtered = accounts.filter(acc => {
     const q = search.trim().toLowerCase();
     const matchesSearch = !q || acc.holder.toLowerCase().includes(q) || acc.clabe.includes(q);
     const matchesCurrency = currencyFilter === 'all' || acc.currency === currencyFilter;
@@ -1074,6 +1081,17 @@ function AccountsView() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / ACCOUNTS_LIST_PER_PAGE));
   const safePage = Math.min(page, totalPages - 1);
   const visible = filtered.slice(safePage * ACCOUNTS_LIST_PER_PAGE, (safePage + 1) * ACCOUNTS_LIST_PER_PAGE);
+
+  // Flujo de verificación demo: pending → (CEP) → verified
+  const setStatus = (id: string, status: VerificationStatus) =>
+    setAccounts(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+
+  const runVerification = (acc: RegisteredAccount) => {
+    setVerifyTarget(null);
+    setStatus(acc.id, 'pending');
+    // Simula la respuesta del CEP tras un breve delay
+    setTimeout(() => setStatus(acc.id, 'verified'), 2200);
+  };
 
   return (
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
@@ -1095,24 +1113,46 @@ function AccountsView() {
         </div>
 
         <div className="bg-white rounded-2xl border border-[#e8edf2] overflow-hidden">
-          <div className="grid grid-cols-[1.6fr_1.6fr_1fr_0.8fr_0.9fr_1.1fr] gap-4 px-6 py-3.5 border-b border-[#e8edf2] bg-[#f8fafc]">
-            {['Account holder', 'CLABE', 'Bank', 'Currency', 'Type', 'Status'].map(h => (
-              <span key={h} className="text-[#627d98] text-xs font-medium uppercase tracking-wide">{h}</span>
+          {/* Orden: Holder · CLABE · Bank · Type · Status · Balance · Currency · Action */}
+          <div className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-3.5 border-b border-[#e8edf2] bg-[#f8fafc]">
+            {['Account holder', 'CLABE', 'Bank', 'Type', 'Status', 'Balance', 'Currency', ''].map((h, i) => (
+              <span key={i} className="text-[#627d98] text-xs font-medium uppercase tracking-wide">{h}</span>
             ))}
           </div>
           {visible.length === 0 ? (
             <div className="px-6 py-16 text-center text-[#9fb3c8] text-sm">No accounts match your search.</div>
           ) : (
-            visible.map(acc => (
-              <div key={acc.id} className="grid grid-cols-[1.6fr_1.6fr_1fr_0.8fr_0.9fr_1.1fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition">
-                <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
-                <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
-                <span className="text-[#486581] text-sm">{acc.bank}</span>
-                <span className="text-[#486581] text-sm">{acc.currency}</span>
-                <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
-                <div><AccountStatusBadge status={acc.status} /></div>
-              </div>
-            ))
+            visible.map(acc => {
+              // CTA verificar solo en receptoras MXN no verificadas (feedback Carlos)
+              const showVerifyCta = acc.type === 'receiving' && acc.currency === 'MXN' && acc.status === 'unverified';
+              return (
+                <div key={acc.id} className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition">
+                  <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
+                  <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
+                  <span className="text-[#486581] text-sm">{acc.bank}</span>
+                  <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
+                  <div><AccountStatusBadge status={acc.status} /></div>
+                  {/* Balance — solo centralizadoras, sin sufijo de moneda */}
+                  <span className="text-sm whitespace-nowrap">
+                    {acc.type === 'centralizing' && acc.balance != null
+                      ? <span className="text-[#334e68] font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                      : <span className="text-[#9fb3c8]">—</span>}
+                  </span>
+                  <span className="text-[#486581] text-sm">{acc.currency}</span>
+                  {/* Action — CTA verificar condicional */}
+                  <div className="flex justify-end">
+                    {showVerifyCta && (
+                      <button
+                        onClick={() => setVerifyTarget(acc)}
+                        className="text-xs font-medium text-primary-500 border border-[#8dcee6] bg-[#e6f4fa] hover:bg-[#b2deee] rounded-lg px-3 py-1.5 transition whitespace-nowrap"
+                      >
+                        Verify
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })
           )}
           {filtered.length > 0 && (
             <div className="flex items-center justify-between px-6 py-3.5">
@@ -1134,6 +1174,47 @@ function AccountsView() {
           )}
         </div>
       </div>
+
+      {/* Modal de verificación (CB-205) */}
+      <AnimatePresence>
+        {verifyTarget && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(100,108,133,0.8)]"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="bg-white rounded-2xl w-[440px] px-6 pt-7 pb-6 flex flex-col gap-6 relative shadow-2xl"
+            >
+              <button onClick={() => setVerifyTarget(null)} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-[#f8fafc] transition text-[#829ab1]">✕</button>
+
+              <div className="flex flex-col items-center gap-4 text-center">
+                <div className="size-16 rounded-full bg-[#e6f4fa] flex items-center justify-center">
+                  <CheckCircle1 size={28} className="text-primary-500" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-[#334e68] text-xl font-semibold">Verify this account?</p>
+                  <p className="text-[#627d98] text-sm leading-5">
+                    We'll send a small validation through the banking network (CEP). The account status will update once the network responds.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-[#f8fafc] rounded-lg px-4 py-3 flex flex-col gap-1">
+                <div className="flex justify-between text-sm"><span className="text-[#627d98]">Account holder</span><span className="text-[#334e68] font-medium">{verifyTarget.holder}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#627d98]">CLABE</span><span className="text-[#334e68] font-mono">{verifyTarget.clabe}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#627d98]">Bank</span><span className="text-[#334e68] font-medium">{verifyTarget.bank}</span></div>
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setVerifyTarget(null)} className="flex-1 border border-[#d9e2ec] bg-white rounded-lg px-4 py-2.5 text-base font-medium text-[#334e68] hover:bg-[#f8fafc] transition">Cancel</button>
+                <button onClick={() => runVerification(verifyTarget)} className="flex-1 bg-primary-500 rounded-lg px-4 py-2.5 text-base font-medium text-white hover:bg-[#0787b6] transition">Verify account</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
