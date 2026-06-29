@@ -1022,9 +1022,27 @@ function AccountStatusBadge({ status }: { status: VerificationStatus }) {
   const cfg = STATUS_CFG[status];
   const icon =
     status === 'verified' ? <CheckCircle1 size={12} /> :
-    status === 'pending'  ? <RefreshCircle1Clockwise size={12} /> :
+    status === 'pending'  ? (
+      <motion.span
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+        className="flex"
+      >
+        <RefreshCircle1Clockwise size={12} />
+      </motion.span>
+    ) :
     <QuestionMarkCircle size={12} />;
-  return <Badge color={cfg.color} size="sm"><span className="flex items-center gap-1">{icon}{cfg.label}</span></Badge>;
+  return (
+    <motion.div
+      key={status}
+      initial={{ scale: 0.85, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+      className="w-fit"
+    >
+      <Badge color={cfg.color} size="sm"><span className="flex items-center gap-1">{icon}{cfg.label}</span></Badge>
+    </motion.div>
+  );
 }
 
 function AccountsFilterDropdown<T extends string>({ value, options, labels, allLabel, onChange }: {
@@ -1039,23 +1057,32 @@ function AccountsFilterDropdown<T extends string>({ value, options, labels, allL
         {label}
         <ChevronDown size={16} className="text-[#627d98]" />
       </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
-          <div className="absolute z-[9999] mt-1 w-full rounded-lg border border-[#d9e2ec] bg-white shadow-lg overflow-hidden">
-            <button onClick={() => { onChange('all'); setOpen(false); }}
-              className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === 'all' ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
-              {allLabel}
-            </button>
-            {options.map(opt => (
-              <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
-                className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === opt ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
-                {labels[opt] ?? opt}
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: -4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -4 }}
+              transition={{ duration: 0.12, ease: 'easeOut' }}
+              style={{ transformOrigin: 'top' }}
+              className="absolute z-[9999] mt-1 w-full rounded-lg border border-[#d9e2ec] bg-white shadow-lg overflow-hidden"
+            >
+              <button onClick={() => { onChange('all'); setOpen(false); }}
+                className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === 'all' ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
+                {allLabel}
               </button>
-            ))}
-          </div>
-        </>
-      )}
+              {options.map(opt => (
+                <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
+                  className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${value === opt ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}>
+                  {labels[opt] ?? opt}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1122,37 +1149,54 @@ function AccountsView() {
           {visible.length === 0 ? (
             <div className="px-6 py-16 text-center text-[#9fb3c8] text-sm">No accounts match your search.</div>
           ) : (
-            visible.map(acc => {
-              // CTA verificar solo en receptoras MXN no verificadas (feedback Carlos)
-              const showVerifyCta = acc.type === 'receiving' && acc.currency === 'MXN' && acc.status === 'unverified';
-              return (
-                <div key={acc.id} className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition">
-                  <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
-                  <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
-                  <span className="text-[#486581] text-sm">{acc.bank}</span>
-                  <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
-                  <div><AccountStatusBadge status={acc.status} /></div>
-                  {/* Balance — solo centralizadoras, sin sufijo de moneda */}
-                  <span className="text-sm whitespace-nowrap">
-                    {acc.type === 'centralizing' && acc.balance != null
-                      ? <span className="text-[#334e68] font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                      : <span className="text-[#9fb3c8]">—</span>}
-                  </span>
-                  <span className="text-[#486581] text-sm">{acc.currency}</span>
-                  {/* Action — CTA verificar condicional */}
-                  <div className="flex justify-end">
-                    {showVerifyCta && (
-                      <button
-                        onClick={() => setVerifyTarget(acc)}
-                        className="text-xs font-medium text-primary-500 border border-[#8dcee6] bg-[#e6f4fa] hover:bg-[#b2deee] rounded-lg px-3 py-1.5 transition whitespace-nowrap"
-                      >
-                        Verify
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+            <motion.div
+              key={`${typeFilter}-${currencyFilter}-${search}-${safePage}`}
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.04 } },
+              }}
+            >
+              {visible.map(acc => {
+                // CTA verificar solo en receptoras MXN no verificadas (feedback Carlos)
+                const showVerifyCta = acc.type === 'receiving' && acc.currency === 'MXN' && acc.status === 'unverified';
+                return (
+                  <motion.div
+                    key={acc.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 8 },
+                      show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+                    }}
+                    className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition"
+                  >
+                    <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
+                    <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
+                    <span className="text-[#486581] text-sm">{acc.bank}</span>
+                    <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
+                    <div><AccountStatusBadge status={acc.status} /></div>
+                    {/* Balance — solo centralizadoras, sin sufijo de moneda */}
+                    <span className="text-sm whitespace-nowrap">
+                      {acc.type === 'centralizing' && acc.balance != null
+                        ? <span className="text-[#334e68] font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                        : <span className="text-[#9fb3c8]">—</span>}
+                    </span>
+                    <span className="text-[#486581] text-sm">{acc.currency}</span>
+                    {/* Action — CTA verificar condicional */}
+                    <div className="flex justify-end">
+                      {showVerifyCta && (
+                        <button
+                          onClick={() => setVerifyTarget(acc)}
+                          className="text-xs font-medium text-primary-500 border border-[#8dcee6] bg-[#e6f4fa] hover:bg-[#b2deee] rounded-lg px-3 py-1.5 transition whitespace-nowrap"
+                        >
+                          Verify
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           )}
           {filtered.length > 0 && (
             <div className="flex items-center justify-between px-6 py-3.5">
