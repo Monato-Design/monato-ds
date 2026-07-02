@@ -254,7 +254,7 @@
 .docs-main {
   padding: var(--space-10) var(--space-12) var(--space-24);
   min-width: 0;
-  max-width: 1360px;
+  max-width: 1500px;
 }
 
 .docs-page {
@@ -262,6 +262,11 @@
   grid-template-columns: minmax(0, 1fr) 260px;
   gap: var(--space-12);
   align-items: start;
+}
+.docs-page--api {
+  /* API Reference pages with code samples: give code panel 55% of width */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: var(--space-10);
 }
 .docs-page--solo { grid-template-columns: minmax(0, 780px); }
 .docs-page--full { display: block; max-width: 1080px; }
@@ -736,7 +741,8 @@
 
 /* ═══ Responsive ═════════════════════════════════════════════ */
 @media (max-width: 1180px) {
-  .docs-page { grid-template-columns: minmax(0, 1fr); }
+  .docs-page,
+  .docs-page--api { grid-template-columns: minmax(0, 1fr); }
   .docs-rail { position: static; }
 }
 @media (max-width: 900px) {

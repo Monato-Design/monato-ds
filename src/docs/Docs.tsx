@@ -43,7 +43,7 @@ export function Docs({ onBackToDS }: DocsProps) {
       <DocsLoader
         variant="exit"
         onReady={onBackToDS}
-        delayMs={900}
+        delayMs={2500}
       />
     );
   }
@@ -191,6 +191,8 @@ export function Docs({ onBackToDS }: DocsProps) {
                 ? 'docs-page docs-page--solo'
                 : page.layout === 'full'
                 ? 'docs-page docs-page--full'
+                : page.sample
+                ? 'docs-page docs-page--api'
                 : 'docs-page'
             }
           >

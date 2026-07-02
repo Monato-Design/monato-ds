@@ -25,7 +25,7 @@ const COPY = {
   },
 } as const;
 
-export function DocsLoader({ onReady, delayMs = 1200, variant = 'enter' }: DocsLoaderProps) {
+export function DocsLoader({ onReady, delayMs = 2500, variant = 'enter' }: DocsLoaderProps) {
   useEffect(() => {
     const t = setTimeout(onReady, delayMs);
     return () => clearTimeout(t);
