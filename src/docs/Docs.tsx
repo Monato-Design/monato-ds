@@ -1,10 +1,10 @@
 // src/docs/Docs.tsx
 // Shell of the documentation.
 // Structure:
-//   Header: brand · search · theme toggle · Back to DS
-//   Row 2: top tabs (kept — user prefers redundant quick-nav)
+//   Header (single row): brand · search · theme toggle · Back to DS
 //   Layout: Sidebar (collapsible groups with colored icons) + Main + Rail
-// Theme: light | dark, persisted to localStorage, scoped to docs only.
+// Theme: light | dark, persisted in localStorage, scoped to docs.
+// Pattern: diagonal lines on both left and right edges (viewport gutter).
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
@@ -32,12 +32,10 @@ export function Docs({ onBackToDS }: DocsProps) {
   const activeTab: TabId = PAGE_TO_TAB[activePage];
   const { theme, toggle } = useDocsTheme();
 
-  // Multi-open collapsible groups — starts with active tab expanded
   const [expandedGroups, setExpandedGroups] = useState<Set<TabId>>(
     () => new Set([activeTab])
   );
 
-  // Auto-expand the active tab's group when active page changes
   useEffect(() => {
     setExpandedGroups((prev) => {
       if (prev.has(activeTab)) return prev;
@@ -88,10 +86,11 @@ export function Docs({ onBackToDS }: DocsProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
     >
-      {/* Diagonal line decor (right edge) */}
-      <div className="docs-pattern-decor" aria-hidden />
+      {/* Diagonal line pattern — both sides */}
+      <div className="docs-pattern-decor docs-pattern-decor--left" aria-hidden />
+      <div className="docs-pattern-decor docs-pattern-decor--right" aria-hidden />
 
-      {/* ═══ Header (2 rows) ═══════════════════════════════════ */}
+      {/* ═══ Header ═══════════════════════════════════════════ */}
       <header className="docs-header">
         <div className="docs-header__row1">
           <motion.div
@@ -125,33 +124,12 @@ export function Docs({ onBackToDS }: DocsProps) {
             transition={{ delay: 0.14, duration: 0.3, ease: 'easeOut' }}
           >
             <ThemeToggle theme={theme} onToggle={toggle} />
-            <Button size="sm" appearance="outline" onClick={handleBack}>
-              <BackIcon size={13} />
+            <Button size="xs" appearance="outline" onClick={handleBack}>
+              <BackIcon size={12} />
               Back to DS
             </Button>
           </motion.div>
         </div>
-
-        <LayoutGroup id="docs-tabs">
-          <nav className="docs-header__row2" aria-label="Secciones">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                className={`docs-tab ${tab.id === activeTab ? 'docs-tab--active' : ''}`}
-                onClick={() => goToTab(tab.id)}
-              >
-                {tab.label}
-                {tab.id === activeTab && (
-                  <motion.div
-                    className="docs-tab__underline"
-                    layoutId="docs-tab-underline"
-                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                  />
-                )}
-              </button>
-            ))}
-          </nav>
-        </LayoutGroup>
       </header>
 
       {/* ═══ Layout ═══════════════════════════════════════════ */}
@@ -497,11 +475,10 @@ function copyPre(btn: HTMLButtonElement) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Tab icon map (colored squares in sidebar)
+// Tab icons (in colored squares)
 // ─────────────────────────────────────────────────────────────
 
 function TabIcon({ iconKey }: { iconKey: TabIconKey }) {
-  // Consistent stroke style — inherits color from parent
   const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   switch (iconKey) {
     case 'lightning':
@@ -518,7 +495,7 @@ function TabIcon({ iconKey }: { iconKey: TabIconKey }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Icons (inline, thin outline)
+// Icons
 // ─────────────────────────────────────────────────────────────
 
 function HomeIcon() {
@@ -529,7 +506,7 @@ function HomeIcon() {
     </svg>
   );
 }
-function BackIcon({ size = 13 }: { size?: number }) {
+function BackIcon({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10 3L5 8l5 5" />

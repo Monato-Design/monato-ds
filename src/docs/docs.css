@@ -4,21 +4,21 @@
    Supports light + dark themes via data-theme attribute.
    ============================================================ */
 
-/* ═══ Theme-scoped variables ═════════════════════════════════
-   Small set of docs-only vars that vary by theme. Everything else
-   uses semantic tokens from tokens.css which auto-remap via
-   [data-theme="dark"].
-   ═════════════════════════════════════════════════════════════ */
+/* ═══ Theme-scoped variables ═════════════════════════════════ */
 .docs-root {
   /* Light defaults */
   --docs-border: #d9e2ec;                        /* approved DS deviation */
-  --docs-pattern: rgba(15, 23, 42, 0.04);        /* diagonal lines color */
+  --docs-pattern: rgba(15, 23, 42, 0.055);        /* diagonal lines color */
   --docs-header-bg: var(--color-background-gray-primary);
-  --docs-guide: #d9e2ec;                          /* vertical guide line in sidebar */
+  --docs-guide: #d9e2ec;
+  /* Gutter: reveals the diagonal pattern on both sides when the viewport
+     is wide enough. Zero on narrow viewports. */
+  --docs-gutter: max(0px, min(80px, calc((100vw - 1420px) / 2)));
+  --docs-header-h: 60px;
 }
 .docs-root[data-theme="dark"] {
   --docs-border: var(--primitive-gray-800);
-  --docs-pattern: rgba(255, 255, 255, 0.04);
+  --docs-pattern: rgba(255, 255, 255, 0.055);
   --docs-header-bg: var(--primitive-gray-950);
   --docs-guide: var(--primitive-gray-800);
 }
@@ -33,39 +33,39 @@
   z-index: 0;
 }
 
-/* ═══ Diagonal line pattern (right edge decor) ═══════════════ */
+/* ═══ Diagonal line pattern (both edges) ═════════════════════ */
 .docs-pattern-decor {
   position: fixed;
   top: 0;
-  right: 0;
   bottom: 0;
-  width: 88px;
+  width: var(--docs-gutter);
   background-image: repeating-linear-gradient(
     -45deg,
-    transparent 0 13px,
-    var(--docs-pattern) 13px 14px
+    transparent 0 8px,
+    var(--docs-pattern) 8px 9px
   );
   pointer-events: none;
   z-index: 0;
 }
-@media (max-width: 1200px) {
-  .docs-pattern-decor { display: none; }
-}
+.docs-pattern-decor--left  { left: 0; }
+.docs-pattern-decor--right { right: 0; }
 
-/* ═══ Top bar (2 rows) ═══════════════════════════════════════ */
+/* ═══ Top bar (single row) ═══════════════════════════════════ */
 .docs-header {
   position: sticky;
   top: 0;
   z-index: 30;
   background: var(--docs-header-bg);
   border-bottom: 1px solid var(--docs-border);
+  padding-left: var(--docs-gutter);
+  padding-right: var(--docs-gutter);
 }
 
 .docs-header__row1 {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  height: 60px;
+  height: var(--docs-header-h);
   padding: 0 var(--space-6);
 }
 
@@ -81,6 +81,7 @@
   line-height: 1;
 }
 
+/* Search — 36px tall to match button/toggle */
 .docs-search {
   margin: 0 auto;
   display: flex;
@@ -89,7 +90,8 @@
   background: var(--color-background-white-primary);
   border: 1px solid var(--docs-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-1-5) var(--space-3);
+  padding: 0 var(--space-3);
+  height: 36px;
   width: min(340px, 32vw);
   transition: border-color .12s, box-shadow .12s;
 }
@@ -125,10 +127,10 @@
   flex-shrink: 0;
 }
 
-/* Theme toggle */
+/* Theme toggle — 36x36 icon-only */
 .docs-theme-toggle {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border: 1px solid var(--docs-border);
@@ -150,42 +152,6 @@
   background: var(--primitive-gray-800);
 }
 
-/* Row 2: tabs */
-.docs-header__row2 {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-6);
-  gap: var(--space-1);
-  height: 44px;
-}
-.docs-tab {
-  position: relative;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary-text);
-  padding: var(--space-3) var(--space-3);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  transition: color .18s;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  line-height: 1;
-  font-family: inherit;
-}
-.docs-tab:hover { color: var(--color-text-title); }
-.docs-tab--active { color: var(--color-text-brand); }
-.docs-tab__underline {
-  position: absolute;
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: -1px;
-  height: 2px;
-  background: var(--color-text-brand);
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-}
-
 /* ═══ Layout ═════════════════════════════════════════════════ */
 .docs-layout {
   display: grid;
@@ -193,13 +159,15 @@
   align-items: start;
   position: relative;
   z-index: 1;
+  padding-left: var(--docs-gutter);
+  padding-right: var(--docs-gutter);
 }
 
 /* ═══ Sidebar ════════════════════════════════════════════════ */
 .docs-nav {
   position: sticky;
-  top: 105px; /* 60 + 44 + 1 */
-  height: calc(100vh - 105px);
+  top: var(--docs-header-h);
+  height: calc(100vh - var(--docs-header-h));
   overflow-y: auto;
   background: var(--color-background-white-primary);
   border-right: 1px solid var(--docs-border);
@@ -286,13 +254,12 @@
   flex-shrink: 0;
 }
 
-/* Items container inside a group */
 .docs-nav__group-items {
   padding: var(--space-1) 0 var(--space-1);
 }
 .docs-nav__group-items-inner {
   border-left: 1px solid var(--docs-guide);
-  margin-left: 15px;      /* aligns line under the icon center */
+  margin-left: 15px;
   padding: var(--space-1) 0;
 }
 
@@ -302,7 +269,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-1) var(--space-3) var(--space-1) var(--space-4);
-  margin-left: -1px;      /* overlap the guide line by 1px */
+  margin-left: -1px;
   color: var(--color-sidebar-navigation-nav-item-default-text);
   font-size: 13.5px;
   cursor: pointer;
@@ -335,7 +302,6 @@
   z-index: 0;
 }
 .docs-nav__link-active-bg::before {
-  /* Blue bar on the left to override the guide line for active item */
   content: '';
   position: absolute;
   left: 0;
@@ -357,7 +323,6 @@
 }
 .docs-nav__link--active:hover .docs-nav__link-hover-bg { opacity: 0; }
 
-/* Method tag (GET/POST/DEL) — right-aligned mono */
 .docs-nav__tag {
   font-family: ui-monospace, Menlo, Monaco, monospace;
   font-size: 9.5px;
@@ -369,7 +334,6 @@
 .docs-tag--del { color: var(--primitive-red-600); }
 .docs-tag--put { color: var(--primitive-orange-600); }
 
-/* Badges (New / Updated) */
 .docs-nav__badge {
   display: inline-flex;
   align-items: center;
@@ -395,7 +359,6 @@
   color: var(--primitive-indigo-400);
 }
 
-/* Sidebar footer — locale */
 .docs-nav__footer {
   margin-top: auto;
   padding-top: var(--space-4);
@@ -439,7 +402,6 @@
 
 .docs-prose { min-width: 0; }
 
-/* ── Breadcrumb ──────────────────────────────────────────── */
 .docs-crumb {
   display: flex;
   align-items: center;
@@ -460,7 +422,6 @@
 .docs-crumb__sep { color: var(--color-text-tertiary-text); }
 .docs-crumb__current { color: var(--color-text-body); }
 
-/* ── Title + subtitle ────────────────────────────────────── */
 .docs-prose h1 {
   color: var(--color-text-title);
   font-size: 40px;
@@ -469,7 +430,6 @@
   line-height: 1.15;
   margin: 0 0 var(--space-2-5);
 }
-
 .docs-prose .docs-sub {
   font-size: 20px;
   line-height: 1.45;
@@ -479,7 +439,7 @@
   font-weight: var(--font-weight-regular);
 }
 
-/* ── Action bar ──────────────────────────────────────────── */
+/* Action bar */
 .docs-actionbar {
   display: flex;
   align-items: center;
@@ -516,7 +476,7 @@
   margin: 0 0 var(--space-8);
 }
 
-/* ── Prose body ──────────────────────────────────────────── */
+/* Prose body */
 .docs-prose h2 {
   color: var(--color-text-title);
   font-size: 22px;
@@ -525,7 +485,6 @@
   line-height: 1.3;
   margin: var(--space-10) 0 var(--space-3-5);
 }
-
 .docs-prose p {
   margin: 0 0 var(--space-4);
   font-size: 15.5px;
@@ -570,7 +529,6 @@
   background: var(--primitive-gray-800);
 }
 
-/* ── Note ────────────────────────────────────────────────── */
 .docs-note {
   background: var(--primitive-skyblue-a05);
   border: 1px solid var(--primitive-skyblue-a20);
@@ -584,7 +542,6 @@
 .docs-note b { color: var(--color-text-title); }
 .docs-note p { margin: 0; font-size: inherit; }
 
-/* ── Table ───────────────────────────────────────────────── */
 .docs-table {
   width: 100%;
   border-collapse: collapse;
@@ -618,7 +575,6 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* ── Endpoint pill ───────────────────────────────────────── */
 .docs-ep {
   display: inline-flex;
   align-items: center;
@@ -651,7 +607,6 @@
   color: var(--color-text-title);
 }
 
-/* ── Steps ───────────────────────────────────────────────── */
 .docs-steps {
   counter-reset: s;
   padding: 0;
@@ -684,7 +639,6 @@
   place-items: center;
 }
 
-/* ── Card grid (API Reference overview) ──────────────────── */
 .docs-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -749,15 +703,14 @@
   margin: 0;
 }
 
-/* ═══ Right rail ═════════════════════════════════════════════ */
+/* Right rail */
 .docs-rail {
   position: sticky;
-  top: 125px;
+  top: calc(var(--docs-header-h) + var(--space-5));
   min-width: 0;
   padding-top: var(--space-1);
 }
 
-/* Table of Contents */
 .docs-toc { display: flex; flex-direction: column; gap: 2px; }
 .docs-toc__title {
   font-size: 11px;
@@ -781,7 +734,7 @@
 }
 .docs-toc__link:hover { color: var(--color-text-brand); }
 
-/* ── Code sample panel ───────────────────────────────────── */
+/* Code sample panel */
 .docs-samples {
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -868,7 +821,7 @@
 .tk-punct { color: var(--primitive-gray-400); }
 .tk-fn { color: var(--primitive-orange-400); }
 
-/* ═══ Loader ═════════════════════════════════════════════════ */
+/* Loader */
 .docs-loader {
   min-height: 100vh;
   display: grid;
@@ -879,7 +832,6 @@
 }
 .docs-loader__inner { text-align: center; }
 .docs-loader__logo { height: 28px; margin: 0 auto var(--space-8); display: block; }
-.docs-loader[data-theme="dark"] .docs-loader__logo,
 .docs-root[data-theme="dark"] .docs-loader__logo { filter: brightness(0) invert(1); }
 .docs-loader__spinner {
   width: 36px;
@@ -899,7 +851,7 @@
 }
 .docs-loader__sub { font-size: 14px; color: var(--color-text-secondary-text); margin: 0; }
 
-/* ═══ Responsive ═════════════════════════════════════════════ */
+/* Responsive */
 @media (max-width: 1180px) {
   .docs-page,
   .docs-page--api { grid-template-columns: minmax(0, 1fr); }
@@ -915,5 +867,4 @@
   }
   .docs-main { padding: var(--space-6) var(--space-5) var(--space-12); }
   .docs-search { width: 200px; }
-  .docs-header__row2 { overflow-x: auto; }
 }
