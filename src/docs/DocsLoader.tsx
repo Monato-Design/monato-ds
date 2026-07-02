@@ -1,17 +1,17 @@
 // src/docs/DocsLoader.tsx
-// Redirect screen. Two variants:
-//   - 'enter' (default): shown when going from DS → docs
-//   - 'exit': shown when going from docs → DS
-// Entry animation: fade + slide up. Logo pulses gently while loading.
+// Redirect screen shown DS → docs and docs → DS.
+// Theme-aware: reads from localStorage on mount if no prop provided.
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import LogoDefault from '../assets/logo-default.png';
+import { readStoredTheme, type DocsTheme } from './theme';
 
 interface DocsLoaderProps {
   onReady: () => void;
   delayMs?: number;
   variant?: 'enter' | 'exit';
+  theme?: DocsTheme;
 }
 
 const COPY = {
@@ -25,17 +25,25 @@ const COPY = {
   },
 } as const;
 
-export function DocsLoader({ onReady, delayMs = 2500, variant = 'enter' }: DocsLoaderProps) {
+export function DocsLoader({
+  onReady,
+  delayMs = 2500,
+  variant = 'enter',
+  theme,
+}: DocsLoaderProps) {
   useEffect(() => {
     const t = setTimeout(onReady, delayMs);
     return () => clearTimeout(t);
   }, [onReady, delayMs]);
 
+  // If no theme prop, read from localStorage (loader spawned before Docs mounts)
+  const activeTheme: DocsTheme = theme ?? readStoredTheme();
   const copy = COPY[variant];
 
   return (
     <motion.div
-      className="docs-loader"
+      className="docs-loader docs-root"
+      data-theme={activeTheme}
       role="status"
       aria-live="polite"
       initial={{ opacity: 0 }}

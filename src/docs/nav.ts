@@ -43,10 +43,19 @@ export type TabId =
 
 export type Method = 'GET' | 'POST' | 'DEL' | 'PUT';
 
+/** Colored icon square colors (map to --primitive-<color>-* alpha tokens) */
+export type TabColor = 'sky' | 'emerald' | 'violet' | 'orange' | 'pink';
+
+/** Icon key — corresponds to a React icon component in Docs.tsx iconMap */
+export type TabIconKey = 'lightning' | 'braces' | 'lightbulb' | 'book' | 'flask';
+
+export type Badge = 'New' | 'Updated';
+
 export type NavLink = {
   id: PageId;
   label: string;
   method?: Method;
+  badge?: Badge;
 };
 
 export type NavGroup = {
@@ -59,6 +68,8 @@ export type TabConfig = {
   label: string;
   /** landing page id when tab is opened */
   landing: PageId;
+  color: TabColor;
+  iconKey: TabIconKey;
   groups: NavGroup[];
 };
 
@@ -67,11 +78,13 @@ export const TABS: TabConfig[] = [
     id: 'get-started',
     label: 'Get started',
     landing: 'overview',
+    color: 'sky',
+    iconKey: 'lightning',
     groups: [
       {
         eyebrow: 'Primeros pasos',
         items: [
-          { id: 'overview', label: 'Overview' },
+          { id: 'overview', label: 'Overview', badge: 'New' },
           { id: 'quickstart', label: 'Quickstart' },
           { id: 'cred', label: 'Credenciales y token' },
           { id: 'authg', label: 'Autenticación' },
@@ -85,12 +98,14 @@ export const TABS: TabConfig[] = [
     id: 'work-api',
     label: 'Trabajar con la API',
     landing: 'pag',
+    color: 'emerald',
+    iconKey: 'braces',
     groups: [
       {
         eyebrow: 'Trabajar con la API',
         items: [
           { id: 'pag', label: 'Paginación' },
-          { id: 'idem', label: 'Idempotencia' },
+          { id: 'idem', label: 'Idempotencia', badge: 'Updated' },
           { id: 'err', label: 'Errores' },
           { id: 'evt', label: 'Eventos y webhooks' },
         ],
@@ -101,6 +116,8 @@ export const TABS: TabConfig[] = [
     id: 'concepts',
     label: 'Conceptos',
     landing: 'cliente',
+    color: 'violet',
+    iconKey: 'lightbulb',
     groups: [
       {
         eyebrow: 'Conceptos',
@@ -118,6 +135,8 @@ export const TABS: TabConfig[] = [
     id: 'api-reference',
     label: 'API Reference',
     landing: 'apiref',
+    color: 'orange',
+    iconKey: 'book',
     groups: [
       {
         eyebrow: 'API Reference',
@@ -128,7 +147,7 @@ export const TABS: TabConfig[] = [
           { id: 'accounts', label: 'Accounts', method: 'POST' },
           { id: 'accountnumbers', label: 'Account Numbers', method: 'POST' },
           { id: 'transactions', label: 'Transactions', method: 'POST' },
-          { id: 'webhooks', label: 'Webhooks', method: 'DEL' },
+          { id: 'webhooks', label: 'Webhooks', method: 'DEL', badge: 'Updated' },
           { id: 'reports', label: 'Reports', method: 'POST' },
         ],
       },
@@ -138,10 +157,12 @@ export const TABS: TabConfig[] = [
     id: 'sandbox',
     label: 'Sandbox',
     landing: 'sim',
+    color: 'pink',
+    iconKey: 'flask',
     groups: [
       {
         eyebrow: 'Sandbox',
-        items: [{ id: 'sim', label: 'Simulaciones' }],
+        items: [{ id: 'sim', label: 'Simulaciones', badge: 'New' }],
       },
     ],
   },

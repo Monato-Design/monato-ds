@@ -1,15 +1,24 @@
 // src/docs/Docs.tsx
 // Shell of the documentation.
-// Layout: Stripe-inspired structure, tokens/colors from Monato DS.
-// Motion: framer-motion for tab underline, sidebar active pill, page transitions,
-//         card hover, action-bar tap, and exit redirect loader.
+// Structure:
+//   Header: brand · search · theme toggle · Back to DS
+//   Row 2: top tabs (kept — user prefers redundant quick-nav)
+//   Layout: Sidebar (collapsible groups with colored icons) + Main + Rail
+// Theme: light | dark, persisted to localStorage, scoped to docs only.
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Button } from '../components/core/button';
-import { TABS, PAGE_TO_TAB, type PageId, type TabId } from './nav';
+import {
+  TABS,
+  PAGE_TO_TAB,
+  type PageId,
+  type TabId,
+  type TabIconKey,
+} from './nav';
 import { PAGES, type Sample } from './pages';
 import { DocsLoader } from './DocsLoader';
+import { useDocsTheme } from './theme';
 import LogoDefault from '../assets/logo-default.png';
 import './docs.css';
 
@@ -21,6 +30,22 @@ export function Docs({ onBackToDS }: DocsProps) {
   const [activePage, setActivePage] = useState<PageId>('overview');
   const [isExiting, setIsExiting] = useState(false);
   const activeTab: TabId = PAGE_TO_TAB[activePage];
+  const { theme, toggle } = useDocsTheme();
+
+  // Multi-open collapsible groups — starts with active tab expanded
+  const [expandedGroups, setExpandedGroups] = useState<Set<TabId>>(
+    () => new Set([activeTab])
+  );
+
+  // Auto-expand the active tab's group when active page changes
+  useEffect(() => {
+    setExpandedGroups((prev) => {
+      if (prev.has(activeTab)) return prev;
+      const next = new Set(prev);
+      next.add(activeTab);
+      return next;
+    });
+  }, [activeTab]);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -31,19 +56,26 @@ export function Docs({ onBackToDS }: DocsProps) {
     const tab = TABS.find((t) => t.id === tabId);
     if (tab) setActivePage(tab.landing);
   };
-
+  const toggleGroup = (tabId: TabId) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(tabId)) next.delete(tabId);
+      else next.add(tabId);
+      return next;
+    });
+  };
   const handleBack = () => setIsExiting(true);
 
   const currentTab = useMemo(() => TABS.find((t) => t.id === activeTab)!, [activeTab]);
   const page = PAGES[activePage];
 
-  // Exit loader takes over the whole viewport when leaving
   if (isExiting) {
     return (
       <DocsLoader
         variant="exit"
         onReady={onBackToDS}
         delayMs={2500}
+        theme={theme}
       />
     );
   }
@@ -51,10 +83,14 @@ export function Docs({ onBackToDS }: DocsProps) {
   return (
     <motion.div
       className="docs-root"
+      data-theme={theme}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
     >
+      {/* Diagonal line decor (right edge) */}
+      <div className="docs-pattern-decor" aria-hidden />
+
       {/* ═══ Header (2 rows) ═══════════════════════════════════ */}
       <header className="docs-header">
         <div className="docs-header__row1">
@@ -88,6 +124,7 @@ export function Docs({ onBackToDS }: DocsProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.14, duration: 0.3, ease: 'easeOut' }}
           >
+            <ThemeToggle theme={theme} onToggle={toggle} />
             <Button size="sm" appearance="outline" onClick={handleBack}>
               <BackIcon size={13} />
               Back to DS
@@ -136,40 +173,87 @@ export function Docs({ onBackToDS }: DocsProps) {
             Home
           </motion.button>
 
-          <LayoutGroup id={`docs-sidebar-${activeTab}`}>
-            {currentTab.groups.map((group, gi) => (
-              <div className="docs-nav__section" key={gi}>
-                <div className="docs-nav__eyebrow">{group.eyebrow}</div>
-                {group.items.map((item) => {
-                  const isActive = item.id === activePage;
-                  return (
-                    <motion.button
-                      key={item.id}
-                      className={`docs-nav__link ${isActive ? 'docs-nav__link--active' : ''}`}
-                      onClick={() => setActivePage(item.id)}
-                      aria-current={isActive ? 'page' : undefined}
-                      whileTap={{ scale: 0.985 }}
+          {TABS.map((tab) => {
+            const isExpanded = expandedGroups.has(tab.id);
+            const items = tab.groups[0]?.items ?? [];
+            return (
+              <div className="docs-nav__group" key={tab.id}>
+                <motion.button
+                  className="docs-nav__group-header"
+                  onClick={() => toggleGroup(tab.id)}
+                  whileTap={{ scale: 0.985 }}
+                  aria-expanded={isExpanded}
+                >
+                  <span className={`docs-nav__group-icon docs-nav__group-icon--${tab.color}`}>
+                    <TabIcon iconKey={tab.iconKey} />
+                  </span>
+                  <span className="docs-nav__group-label">{tab.label}</span>
+                  <motion.svg
+                    className="docs-nav__group-chev"
+                    width="12" height="12" viewBox="0 0 16 16"
+                    fill="none" stroke="currentColor" strokeWidth="1.75"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    animate={{ rotate: isExpanded ? 0 : -90 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                  >
+                    <path d="M4 6l4 4 4-4" />
+                  </motion.svg>
+                </motion.button>
+
+                <AnimatePresence initial={false}>
+                  {isExpanded && (
+                    <motion.div
+                      className="docs-nav__group-items"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      style={{ overflow: 'hidden' }}
                     >
-                      {isActive && (
-                        <motion.span
-                          className="docs-nav__link-active-bg"
-                          layoutId={`docs-sidebar-active-${activeTab}`}
-                          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                        />
-                      )}
-                      {!isActive && <span className="docs-nav__link-hover-bg" aria-hidden />}
-                      <span>{item.label}</span>
-                      {item.method && (
-                        <span className={`docs-nav__tag docs-tag--${item.method.toLowerCase()}`}>
-                          {item.method}
-                        </span>
-                      )}
-                    </motion.button>
-                  );
-                })}
+                      <div className="docs-nav__group-items-inner">
+                        <LayoutGroup id={`docs-sidebar-active-${tab.id}`}>
+                          {items.map((item) => {
+                            const isActive = item.id === activePage;
+                            return (
+                              <motion.button
+                                key={item.id}
+                                className={`docs-nav__link ${isActive ? 'docs-nav__link--active' : ''}`}
+                                onClick={() => setActivePage(item.id)}
+                                aria-current={isActive ? 'page' : undefined}
+                                whileTap={{ scale: 0.985 }}
+                              >
+                                {isActive && (
+                                  <motion.span
+                                    className="docs-nav__link-active-bg"
+                                    layoutId={`docs-sidebar-active-${tab.id}`}
+                                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                                  />
+                                )}
+                                {!isActive && <span className="docs-nav__link-hover-bg" aria-hidden />}
+                                <span className="docs-nav__link-label">{item.label}</span>
+                                <span className="docs-nav__link-tail">
+                                  {item.badge && (
+                                    <span className={`docs-nav__badge docs-nav__badge--${item.badge.toLowerCase()}`}>
+                                      {item.badge}
+                                    </span>
+                                  )}
+                                  {item.method && (
+                                    <span className={`docs-nav__tag docs-tag--${item.method.toLowerCase()}`}>
+                                      {item.method}
+                                    </span>
+                                  )}
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </LayoutGroup>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            ))}
-          </LayoutGroup>
+            );
+          })}
 
           <div className="docs-nav__footer">
             <div className="docs-nav__locale">
@@ -205,7 +289,6 @@ export function Docs({ onBackToDS }: DocsProps) {
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.22, ease: 'easeOut' }}
               >
-                {/* Breadcrumb */}
                 <div className="docs-crumb">
                   <button className="docs-crumb__link" onClick={() => setActivePage('overview')}>
                     Home
@@ -229,7 +312,6 @@ export function Docs({ onBackToDS }: DocsProps) {
                   </p>
                 )}
 
-                {/* Action bar */}
                 <div className="docs-actionbar">
                   <ActionBtn label="Preguntar sobre esta página"><SparkleIcon /></ActionBtn>
                   <ActionBtn label="Copiar para LLM"><CopyIcon /></ActionBtn>
@@ -272,6 +354,50 @@ export function Docs({ onBackToDS }: DocsProps) {
 // ─────────────────────────────────────────────────────────────
 // Sub-components
 // ─────────────────────────────────────────────────────────────
+
+function ThemeToggle({ theme, onToggle }: { theme: 'light' | 'dark'; onToggle: () => void }) {
+  return (
+    <motion.button
+      className="docs-theme-toggle"
+      onClick={onToggle}
+      aria-label={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+      whileTap={{ scale: 0.9 }}
+      whileHover={{ rotate: theme === 'light' ? -20 : 20 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === 'light' ? (
+          <motion.svg
+            key="moon"
+            width="15" height="15" viewBox="0 0 16 16"
+            fill="none" stroke="currentColor" strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round"
+            initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
+            transition={{ duration: 0.2 }}
+          >
+            <path d="M13 9.5A6 6 0 0 1 6.5 3 6 6 0 1 0 13 9.5z" />
+          </motion.svg>
+        ) : (
+          <motion.svg
+            key="sun"
+            width="15" height="15" viewBox="0 0 16 16"
+            fill="none" stroke="currentColor" strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round"
+            initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
+            transition={{ duration: 0.2 }}
+          >
+            <circle cx="8" cy="8" r="3" />
+            <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1" />
+          </motion.svg>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+}
 
 function ActionBtn({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -371,7 +497,28 @@ function copyPre(btn: HTMLButtonElement) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Icons (thin outline, 14px, sized by parent font)
+// Tab icon map (colored squares in sidebar)
+// ─────────────────────────────────────────────────────────────
+
+function TabIcon({ iconKey }: { iconKey: TabIconKey }) {
+  // Consistent stroke style — inherits color from parent
+  const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  switch (iconKey) {
+    case 'lightning':
+      return <svg viewBox="0 0 16 16" {...p}><path d="M9 1L3 9h4l-1 6 6-8H8z" /></svg>;
+    case 'braces':
+      return <svg viewBox="0 0 16 16" {...p}><path d="M6 2c-1.5 0-2 1-2 2v2c0 1-.5 2-2 2 1.5 0 2 1 2 2v2c0 1 .5 2 2 2M10 2c1.5 0 2 1 2 2v2c0 1 .5 2 2 2-1.5 0-2 1-2 2v2c0 1-.5 2-2 2" /></svg>;
+    case 'lightbulb':
+      return <svg viewBox="0 0 16 16" {...p}><path d="M5.5 10a4 4 0 1 1 5 0v1.5h-5V10z" /><path d="M6.5 13.5h3M7 15h2" /></svg>;
+    case 'book':
+      return <svg viewBox="0 0 16 16" {...p}><path d="M3 3h4a2 2 0 0 1 2 2v9a1 1 0 0 0-1-1H3V3z" /><path d="M13 3H9a2 2 0 0 0-2 2v9a1 1 0 0 1 1-1h5V3z" /></svg>;
+    case 'flask':
+      return <svg viewBox="0 0 16 16" {...p}><path d="M6 2h4M7 2v5.5L3.5 13.2c-.4.7.1 1.8 1 1.8h7c.9 0 1.4-1.1 1-1.8L9 7.5V2" /></svg>;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Icons (inline, thin outline)
 // ─────────────────────────────────────────────────────────────
 
 function HomeIcon() {
@@ -382,7 +529,6 @@ function HomeIcon() {
     </svg>
   );
 }
-
 function BackIcon({ size = 13 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -390,7 +536,6 @@ function BackIcon({ size = 13 }: { size?: number }) {
     </svg>
   );
 }
-
 function GlobeIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -399,7 +544,6 @@ function GlobeIcon() {
     </svg>
   );
 }
-
 function SparkleIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -408,7 +552,6 @@ function SparkleIcon() {
     </svg>
   );
 }
-
 function CopyIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -417,7 +560,6 @@ function CopyIcon() {
     </svg>
   );
 }
-
 function MarkdownIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -426,7 +568,6 @@ function MarkdownIcon() {
     </svg>
   );
 }
-
 function DownloadIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
