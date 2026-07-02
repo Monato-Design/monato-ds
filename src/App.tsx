@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronRight, Plus, Funnel1, Layout14,
   Bolt1, Check, Comment1, ChevronBothDirection,
   Diamonds1, Rocket1, ColourPalette3, SlidersDoubleHorizontal,
-  FileTextMultiple, CheckCircle1, Doller, Globe2,
+  FileTextMultiple, CheckCircle1, Doller,
 } from '@tailgrids/icons';
 import { Button } from './components/core/button';
 import { ButtonGroup } from './components/core/button-group';
@@ -40,6 +40,7 @@ import { Sidebar } from './blocks/Sidebar';
 import LogoDefault from './assets/logo-default.png';
 import { AuthGate } from './components/AuthGate';
 import { getUserDisplay, clearUserEmail } from './lib/user';
+import { Docs, DocsLoader } from './docs';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
@@ -1233,7 +1234,6 @@ function PrimitivesDropdown({ label, items, active, onSelect }: {
 }
 
 // ─── External resources ───────────────────────────────────────────────────────
-const FIGMA_DS_URL = 'https://www.figma.com/design/nau30mpaZ43tyBjogqSvMV/DS-Web-2026--new-?node-id=1112-920';
 
 // ─── Logout icon (inline SVG, no @tailgrids dependency) ───────────────────────
 function LogoutIcon({ size = 13 }: { size?: number }) {
@@ -1260,6 +1260,7 @@ function LogoutIcon({ size = 13 }: { size?: number }) {
 // ─── App ──────────────────────────────────────────────────────────────────────
 export function App() {
   const [active, setActive] = useState<TabId>('overview');
+  const [docsView, setDocsView] = useState<'ds' | 'loading' | 'docs'>('ds');
   const userDisplay = useMemo(() => getUserDisplay(), []);
 
   const handleLogout = async () => {
@@ -1285,6 +1286,14 @@ export function App() {
     window.addEventListener('hashchange', sync);
     return () => window.removeEventListener('hashchange', sync);
   }, []);
+
+  // ── Docs experience (redirection flow) ────────────────────────
+  if (docsView === 'loading') {
+    return <DocsLoader onReady={() => setDocsView('docs')} />;
+  }
+  if (docsView === 'docs') {
+    return <Docs onBackToDS={() => setDocsView('ds')} />;
+  }
 
   return (
     <AuthGate>
@@ -1379,10 +1388,10 @@ export function App() {
             <Button
               size="sm"
               appearance="outline"
-              onClick={() => window.open(FIGMA_DS_URL, '_blank', 'noopener,noreferrer')}
+              onClick={() => setDocsView('loading')}
             >
-              <Globe2 size={13} />
-              Figma
+              <FileTextMultiple size={13} />
+              For devs
             </Button>
             <Button size="sm" onClick={handleLogout}>
               <LogoutIcon size={13} />
