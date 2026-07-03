@@ -84,24 +84,7 @@ export function FilterDrawer({ open, value, onClose, onApply }: FilterDrawerProp
           >
             {/* Header */}
             <div className="bp-drawer__header">
-              <div className="bp-drawer__header-titles">
-                <h2 className="bp-drawer__title">Filter By</h2>
-                <AnimatePresence>
-                  {active && (
-                    <motion.button
-                      type="button"
-                      className="bp-drawer__clear"
-                      onClick={clearAll}
-                      initial={{ opacity: 0, x: -4 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -4 }}
-                      whileHover={{ x: 1 }}
-                    >
-                      Clear All
-                    </motion.button>
-                  )}
-                </AnimatePresence>
-              </div>
+              <h2 className="bp-drawer__title">Filter By</h2>
               <motion.button
                 type="button"
                 className="bp-drawer__close"
@@ -127,7 +110,18 @@ export function FilterDrawer({ open, value, onClose, onApply }: FilterDrawerProp
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                     style={{ overflow: 'hidden' }}
                   >
-                    <p className="bp-drawer__section-title">Filters selected</p>
+                    <div className="bp-drawer__chips-header">
+                      <p className="bp-drawer__section-title">Filters selected</p>
+                      <motion.button
+                        type="button"
+                        className="bp-drawer__clear"
+                        onClick={clearAll}
+                        whileHover={{ x: 1 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        Clear All
+                      </motion.button>
+                    </div>
                     <motion.div className="bp-drawer__chips" layout>
                       <AnimatePresence mode="popLayout">
                         {draft.dateRange.start && (

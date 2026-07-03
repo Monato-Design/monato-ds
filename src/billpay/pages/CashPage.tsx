@@ -1,10 +1,11 @@
 // src/billpay/pages/CashPage.tsx
 // Cash view — table with search, filter drawer, show dropdown, and pagination.
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search1, Filter, Upload1, Copy1, ArrowLeft, ArrowRight,
+  CheckCircle1,
 } from '@tailgrids/icons';
 import type { Transaction, FilterState, ShowOption } from '../types';
 import { emptyFilterState, hasActiveFilters } from '../types';
@@ -147,10 +148,25 @@ export function CashPage() {
 
 function TxRow({ tx, index }: { tx: Transaction; index: number }) {
   const c = tx.client;
+  const [copied, setCopied] = useState(false);
   const badgeCls =
     tx.status === 'Paid'    ? 'bp-badge bp-badge--paid'
   : tx.status === 'Expired' ? 'bp-badge bp-badge--expired'
   :                           'bp-badge bp-badge--reversed';
+
+  // Reset the "copied" visual after 1.5s so the button reverts to Copy1
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  const handleCopy = () => {
+    // Fire-and-forget: we always show the check feedback, regardless of whether
+    // clipboard write succeeds (some browsers block it in iframes / prototypes)
+    try { void navigator.clipboard?.writeText(tx.reference); } catch { /* noop */ }
+    setCopied(true);
+  };
 
   const rowMotion = {
     initial: { opacity: 0, y: 6 },
@@ -173,11 +189,35 @@ function TxRow({ tx, index }: { tx: Transaction; index: number }) {
           <span className="bp-ref__value">{tx.reference}</span>
           <button
             type="button"
-            className="bp-ref__copy"
-            onClick={() => { try { navigator.clipboard.writeText(tx.reference); } catch { /* noop */ } }}
-            aria-label="Copy reference"
+            className={`bp-ref__copy ${copied ? 'bp-ref__copy--done' : ''}`}
+            onClick={handleCopy}
+            aria-label={copied ? 'Reference copied' : 'Copy reference'}
           >
-            <Copy1 size={20} />
+            <AnimatePresence mode="wait" initial={false}>
+              {copied ? (
+                <motion.span
+                  key="check"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.6, opacity: 0 }}
+                  transition={{ duration: 0.16, ease: 'easeOut' }}
+                  style={{ display: 'inline-grid', placeItems: 'center' }}
+                >
+                  <CheckCircle1 size={20} />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="copy"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.6, opacity: 0 }}
+                  transition={{ duration: 0.16, ease: 'easeOut' }}
+                  style={{ display: 'inline-grid', placeItems: 'center' }}
+                >
+                  <Copy1 size={20} />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </motion.div>
