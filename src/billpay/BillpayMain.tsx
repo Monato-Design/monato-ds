@@ -15,7 +15,12 @@ export default function BillpayMainPrototype() {
 
   return (
     <div>
-      <div className="rounded-xl border border-base-100 bg-background-50 overflow-hidden">
+      <motion.div
+        className="rounded-xl border border-base-100 bg-background-50 overflow-hidden"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+      >
         <div className="border-b border-base-100 bg-background-soft-50 px-4 py-2.5 flex items-center justify-between">
           <span className="text-text-200 text-[11px] font-medium uppercase tracking-widest">
             BillPay Main v1.0 — Backoffice (Home + Cash)
@@ -66,13 +71,15 @@ export default function BillpayMainPrototype() {
                 <Badge key={tag} color="gray" size="sm">{tag}</Badge>
               ))}
             </div>
-            <Button onClick={() => setOpen(true)}>
-              <Doller size={14} className="text-white" />
-              Abrir prototipo
-            </Button>
+            <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }} style={{ display: 'inline-block' }}>
+              <Button onClick={() => setOpen(true)}>
+                <Doller size={14} className="text-white" />
+                Abrir prototipo
+              </Button>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {open && (
