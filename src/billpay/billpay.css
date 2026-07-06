@@ -54,7 +54,7 @@
   overflow: hidden;
 }
 
-/* ═══ Sidebar (280px) ════════════════════════════════════════ */
+/* ═══ Sidebar (280px expanded, 88px collapsed) ══════════════════ */
 .bp-sidebar {
   width: 280px;
   flex-shrink: 0;
@@ -65,6 +65,7 @@
   justify-content: space-between;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;   /* labels shrink to width 0 during collapse — hide the overflow */
 }
 
 .bp-sidebar__brand {
@@ -73,9 +74,27 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 28px;
+  gap: 8px;
 }
-.bp-sidebar__brand-logo { height: 22px; width: auto; display: block; }
-.bp-sidebar__brand-icon { width: 20px; height: 20px; display: block; }
+.bp-sidebar--collapsed .bp-sidebar__brand {
+  justify-content: center;   /* toggle button centered when there's no logo */
+}
+.bp-sidebar__brand-logo { height: 22px; width: auto; display: block; flex-shrink: 0; }
+
+/* Sidebar toggle button (Layout22 icon) */
+.bp-sidebar__toggle {
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--bp-brand);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: color .12s;
+}
+.bp-sidebar__toggle:hover { color: var(--bp-sidebar-text); }
 
 .bp-sidebar__eyebrow {
   color: var(--bp-text-2);
@@ -121,6 +140,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
+  min-width: 0;
 }
 .bp-nav__item svg { flex-shrink: 0; }
 .bp-nav__item-label {
@@ -135,6 +155,21 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Collapsed state — items shrink to icon-only and center */
+.bp-sidebar--collapsed .bp-nav__item {
+  padding: 8px 0;
+}
+.bp-sidebar--collapsed .bp-nav__item-content {
+  justify-content: center;
+  gap: 0;
+}
+.bp-sidebar--collapsed .bp-user__row {
+  padding-top: 20px;
+  justify-content: center;
 }
 .bp-nav__badge {
   background: var(--bp-active-bg);

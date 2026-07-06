@@ -31,8 +31,9 @@ type ApiScenario = '200' | '400' | '409' | '503' | 'timeout';
 const SCENARIOS: ApiScenario[] = ['200', '400', '409', '503', 'timeout'];
 
 export function BPApp({ onExit }: BPAppProps) {
-  const [active, setActive]     = useState<NavItemId>('home');
-  const [scenario, setScenario] = useState<ApiScenario>('200');
+  const [active, setActive]         = useState<NavItemId>('home');
+  const [scenario, setScenario]     = useState<ApiScenario>('200');
+  const [collapsed, setCollapsed]   = useState(false);
 
   return (
     <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
@@ -78,7 +79,12 @@ export function BPApp({ onExit }: BPAppProps) {
         {/* App content — bounded (no viewport-height math inside) */}
         <div className="bp-root flex-1 overflow-hidden">
           <div className="bp-shell">
-            <Sidebar active={active} onSelect={setActive} />
+            <Sidebar
+              active={active}
+              onSelect={setActive}
+              collapsed={collapsed}
+              onToggle={() => setCollapsed((c) => !c)}
+            />
 
             <div className="bp-page">
               <header className="bp-topbar">
