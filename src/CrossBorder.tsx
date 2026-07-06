@@ -1018,6 +1018,35 @@ const STATUS_CFG: Record<VerificationStatus, { label: string; color: 'success' |
 
 const ACCOUNTS_LIST_PER_PAGE = 5;
 
+// Prefijos CLABE oficiales (primeros 3 dígitos identifican al banco)
+const CLABE_BANK_MAP: Record<string, string> = {
+  '002': 'Citibanamex',
+  '012': 'BBVA',
+  '014': 'Santander',
+  '019': 'Banjercito',
+  '021': 'HSBC',
+  '030': 'Bajío',
+  '032': 'IXE',
+  '036': 'Inbursa',
+  '037': 'Interacciones',
+  '042': 'Mifel',
+  '044': 'Scotiabank',
+  '058': 'Banregio',
+  '059': 'Invex',
+  '060': 'Bansi',
+  '062': 'Afirme',
+  '072': 'Banorte',
+  '734': 'Fincopay',
+};
+
+const BANK_OPTIONS = Object.values(CLABE_BANK_MAP).sort();
+
+// Detecta banco por prefijo de CLABE; '' si no matchea
+function detectBankFromClabe(clabe: string): string {
+  const prefix = clabe.slice(0, 3);
+  return CLABE_BANK_MAP[prefix] ?? '';
+}
+
 function AccountStatusBadge({ status }: { status: VerificationStatus }) {
   const cfg = STATUS_CFG[status];
   const icon =
@@ -1087,6 +1116,175 @@ function AccountsFilterDropdown<T extends string>({ value, options, labels, allL
   );
 }
 
+// ─── Modal de alta de cuenta (CB-99) ──────────────────────────────────────────
+function AddAccountModal({ onClose, onSave }: {
+  onClose: () => void;
+  onSave: (data: Omit<RegisteredAccount, 'id' | 'status'>) => void;
+}) {
+  const [holder, setHolder] = useState('');
+  const [clabe, setClabe] = useState('');
+  const [bank, setBank] = useState('');
+  const [bankTouched, setBankTouched] = useState(false);
+  const [currency, setCurrency] = useState<'MXN' | 'USD' | 'EUR'>('MXN');
+  const [type, setType] = useState<AccountType>('receiving');
+  const [bankOpen, setBankOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleClabe = (val: string) => {
+    const digits = val.replace(/\D/g, '').slice(0, 18);
+    setClabe(digits);
+    if (!bankTouched) {
+      const detected = detectBankFromClabe(digits);
+      if (detected) setBank(detected);
+    }
+  };
+
+  const clabeValid = /^\d{18}$/.test(clabe);
+  const canSave = !!(holder.trim() && clabeValid && bank && currency && type);
+
+  const handleSave = () => {
+    setSubmitted(true);
+    if (!canSave) return;
+    onSave({ holder: holder.trim(), clabe, bank, currency, type });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(100,108,133,0.8)] p-4"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        transition={{ duration: 0.16 }}
+        className="bg-white rounded-2xl w-[520px] max-h-[90vh] overflow-y-auto relative shadow-2xl"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#f0f4f8]">
+          <div>
+            <p className="text-[#334e68] text-xl font-semibold">Add account</p>
+            <p className="text-[#627d98] text-sm mt-0.5">Register a new recipient or centralizing account.</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-[#f8fafc] transition text-[#829ab1]">✕</button>
+        </div>
+
+        {/* Form */}
+        <div className="px-6 py-5 flex flex-col gap-4">
+          {/* Holder */}
+          <div>
+            <label className="text-[#486581] text-sm font-medium mb-1.5 block">Account holder</label>
+            <input
+              value={holder}
+              onChange={e => setHolder(e.target.value)}
+              placeholder="Ex. Fernando Villa Acuña"
+              className="w-full h-11 px-3.5 rounded-lg border border-[#d9e2ec] bg-white text-sm text-[#334e68] placeholder:text-[#9fb3c8] focus:border-primary-500 focus:outline-none transition"
+            />
+            {submitted && !holder.trim() && <p className="text-[#fb3748] text-xs mt-1">Account holder is required</p>}
+          </div>
+
+          {/* CLABE */}
+          <div>
+            <label className="text-[#486581] text-sm font-medium mb-1.5 block">CLABE</label>
+            <input
+              value={clabe}
+              onChange={e => handleClabe(e.target.value)}
+              placeholder="18 digits"
+              inputMode="numeric"
+              className="w-full h-11 px-3.5 rounded-lg border border-[#d9e2ec] bg-white text-sm text-[#334e68] font-mono placeholder:text-[#9fb3c8] placeholder:font-sans focus:border-primary-500 focus:outline-none transition"
+            />
+            <div className="flex items-center justify-between mt-1">
+              <span className={`text-xs ${clabe.length === 18 ? 'text-[#16894c]' : 'text-[#9fb3c8]'}`}>{clabe.length}/18</span>
+              {submitted && !clabeValid && <span className="text-[#fb3748] text-xs">CLABE must be exactly 18 digits</span>}
+            </div>
+          </div>
+
+          {/* Bank — autodetectado, editable */}
+          <div>
+            <label className="text-[#486581] text-sm font-medium mb-1.5 block">
+              Bank
+              {bank && !bankTouched && <span className="text-[#16894c] text-xs font-normal ml-2">· auto-detected</span>}
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setBankOpen(v => !v)}
+                className="w-full h-11 px-3.5 rounded-lg border border-[#d9e2ec] bg-white flex items-center justify-between text-sm hover:bg-[#f8fafc] transition"
+              >
+                <span className={bank ? 'text-[#334e68]' : 'text-[#9fb3c8]'}>{bank || 'Select bank'}</span>
+                <ChevronDown size={16} className="text-[#627d98]" />
+              </button>
+              {bankOpen && (
+                <>
+                  <div className="fixed inset-0 z-[110]" onClick={() => setBankOpen(false)} />
+                  <div className="absolute z-[120] mt-1 w-full max-h-52 overflow-y-auto rounded-lg border border-[#d9e2ec] bg-white shadow-lg">
+                    {BANK_OPTIONS.map(b => (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => { setBank(b); setBankTouched(true); setBankOpen(false); }}
+                        className={`w-full px-3.5 py-2.5 text-left text-sm hover:bg-[#f8fafc] transition ${bank === b ? 'text-primary-500 font-medium' : 'text-[#334e68]'}`}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            {submitted && !bank && <p className="text-[#fb3748] text-xs mt-1">Select a bank</p>}
+          </div>
+
+          {/* Currency + Type */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-[#486581] text-sm font-medium mb-1.5 block">Currency</label>
+              <div className="flex gap-2">
+                {(['MXN', 'USD', 'EUR'] as const).map(c => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCurrency(c)}
+                    className={`flex-1 h-11 rounded-lg border text-sm font-medium transition ${currency === c ? 'border-primary-500 bg-[#e6f4fa] text-primary-500' : 'border-[#d9e2ec] text-[#627d98] hover:bg-[#f8fafc]'}`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[#486581] text-sm font-medium mb-1.5 block">Account type</label>
+              <select
+                value={type}
+                onChange={e => setType(e.target.value as AccountType)}
+                className="w-full h-11 px-3 rounded-lg border border-[#d9e2ec] bg-white text-sm text-[#334e68] focus:border-primary-500 focus:outline-none transition"
+              >
+                <option value="private">Private</option>
+                <option value="receiving">Receiving</option>
+                <option value="centralizing">Centralizing</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Nota de verificación para receptoras MXN */}
+          {type === 'receiving' && currency === 'MXN' && (
+            <div className="bg-[#e6f4fa] border border-[#8dcee6] rounded-lg px-4 py-3 flex items-start gap-2.5">
+              <QuestionMarkCircle size={16} className="text-primary-500 shrink-0 mt-0.5" />
+              <p className="text-[#06698e] text-xs leading-5">
+                This account can be verified through the banking network (CEP) once registered. You'll see a "Verify" action in the list.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 px-6 py-4 border-t border-[#f0f4f8]">
+          <button onClick={onClose} className="flex-1 border border-[#d9e2ec] bg-white rounded-lg px-4 py-2.5 text-base font-medium text-[#334e68] hover:bg-[#f8fafc] transition">Cancel</button>
+          <button onClick={handleSave} disabled={submitted && !canSave} className="flex-1 bg-primary-500 rounded-lg px-4 py-2.5 text-base font-medium text-white hover:bg-[#0787b6] disabled:opacity-50 transition">Add account</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function AccountsView() {
   const [search, setSearch] = useState('');
   const [currencyFilter, setCurrencyFilter] = useState<'MXN' | 'USD' | 'EUR' | 'all'>('all');
@@ -1096,6 +1294,9 @@ function AccountsView() {
   // Estado local de cuentas — permite mutar el status al verificar (demo del flujo CB-205)
   const [accounts, setAccounts] = useState<RegisteredAccount[]>(REGISTERED_ACCOUNTS);
   const [verifyTarget, setVerifyTarget] = useState<RegisteredAccount | null>(null);
+
+  // Modal de alta de cuenta nueva
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = accounts.filter(acc => {
     const q = search.trim().toLowerCase();
@@ -1120,12 +1321,32 @@ function AccountsView() {
     setTimeout(() => setStatus(acc.id, 'verified'), 2200);
   };
 
+  // Alta de cuenta nueva — entra al inicio del listado
+  const addAccount = (data: Omit<RegisteredAccount, 'id' | 'status'>) => {
+    const newAcc: RegisteredAccount = {
+      ...data,
+      id: `new-${Date.now()}`,
+      status: 'unverified',
+    };
+    setAccounts(prev => [newAcc, ...prev]);
+    setAddOpen(false);
+    setPage(0);
+  };
+
   return (
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
-        <div>
-          <h1 className="text-[#151515] text-2xl font-semibold">Registered accounts</h1>
-          <p className="text-[#627d98] text-sm mt-1">View your registered private, receiving and centralizing accounts.</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-[#151515] text-2xl font-semibold">Registered accounts</h1>
+            <p className="text-[#627d98] text-sm mt-1">View your registered private, receiving and centralizing accounts.</p>
+          </div>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="shrink-0 flex items-center gap-2 bg-primary-500 hover:bg-[#0787b6] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition whitespace-nowrap"
+          >
+            <span className="text-base leading-none">+</span> Add account
+          </button>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
@@ -1218,6 +1439,13 @@ function AccountsView() {
           )}
         </div>
       </div>
+
+      {/* Modal de alta de cuenta (CB-99) */}
+      <AnimatePresence>
+        {addOpen && (
+          <AddAccountModal onClose={() => setAddOpen(false)} onSave={addAccount} />
+        )}
+      </AnimatePresence>
 
       {/* Modal de verificación (CB-205) */}
       <AnimatePresence>
