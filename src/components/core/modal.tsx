@@ -73,7 +73,7 @@ export function Modal({ open, onClose, children, className }: ModalProps) {
     <div role="presentation" className="fixed inset-0 z-50">
       <div
         ref={overlayRef}
-        className="animate-fade-in fixed inset-0 bg-[rgba(94,93,93,0.25)] backdrop-blur-sm"
+        className="animate-fade-in fixed inset-0 bg-black/20"
         onClick={onClose}
         role="presentation"
       />

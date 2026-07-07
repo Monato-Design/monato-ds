@@ -1,0 +1,58 @@
+/* ============================================================
+   CLP V1.0 — scoped design tokens
+   Figma: "CLP V1.0 (May 2026)" — fileKey 2OYrByr8jqGsErdGtAQLRT
+
+   Why this file exists:
+   The repo's global tokens (tokens/monato.css) were synced from the
+   older "DS Web 2026" file, where the text/gray scale resolves to
+   NEUTRAL grays (#18181b, #1e1e22, #3f3f46, #52525b). CLP V1.0 uses
+   the BLUE-GRAY scale (#334e68, #486581, #829ab1, #9fb3c8).
+
+   Instead of hard-coding hexes across the prototype, we override the
+   semantic CSS variables inside a `.clp-root` scope — the exact same
+   mechanism dark mode uses under [data-theme="dark"]. Every DS Tailwind
+   class (text-title-50, text-text-100, border-base-200, …) then resolves
+   to the CLP palette INSIDE .clp-root and stays untouched everywhere else.
+   ============================================================ */
+
+.clp-root {
+  /* ── Text — blue-gray scale (CLP V1.0) ── */
+  --color-text-title: #334e68;          /* Text/Title Color   → text-title-50 */
+  --color-text-body: #486581;           /* Text/Text Color    → text-text-50  */
+  --color-text-secondary-text: #829ab1; /* Text/Secondary     → text-text-100 */
+  --color-text-tertiary-text: #9fb3c8;  /* Text/Tertiary      → text-text-200 */
+
+  /* ── Borders ── */
+  --color-border-secondary: #f0f4f8;     /* Border/Secondary       → border-base-100 */
+  --color-border-secondary-alt: #d9e2ec; /* Border/Secondary_alt   → border-base-200 */
+  --color-border-tertiary: #d9e2ec;      /* input border           → border-base-300 */
+
+  /* ── Inputs ── */
+  --color-input-placeholder-text: #9fb3c8;
+
+  /* ── Surfaces ── */
+  --color-background-gray-primary: #f8fafc; /* page canvas → bg-background-soft-50 */
+
+  /* ── Badges — "Tipo de ID" (no clean DS utility, expose as vars) ── */
+  --clp-badge-rfc-bg: #e6f4fa;   /* Skyblue/50  */
+  --clp-badge-rfc-text: #0894c8; /* Skyblue/500 */
+  --clp-badge-curp-bg: #f5f3ff;  /* Violet/50   */
+  --clp-badge-curp-text: #6d28d9;/* Violet/700  */
+
+  /* ── Status (upload feedback) ── */
+  --clp-status-success: #22c55e; /* Badges/Success/Icon */
+  --clp-status-error: #fb3748;   /* Badges/Error/Icon   */
+  --clp-file-icon-bg: #f0fdf4;   /* Green/50 tint for CSV icon */
+  --clp-file-icon: #15803d;      /* Green/700 */
+
+  /* ── Semantic badges (Etapa / Estado / KPI trend) ── */
+  --clp-badge-primary-bg: #e6f4fa;  --clp-badge-primary-text: #0894c8;
+  --clp-badge-success-bg: #e9f9f0;  --clp-badge-success-text: #16894c;
+  --clp-badge-warning-bg: #fef8e9;  --clp-badge-warning-text: #af8115;
+  --clp-badge-error-bg: #ffebed;    --clp-badge-error-text: #b22733;
+
+  /* ── KPI card + dark action button ── */
+  --clp-kpi-icon-bg: #e6f4fa;    /* Skyblue/50 */
+  --clp-dark: #323544;           /* Primary (dark) — "Actualizar portafolio" */
+  --clp-dark-hover: #454b62;
+}

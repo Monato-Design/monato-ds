@@ -79,7 +79,7 @@ Atomic/molecular components. These are the building blocks patterns consume — 
 | Error Pages | `7672:139` | pending |
 | Mega Menu | `7259:1472` | pending |
 | Modals | `7738:1298` | pending |
-| Sign In / Sign Up | `7753:735` | pending |
+| Sign In / Sign Up | `7753:735` | in-code — adaptado a login en `src/CLP.tsx` (`LoginScreen`), basado en nodo `8549:1901` (variante "Sign up" adaptada como login) |
 | Sticky Bars | `16256:2550` | pending |
 | Gallery | `7483:327` | pending |
 | Tables | `7832:3869` | pending |

@@ -41,7 +41,7 @@ export function DialogOverlay({
   return (
     <ModalOverlay
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-200 data-entering:opacity-0 data-exiting:opacity-0",
+        "fixed inset-0 z-50 bg-black/20 transition-opacity duration-200 data-entering:opacity-0 data-exiting:opacity-0",
         className
       )}
       isDismissable={isDismissable}

@@ -1,970 +1,220 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Avatar } from './components/core/avatar';
 import { Badge } from './components/core/badge';
 import { Button } from './components/core/button';
-import { Modal } from './components/core/modal';
-import { Pagination } from './components/core/pagination';
-import {
-  Home,
-  CreditCard, Doller,
-  Search1, Funnel1,
-  ArrowUpward, Upload1,
-  RefreshCircle1Clockwise, TrendUp2,
-  BarChart2, UserMultiple4,
-  Gear1, Bell1,
-  ChevronDown, Download1,
-  UploadCloud, FileTextMultiple,
-  CheckCircle1, Layers2, Locked3,
-} from '@tailgrids/icons';
+import { Input } from './components/core/input';
+import { Checkbox } from './components/core/checkbox';
+import { Label } from './components/core/label';
+import { Eye, EyeDisabled, Layers2 } from '@tailgrids/icons';
 import LogoDefault from './assets/logo-default.png';
+import { AppShell } from './clp/AppShell';
+import './clp/tokens.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type Screen = 'portafolio' | 'clientes';
+type Screen = 'login' | 'app';
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const CLIENTES = [
-  { id: '1',  name: 'John Doe',      email: 'johndoe@gmail.com',   monto: '$18,50.34', venc: '2024-06-15', tipo: 'Software License', etapa: 'Pre-vencimiento', estado: 'Pendiente',    sex: 'M', extId: '2d8929amz9', tel: '33 2837 3789' },
-  { id: '2',  name: 'Kierra Franci', email: 'kierra@gmail.com',    monto: '$18,50.34', venc: '2024-06-15', tipo: 'Software License', etapa: 'Al día',          estado: 'Pagado',       sex: 'F', extId: '2d8929amz9', tel: '33 2837 3789' },
-  { id: '3',  name: 'Emerson W.',    email: 'emerson@gmail.com',   monto: '$18,50.34', venc: '2024-06-15', tipo: 'Software License', etapa: 'Mora temprana',   estado: 'Reprogramado', sex: 'M', extId: '2d8929amz9', tel: '33 2837 3789' },
-  { id: '4',  name: 'Chance Philips',email: 'chance@gmail.com',    monto: '$18,50.34', venc: '2024-06-15', tipo: 'Software License', etapa: 'Mora avanzada',   estado: 'Anulado',      sex: 'M', extId: '2d8929amz9', tel: '33 2837 3789' },
-  { id: '5',  name: 'Sara Mitchell', email: 'sara@gmail.com',      monto: '$22,100.00',venc: '2024-07-01', tipo: 'Crédito',          etapa: 'Al día',          estado: 'Pagado',       sex: 'F', extId: '3k1029bxz1', tel: '55 1234 5678' },
-  { id: '6',  name: 'Luis Torres',   email: 'luis@gmail.com',      monto: '$9,500.00', venc: '2024-06-20', tipo: 'Crédito',          etapa: 'Pre-vencimiento', estado: 'Pendiente',    sex: 'M', extId: '7p3847cqw4', tel: '81 9876 5432' },
-  { id: '7',  name: 'Ana García',    email: 'ana@gmail.com',       monto: '$31,200.00',venc: '2024-05-30', tipo: 'Software License', etapa: 'Mora avanzada',   estado: 'Anulado',      sex: 'F', extId: '9x2048drt6', tel: '33 2837 9900' },
-  { id: '8',  name: 'Pedro Ramos',   email: 'pedro@gmail.com',     monto: '$15,750.00',venc: '2024-06-10', tipo: 'Crédito',          etapa: 'Al día',          estado: 'Pagado',       sex: 'M', extId: '4m5619esu8', tel: '55 5678 1234' },
-  { id: '9',  name: 'Valeria Cruz',  email: 'valeria@gmail.com',   monto: '$8,300.00', venc: '2024-07-15', tipo: 'Software License', etapa: 'Pre-vencimiento', estado: 'Pendiente',    sex: 'F', extId: '2d8929amz9', tel: '33 2837 3789' },
-  { id: '10', name: 'Marco Silva',   email: 'marco@gmail.com',     monto: '$44,000.00',venc: '2024-06-05', tipo: 'Crédito',          etapa: 'Mora temprana',   estado: 'Reprogramado', sex: 'M', extId: '6n7730ftv2', tel: '81 3344 5566' },
-];
+// ─── Screen: login ────────────────────────────────────────────────────────────
 
-const ETAPA_COLOR: Record<string, 'primary'|'success'|'warning'|'error'|'orange'|'gray'|'blue'> = {
-  'Pre-vencimiento': 'primary', 'Al día': 'success',
-  'Mora temprana': 'orange',    'Mora avanzada': 'error',
-};
-const ESTADO_COLOR: Record<string, 'success'|'primary'|'warning'|'error'|'gray'|'blue'> = {
-  'Pagado': 'success',  'Pendiente': 'primary',
-  'Reprogramado': 'blue', 'Anulado': 'error',
-};
+function LoginScreen({ onLogin }: { onLogin: () => void }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const AVATAR_COLORS = [
-  'bg-primary-500', 'bg-violet-500', 'bg-emerald-500',
-  'bg-orange-500',  'bg-rose-500',   'bg-sky-500',
-];
-
-// ─── KPI Card ─────────────────────────────────────────────────────────────────
-function KpiCard({
-  icon: Icon, label, value, sub, trend, delay = 0,
-}: {
-  icon: React.FC<{ size?: number; className?: string; strokeWidth?: number }>;
-  label: string; value: string; sub: string; trend: string; delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.22, ease: 'easeOut' }}
-      className="rounded-xl border border-base-100 bg-background-50 p-5 space-y-3"
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex size-10 items-center justify-center rounded-lg bg-background-soft-50 border border-base-100">
-          <Icon size={18} className="text-text-100" />
-        </div>
-        <Badge color="success" size="sm">
-          <ArrowUpward size={10} />
-            {trend}
-        </Badge>
-      </div>
-      <div>
-        <p className="text-text-200 text-xs font-medium">{label}</p>
-        <p className="text-title-50 text-2xl font-semibold tracking-tight mt-0.5">{value}</p>
-        <p className="text-text-200 text-xs mt-0.5">{sub}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── File Uploader ────────────────────────────────────────────────────────────
-type UploadState = 'idle' | 'uploading' | 'completed' | 'error';
-
-function FileUploader({ onClose }: { onClose: () => void }) {
-  const [dragging, setDragging] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadState, setUploadState] = useState<UploadState>('idle');
-  const [progress, setProgress] = useState(0);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setDragging(false);
-    const f = e.dataTransfer.files[0];
-    if (f) setFile(f);
-  }, []);
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) setFile(f);
+    setLoading(true);
+    // Bypass de demo: para fines de portafolio, cualquier click en "Iniciar sesión" entra.
+    setTimeout(onLogin, 600);
   };
-
-  const handleUpload = () => {
-    if (!file) return;
-    setUploadState('uploading');
-    setProgress(0);
-
-    // Simular progreso
-    let p = 0;
-    const interval = setInterval(() => {
-      p += Math.random() * 18 + 4;
-      if (p >= 100) {
-        p = 100;
-        clearInterval(interval);
-        setProgress(100);
-        // 50/50 completed vs error para demo
-        setTimeout(() => {
-          setUploadState(Math.random() > 0.4 ? 'completed' : 'error');
-        }, 400);
-      } else {
-        setProgress(Math.round(p));
-      }
-    }, 180);
-  };
-
-  const fileSize = file ? `${(file.size / 1024).toFixed(0)} KB` : '';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 10 }}
-      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-      className="w-full max-w-lg rounded-2xl bg-background-50 shadow-xl overflow-hidden"
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-base-100">
-        <h3 className="text-title-50 text-base font-semibold">Upload Files</h3>
-        <button
-          onClick={onClose}
-          className="size-7 rounded-lg hover:bg-background-soft-50 flex items-center justify-center transition text-text-200 hover:text-title-50"
+    <div className="flex h-full w-full">
+      {/* Panel izquierdo — formulario */}
+      <div className="flex flex-1 items-center justify-center bg-background-50 px-8 py-12">
+        <motion.div
+          className="w-full max-w-[400px]"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
         >
-          ✕
-        </button>
-      </div>
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+            className="mb-9"
+          >
+            <h1 className="text-title-50 text-4xl font-semibold">Inicia sesión en CLP</h1>
+            <p className="text-text-100 mt-3 text-base">
+              Accede a tu cuenta para gestionar tu cartera de cobranza.
+            </p>
+          </motion.div>
 
-      <div className="px-6 py-5 space-y-4">
-
-        {/* ── Estado: idle — drop zone ── */}
-        {uploadState === 'idle' && (
-          <>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <motion.div
-              onDragOver={e => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={handleDrop}
-              animate={{
-                borderColor: dragging ? '#0894c8' : file ? '#22c55e' : '#e4e4e7',
-                backgroundColor: dragging ? 'rgba(8,148,200,0.04)' : 'transparent',
-              }}
-              transition={{ duration: 0.15 }}
-              className="rounded-xl border-2 border-dashed p-8 flex flex-col items-center gap-3 cursor-pointer"
-              onClick={() => document.getElementById('file-input')?.click()}
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              className="flex flex-col gap-2"
             >
-              <input id="file-input" type="file" accept=".csv" className="hidden" onChange={handleFile} />
-              <motion.div
-                animate={{ scale: dragging ? 1.1 : 1 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-                className={`size-12 rounded-full flex items-center justify-center ${file ? 'bg-green-50' : 'bg-background-soft-50'}`}
-              >
-                {file
-                    ? <CheckCircle1 size={24} className="text-green-500" />
-                    : <UploadCloud  size={24} className="text-text-200" />
-                  }
-              </motion.div>
-              {file ? (
-                <div className="text-center">
-                  <p className="text-title-50 text-sm font-medium">{file.name}</p>
-                  <p className="text-text-200 text-xs mt-0.5">{fileSize} · listo para subir</p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p className="text-title-50 text-sm font-medium">Arrastra tu archivo aquí</p>
-                  <p className="text-text-200 text-xs mt-0.5">o haz clic para seleccionar · Solo .CSV, hasta 50MB</p>
-                </div>
-              )}
-              {!file && (
-                <button
-                  onClick={e => { e.stopPropagation(); document.getElementById('file-input')?.click(); }}
-                  className="mt-1 px-4 py-1.5 rounded-lg border border-base-200 text-xs text-title-50 hover:bg-background-soft-50 transition"
-                >
-                  Seleccionar archivo
-                </button>
-              )}
+              <Label>Correo electrónico</Label>
+              <Input
+                type="email"
+                autoComplete="email"
+                placeholder="tu.nombre@empresa.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full"
+              />
             </motion.div>
 
-            {/* Template download */}
-            <div className="flex items-center gap-3 rounded-xl border border-base-100 bg-background-soft-50 px-4 py-3">
-              <div className="flex size-9 items-center justify-center rounded-lg border border-base-100 bg-background-50 shrink-0">
-                <FileTextMultiple size={16} className="text-text-100" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-title-50 text-xs font-medium">Descarga la plantilla .CSV aquí</p>
-                <p className="text-text-200 text-[11px] mt-0.5">Campos: nombre, ID, teléfono, email, sexo (opc.), ID externo</p>
-              </div>
-              <button className="shrink-0 text-text-200 hover:text-primary-500 transition">
-                <Download1 size={16} />
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* ── Estados: uploading / completed / error — file row ── */}
-        {uploadState !== 'idle' && file && (
-          <div className="rounded-xl border border-base-100 bg-background-50 px-4 py-3.5 space-y-3">
-            <div className="flex items-center gap-3">
-              {/* PDF icon */}
-              <div className="relative shrink-0">
-                <div className="size-10 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center">
-                  <FileTextMultiple size={18} className="text-red-400" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 bg-red-500 rounded text-white text-[8px] font-bold px-0.5 leading-tight">
-                  PDF
-                </div>
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <p className="text-title-50 text-sm font-medium truncate">{file.name}</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <p className="text-text-200 text-xs">
-                    {uploadState === 'uploading'
-                      ? `${Math.round(file.size / 1024 * (progress / 100))} KB of ${fileSize}`
-                      : `${fileSize} of ${fileSize}`
-                    }
-                  </p>
-                  {uploadState === 'completed' && (
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center gap-1 text-xs font-medium text-green-500"
-                    >
-                      <span className="size-1.5 rounded-full bg-green-500 inline-block" />
-                      Completed
-                    </motion.span>
-                  )}
-                  {uploadState === 'error' && (
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center gap-1 text-xs font-medium text-red-500"
-                    >
-                      <span className="size-1.5 rounded-full bg-red-500 inline-block" />
-                      Errores encontrados
-                    </motion.span>
-                  )}
-                </div>
-              </div>
-
-              <button className="shrink-0 text-text-200 hover:text-red-400 transition">
-                <Download1 size={16} />
-              </button>
-            </div>
-
-            {/* Progress bar — solo en uploading */}
-            {uploadState === 'uploading' && (
-              <div className="space-y-1.5">
-                <div className="h-1.5 w-full rounded-full bg-background-soft-100 overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full bg-primary-500"
-                    initial={{ width: '0%' }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.15, ease: 'linear' }}
-                  />
-                </div>
-                <p className="text-text-200 text-xs text-right">{progress}%</p>
-              </div>
-            )}
-          </div>
-        )}
-
-      </div>
-
-      {/* ── Actions ── */}
-      <div className="px-6 pb-6 flex gap-3">
-        <Button appearance="outline" className="flex-1" onClick={onClose}>
-          Cancel
-        </Button>
-
-        {uploadState === 'idle' && (
-          <Button className="flex-1" disabled={!file} onClick={handleUpload}>
-            <span className="flex items-center gap-1.5">
-              <Upload1 size={14} />
-              Cargar clientes
-            </span>
-          </Button>
-        )}
-
-        {uploadState === 'uploading' && (
-          <Button className="flex-1" disabled>
-            <span className="flex items-center gap-1.5">
-              <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="[&_svg]:fill-none [&_path]:fill-none inline-flex"
-              >
-                <RefreshCircle1Clockwise size={14} />
-              </motion.span>
-              Subiendo...
-            </span>
-          </Button>
-        )}
-
-        {uploadState === 'completed' && (
-          <Button className="flex-1" onClick={onClose}>
-            Continuar
-          </Button>
-        )}
-
-        {uploadState === 'error' && (
-          <Button className="flex-1" variant="danger">
-            <span className="flex items-center gap-1.5">
-              <Download1 size={14} />
-              Descargar errores
-            </span>
-          </Button>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
-
-// ─── Nav data ─────────────────────────────────────────────────────────────────
-const NAV_MAIN = [
-  { id: 'dashboard',   label: 'Dashboard',                icon: Home,              disabled: true  },
-  { id: 'products',    label: 'Products',                 icon: Layers2,             disabled: true  },
-  { id: 'portafolio',  label: 'Portafolio de obligaciones',icon: CreditCard, disabled: false },
-  { id: 'clientes',    label: 'Clientes',                 icon: UserMultiple4,       disabled: false },
-  { id: 'payments',    label: 'Payments',                 icon: Doller,        disabled: true  },
-];
-
-const NAV_OTHERS = [
-  { label: 'Marketing',    icon: TrendUp2,       disabled: true },
-  { label: 'Notification', icon: Bell1,          disabled: true },
-  { label: 'Store',        icon: RefreshCircle1Clockwise, disabled: true },
-  { label: 'Cashback',     icon: BarChart2,      disabled: true },
-];
-
-function Sidebar({ screen, onNavigate, onProfileOpen }: {
-  screen: Screen;
-  onNavigate: (s: Screen) => void;
-  onProfileOpen: () => void;
-}) {
-  return (
-    <aside className="h-full w-60 shrink-0 flex flex-col border-r border-base-100 bg-background-50">
-      {/* Logo */}
-      <div className="flex items-center justify-between border-b border-base-100 px-4 py-3.5">
-        <img src={LogoDefault} alt="monato" className="h-5 w-auto" />
-        <button className="text-text-200 hover:text-title-50 transition">
-          <Layers2 size={15} />
-        </button>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-        {/* Main menu */}
-        <div>
-          <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Main menu</p>
-          {NAV_MAIN.map(({ id, label, icon: Icon, disabled }) => {
-            const isActive = screen === id;
-            return (
-              <button
-                key={id}
-                onClick={() => !disabled && onNavigate(id as Screen)}
-                disabled={disabled}
-                className={[
-                  'w-full relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors',
-                  isActive
-                    ? 'text-primary-500 font-medium'
-                    : disabled
-                    ? 'text-text-200 opacity-50 cursor-not-allowed'
-                    : 'text-text-50 hover:bg-background-soft-50',
-                ].join(' ')}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="clp-nav-bg"
-                    className="absolute inset-0 rounded-lg bg-primary-500/10"
-                    transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                  />
-                )}
-                <Icon size={15} className={isActive ? 'text-primary-500' : 'text-text-200'} />
-                <span className="relative z-10 leading-tight">{label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Others */}
-        <div>
-          <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Others</p>
-          {NAV_OTHERS.map(({ label, icon: Icon }) => (
-            <button
-              key={label}
-              disabled
-              className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-200 opacity-50 cursor-not-allowed"
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              className="flex flex-col gap-2"
             >
-              <Icon size={15} className="text-text-200" />
-              {label}
-            </button>
-          ))}
-        </div>
+              <Label>Contraseña</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder="Ingresa tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="text-text-100 absolute top-1/2 right-3.5 -translate-y-1/2"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showPassword ? <EyeDisabled size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </motion.div>
 
-        {/* Support */}
-        <div>
-          <p className="text-text-200 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest">Support</p>
-          {[
-            { label: 'Support',  icon: Bell1 },
-            { label: 'Settings', icon: Gear1 },
-          ].map(({ label, icon: Icon }) => (
-            <button
-              key={label}
-              disabled
-              className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-text-200 opacity-50 cursor-not-allowed"
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              className="flex items-center justify-between"
             >
-              <Icon size={15} className="text-text-200" />
-              {label}
-            </button>
-          ))}
-        </div>
-      </nav>
-
-      {/* User footer — click to open profile */}
-      <motion.button
-        whileHover={{ backgroundColor: 'var(--color-background-soft-50)' }}
-        onClick={onProfileOpen}
-        className="border-t border-base-100 px-4 py-3 flex items-center gap-2.5 w-full text-left transition-colors"
-      >
-        <Avatar size="sm" fallback="KM" />
-        <div className="min-w-0 flex-1">
-          <p className="text-title-50 text-xs font-medium truncate">Kathryn Murphy</p>
-          <p className="text-text-200 text-[11px] truncate">murphy.mitc@example.com</p>
-        </div>
-      </motion.button>
-    </aside>
-  );
-}
-
-// ─── Profile Drawer ───────────────────────────────────────────────────────────
-function ProfileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [name, setName] = useState('Kathryn Murphy');
-  const [title, setTitle] = useState('Product Manager');
-  const [twoFA, setTwoFA] = useState(false);
-  const [loginAlert, setLoginAlert] = useState(true);
-
-  const HISTORIAL = [
-    { color: 'bg-green-500',   title: 'New user registered',     desc: 'John Doe joined your platform',    time: '10 min ago' },
-    { color: 'bg-primary-500', title: 'Portafolio actualizado',   desc: '3,782 obligaciones sincronizadas', time: '1 hr ago'   },
-    { color: 'bg-orange-500',  title: 'Alerta de mora detectada', desc: 'Chance Philips — mora avanzada',   time: '3 hr ago'   },
-  ];
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/20 z-20"
-            onClick={onClose}
-          />
-
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 340, damping: 32 }}
-            className="absolute top-0 right-0 h-full w-[420px] bg-background-50 border-l border-base-100 z-30 flex flex-col shadow-2xl"
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-base-100 shrink-0">
-              <div>
-                <h3 className="text-title-50 text-base font-semibold">Profile</h3>
-                <p className="text-text-200 text-xs mt-0.5">Update your profile information</p>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                className="size-7 rounded-lg hover:bg-background-soft-50 flex items-center justify-center text-text-200 hover:text-title-50 transition mt-0.5"
+              <label className="flex cursor-pointer items-center gap-2.5">
+                <Checkbox checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+                <span className="text-text-50 text-sm">Recuérdame</span>
+              </label>
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                className="text-title-50 text-sm font-medium hover:underline"
               >
-                ✕
-              </motion.button>
-            </div>
+                ¿Olvidaste tu contraseña?
+              </a>
+            </motion.div>
 
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
-
-              {/* Avatar upload */}
-              <div className="flex items-center gap-4">
-                <div className="relative shrink-0">
-                  <div className="size-16 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-white text-lg font-semibold">
-                    KM
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background-50 border border-base-100 flex items-center justify-center">
-                    <Upload1 size={10} className="text-text-200" />
-                  </div>
-                </div>
-                <div>
-                  <p className="text-title-50 text-sm font-medium">Upload Image</p>
-                  <p className="text-text-200 text-xs mt-0.5">180x180 pixels px Png or Jpeg</p>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                    className="mt-2 px-4 py-1.5 rounded-lg border border-base-200 text-xs text-title-50 hover:bg-background-soft-50 transition"
-                  >
-                    Upload
-                  </motion.button>
-                </div>
-              </div>
-
-              {/* Account Info */}
-              <div className="space-y-4">
-                <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Account Info</p>
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <label className="text-text-100 text-xs font-medium">Name</label>
-                    <input
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-base-200 bg-background-50 px-3 text-sm text-title-50 focus:outline-none focus:border-primary-500 transition"
+            <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {loading && (
+                    <motion.span
+                      className="size-4 rounded-full border-2 border-white/40 border-t-white"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.7, repeat: Infinity, ease: 'linear' }}
                     />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-text-100 text-xs font-medium">Title</label>
-                    <input
-                      value={title}
-                      onChange={e => setTitle(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-base-200 bg-background-50 px-3 text-sm text-title-50 focus:outline-none focus:border-primary-500 transition"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Historial */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Historial</p>
-                  <button className="text-primary-500 text-xs font-medium hover:underline transition">Ver todo</button>
-                </div>
-                <div className="space-y-3">
-                  {HISTORIAL.map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: 8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.07 }}
-                      className="flex items-start gap-3"
-                    >
-                      <div className={`size-2 rounded-full ${item.color} mt-1.5 shrink-0`} />
-                      <div className="min-w-0">
-                        <p className="text-title-50 text-xs font-medium">{item.title}</p>
-                        <p className="text-text-200 text-xs">{item.desc}</p>
-                        <p className="text-text-200 text-[11px] mt-0.5">{item.time}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Security */}
-              <div className="space-y-3">
-                <p className="text-title-50 text-xs font-semibold uppercase tracking-wider">Security</p>
-                <div className="space-y-3">
-                  {/* Control 2FA */}
-                  <div className="flex items-center justify-between rounded-xl border border-base-100 px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-background-soft-50 border border-base-100 flex items-center justify-center shrink-0">
-                        <Locked3 size={15} className="text-text-100" />
-                      </div>
-                      <div>
-                        <p className="text-title-50 text-xs font-medium">Control 2FA</p>
-                        <p className="text-text-200 text-[11px]">Enable two factor authentication</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setTwoFA(v => !v)}
-                      className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 ${twoFA ? 'bg-primary-500' : 'bg-base-200'}`}
-                      style={{ height: '22px', width: '40px' }}
-                    >
-                      <motion.span
-                        animate={{ x: twoFA ? 18 : 2 }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                        className="absolute top-0.5 size-4 rounded-full bg-white shadow-sm"
-                        style={{ top: '3px' }}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Login Alert */}
-                  <div className="flex items-center justify-between rounded-xl border border-base-100 px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-background-soft-50 border border-base-100 flex items-center justify-center shrink-0">
-                        <Bell1 size={15} className="text-text-100" />
-                      </div>
-                      <div>
-                        <p className="text-title-50 text-xs font-medium">Login Alert</p>
-                        <p className="text-text-200 text-[11px]">Enable account login alert</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setLoginAlert(v => !v)}
-                      className="relative rounded-full transition-colors duration-200"
-                      style={{ height: '22px', width: '40px', backgroundColor: loginAlert ? '#0894c8' : '#e4e4e7' }}
-                    >
-                      <motion.span
-                        animate={{ x: loginAlert ? 18 : 2 }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                        className="absolute top-0.5 size-4 rounded-full bg-white shadow-sm"
-                        style={{ top: '3px' }}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Footer actions */}
-            <div className="border-t border-base-100 px-6 py-4 flex gap-3 shrink-0">
-              <Button appearance="outline" className="flex-1" onClick={onClose}>
-                Discard
-              </Button>
-              <motion.div className="flex-1" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
-                <Button className="w-full" onClick={onClose}>
-                  Apply Changes
+                  )}
+                  {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
                 </Button>
               </motion.div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-
-
-function PortafolioScreen() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const PER_PAGE = 6;
-
-  const filtered = CLIENTES.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.etapa.toLowerCase().includes(search.toLowerCase())
-  );
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-
-  return (
-    <div className="flex-1 overflow-y-auto bg-background-soft-50">
-      {/* Top bar */}
-      <div className="bg-background-50 border-b border-base-100 px-7 py-4 flex items-center">
-        <h1 className="text-title-50 text-lg font-semibold">Portafolio de obligaciones</h1>
-      </div>
-
-      <div className="px-7 py-6 space-y-5">
-        {/* KPI Cards row 1 */}
-        <div className="grid grid-cols-4 gap-4">
-          <KpiCard icon={CreditCard} label="Obligaciones activas"        value="3,782" sub="Total en cartera"       trend="11.01%" delay={0}    />
-          <KpiCard icon={Doller}       label="Monto total esperado"         value="3,782" sub="MXN en periodo actual"  trend="11.01%" delay={0.05} />
-          <KpiCard icon={BarChart2}          label="Obligaciones en mora"         value="3,782" sub="Requieren seguimiento"   trend="11.01%" delay={0.10} />
-          <KpiCard icon={TrendUp2}           label="Performance del portafolio"   value="3,782" sub="Índice general"          trend="11.01%" delay={0.15} />
-        </div>
-
-        {/* KPI Cards row 2 */}
-        <div className="grid grid-cols-4 gap-4">
-          {[
-            { label: 'Saldo total en mora',        value: '$120,369' },
-            { label: 'Días promedio de mora',      value: '$120,369' },
-            { label: 'Índice de morosidad (iMor)', value: '$120,369' },
-            { label: 'Tasa de recuperación',       value: '$120,369' },
-          ].map(({ label, value }, i) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.05, duration: 0.22, ease: 'easeOut' }}
-              className="rounded-xl border border-base-100 bg-background-50 px-5 py-4"
-            >
-              <p className="text-title-50 text-xl font-semibold">{value}</p>
-              <p className="text-text-200 text-xs mt-1">{label}</p>
             </motion.div>
-          ))}
-        </div>
-
-        {/* Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.22, ease: 'easeOut' }}
-          className="rounded-xl border border-base-100 bg-background-50 overflow-hidden"
-        >
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-base-100">
-            <h3 className="text-title-50 text-sm font-semibold">Obligaciones</h3>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
-                <input
-                  value={search}
-                  onChange={e => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Buscar..."
-                  className="h-8 w-44 rounded-lg border border-base-200 bg-background-soft-50 pl-8 pr-3 text-xs text-title-50 placeholder:text-text-200 focus:outline-none focus:border-primary-500"
-                />
-              </div>
-              <button className="h-8 px-3 flex items-center gap-1.5 rounded-lg border border-base-200 bg-background-soft-50 text-xs text-text-50 hover:bg-background-soft-100 transition">
-                <Funnel1 size={12} />
-                Filtrar
-              </button>
-              <Button size="sm" appearance="outline">
-                <RefreshCircle1Clockwise size={13} />
-                Actualizar portafolio
-              </Button>
-              <Button size="sm">
-                <Upload1 size={13} />
-                Cargar portafolio
-              </Button>
-            </div>
-          </div>
-
-          <table className="min-w-full border-separate border-spacing-0 text-left">
-            <thead>
-              <tr>
-                {['Cliente', 'Monto', 'Vencimiento', 'Tipo', 'Etapa', 'Estado'].map(h => (
-                  <th key={h} className="border-base-100 border-b px-5 py-3 text-xs font-medium text-text-100">
-                    <span className="flex items-center gap-1 cursor-pointer hover:text-title-50 transition">
-                      {h}
-                      <ChevronDown size={10} />
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence mode="wait">
-                {paginated.map((c, i) => (
-                  <motion.tr
-                    key={c.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.18 }}
-                    className="hover:bg-background-soft-50 transition-colors border-b border-base-100 last:border-0"
-                  >
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className={`size-8 rounded-full ${AVATAR_COLORS[parseInt(c.id) % AVATAR_COLORS.length]} flex items-center justify-center text-white text-xs font-semibold shrink-0`}>
-                          {c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-title-50 text-sm font-medium leading-tight">{c.name}</p>
-                          <p className="text-text-200 text-xs">{c.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5"><span className="text-title-50 text-sm font-medium">{c.monto}</span></td>
-                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.venc}</span></td>
-                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.tipo}</span></td>
-                    <td className="px-5 py-3.5"><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></td>
-                    <td className="px-5 py-3.5"><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-
-          <div className="border-t border-base-100 px-5 py-3 flex items-center gap-4">
-            <span className="text-text-200 text-xs shrink-0">{filtered.length} obligaciones</span>
-            <div className="ml-auto">
-              <Pagination
-                totalPages={Math.ceil(filtered.length / PER_PAGE)}
-                currentPage={page}
-                onPageChange={setPage}
-              />
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Clientes screen ──────────────────────────────────────────────────────────
-function ClientesScreen() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [uploadOpen, setUploadOpen] = useState(false);
-  const PER_PAGE = 6;
-
-  const filtered = CLIENTES.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.email.toLowerCase().includes(search.toLowerCase())
-  );
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-
-  return (
-    <div className="flex-1 overflow-y-auto bg-background-soft-50">
-      {/* Top bar */}
-      <div className="bg-background-50 border-b border-base-100 px-7 py-4 flex items-center">
-        <h1 className="text-title-50 text-lg font-semibold">Clientes</h1>
-      </div>
-
-      <div className="px-7 py-6 space-y-5">
-        {/* KPI cards */}
-        <div className="grid grid-cols-4 gap-4">
-          <KpiCard icon={UserMultiple4} label="Obligaciones activas"        value="3,782" sub="Clientes activos"           trend="11.01%" delay={0}    />
-          <KpiCard icon={Doller}  label="Monto total esperado"         value="3,782" sub="MXN en cartera"             trend="11.01%" delay={0.05} />
-          <KpiCard icon={BarChart2}     label="Obligaciones en mora"         value="3,782" sub="Clientes con deuda vencida" trend="11.01%" delay={0.10} />
-          <KpiCard icon={TrendUp2}      label="Performance del portafolio"   value="3,782" sub="Índice general"             trend="11.01%" delay={0.15} />
-        </div>
-
-        {/* Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.22 }}
-          className="rounded-xl border border-base-100 bg-background-50 overflow-hidden"
-        >
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-base-100">
-            <div className="relative">
-              <Search1 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-200 pointer-events-none" />
-              <input
-                value={search}
-                onChange={e => { setSearch(e.target.value); setPage(1); }}
-                placeholder="Buscar..."
-                className="h-8 w-52 rounded-lg border border-base-200 bg-background-soft-50 pl-8 pr-3 text-xs text-title-50 placeholder:text-text-200 focus:outline-none focus:border-primary-500"
-              />
-            </div>
-            <Button size="sm" onClick={() => setUploadOpen(true)}>
-              <Upload1 size={13} />
-              Cargar clientes
-            </Button>
-          </div>
-
-          <table className="min-w-full border-separate border-spacing-0 text-left">
-            <thead>
-              <tr>
-                {['Cliente', 'ID Externo', 'Etapa', 'Teléfono', 'Sexo', 'Estado'].map(h => (
-                  <th key={h} className="border-base-100 border-b px-5 py-3 text-xs font-medium text-text-100">
-                    <span className="flex items-center gap-1 cursor-pointer hover:text-title-50 transition">
-                      {h}
-                      <ChevronDown size={10} />
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence mode="wait">
-                {paginated.map((c, i) => (
-                  <motion.tr
-                    key={c.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.18 }}
-                    className="hover:bg-background-soft-50 transition-colors border-b border-base-100 last:border-0"
-                  >
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className={`size-8 rounded-full ${AVATAR_COLORS[parseInt(c.id) % AVATAR_COLORS.length]} flex items-center justify-center text-white text-xs font-semibold shrink-0`}>
-                          {c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-title-50 text-sm font-medium leading-tight">{c.name}</p>
-                          <p className="text-text-200 text-xs">{c.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5"><span className="text-text-50 font-mono text-sm">{c.extId}</span></td>
-                    <td className="px-5 py-3.5"><Badge color={ETAPA_COLOR[c.etapa] ?? 'gray'} size="sm">{c.etapa}</Badge></td>
-                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.tel}</span></td>
-                    <td className="px-5 py-3.5"><span className="text-text-50 text-sm">{c.sex === 'F' ? 'Femenino' : 'Masculino'}</span></td>
-                    <td className="px-5 py-3.5"><Badge color={ESTADO_COLOR[c.estado] ?? 'gray'} size="sm">{c.estado}</Badge></td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-
-          <div className="border-t border-base-100 px-5 py-3 flex items-center gap-4">
-            <span className="text-text-200 text-xs shrink-0">{filtered.length} clientes</span>
-            <div className="ml-auto">
-              <Pagination
-                totalPages={Math.ceil(filtered.length / PER_PAGE)}
-                currentPage={page}
-                onPageChange={setPage}
-              />
-            </div>
-          </div>
+          </form>
         </motion.div>
       </div>
 
-      {/* Upload modal */}
-      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)}>
-        <FileUploader onClose={() => setUploadOpen(false)} />
-      </Modal>
+      {/* Panel derecho — marca */}
+      <div className="relative hidden w-[42%] max-w-md shrink-0 overflow-hidden bg-[var(--primitive-gray-950)] md:flex md:flex-col md:justify-center md:px-16">
+        <div
+          className="pointer-events-none absolute -top-24 -right-24 size-[420px] rounded-full opacity-70 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(closest-side, rgba(8,148,200,0.55), transparent 70%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 -left-16 size-[460px] rounded-full opacity-60 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(closest-side, rgba(99,102,241,0.4), transparent 70%)',
+          }}
+        />
+
+        <div className="relative flex flex-col gap-5">
+          <img src={LogoDefault} alt="Monato" className="h-9 w-auto object-contain object-left" />
+          <p className="max-w-xs text-lg leading-7 text-[var(--primitive-white-a70)]">
+            Gestiona tu cartera y cobranza desde un solo lugar.
+          </p>
+        </div>
+
+        <div className="relative mt-9 flex flex-col gap-1 text-sm">
+          <p className="text-[var(--primitive-white-a60)]">¿Necesitas ayuda?</p>
+          <a href="mailto:soporte@monato.com" className="text-[var(--primitive-white-a90)] underline">
+            soporte@monato.com
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
 
 // ─── Mac Desktop Wrapper ──────────────────────────────────────────────────────
 function MacDesktop({ onExit }: { onExit: () => void }) {
-  const [screen, setScreen] = useState<Screen>('portafolio');
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [screen, setScreen] = useState<Screen>('login');
+
+  const screenLabel = screen === 'login' ? 'Inicio de sesión' : 'CLP';
 
   return (
-    <div className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
-      {/* Window */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-[1440px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-white/10 relative"
-        style={{ height: 'min(1000px, calc(100vh - 32px))' }}
-      >
-        {/* Mac title bar */}
-        <div className="h-9 bg-[#1e1e1e] flex items-center px-4 gap-2 shrink-0">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="clp-root relative h-full w-full overflow-hidden bg-background-50"
+    >
+      {/* Hover zone pinned to the top edge — only this strip triggers the reveal,
+          not the whole window, so the bar stays hidden while using the app. */}
+      <div className="group/mac absolute inset-x-0 top-0 z-30 h-9">
+        {/* Mac title bar — hidden by default, slides down on hover near the top edge */}
+        <div className="absolute inset-x-0 top-0 z-20 flex h-9 shrink-0 -translate-y-full items-center gap-2 bg-[#1e1e1e]/95 px-4 backdrop-blur transition-transform duration-200 group-hover/mac:translate-y-0">
           <button
             onClick={onExit}
-            className="size-3 rounded-full bg-red-500 hover:bg-red-400 transition flex items-center justify-center group"
+            className="group flex size-3 items-center justify-center rounded-full bg-red-500 transition hover:bg-red-400"
             title="Volver al catálogo"
           >
-            <span className="text-red-900 text-[8px] font-bold opacity-0 group-hover:opacity-100">✕</span>
+            <span className="text-[8px] font-bold text-red-900 opacity-0 group-hover:opacity-100">✕</span>
           </button>
           <div className="size-3 rounded-full bg-yellow-500" />
           <div className="size-3 rounded-full bg-green-500" />
-          <div className="flex-1 flex justify-center">
-            <span className="text-white/40 text-[11px]">CLP — Monato · {screen === 'portafolio' ? 'Portafolio de obligaciones' : 'Clientes'}</span>
+          <div className="flex flex-1 justify-center">
+            <span className="text-[11px] text-white/40">CLP — Monato · {screenLabel}</span>
           </div>
         </div>
+      </div>
 
-        {/* App content */}
-        <div className="flex-1 flex overflow-hidden bg-background-50 relative">
-          <Sidebar screen={screen} onNavigate={setScreen} onProfileOpen={() => setProfileOpen(true)} />
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={screen}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="flex-1 flex overflow-hidden"
-            >
-              {screen === 'portafolio' ? <PortafolioScreen /> : <ClientesScreen />}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Profile Drawer */}
-          <ProfileDrawer open={profileOpen} onClose={() => setProfileOpen(false)} />
-        </div>
-      </motion.div>
-    </div>
+      {/* App content — occupies the full window */}
+      <div className="relative h-full w-full overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={screen}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="h-full w-full"
+          >
+            {screen === 'login'
+              ? <LoginScreen onLogin={() => setScreen('app')} />
+              : <AppShell />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </motion.div>
   );
 }
 
@@ -990,20 +240,15 @@ export function CLP() {
                   <div className="size-1.5 rounded-full bg-yellow-500" />
                   <div className="size-1.5 rounded-full bg-green-500" />
                 </div>
-                <div className="flex flex-1 overflow-hidden">
-                  <div className="w-14 border-r border-base-100 bg-background-50 p-1.5 flex flex-col gap-1">
-                    <div className="h-2 bg-primary-500/20 rounded" />
-                    <div className="h-1.5 bg-base-100 rounded" />
-                    <div className="h-1.5 bg-base-100 rounded" />
-                    <div className="h-1.5 bg-base-100 rounded" />
+                <div className="flex flex-1">
+                  {/* Login mock: form panel + dark brand panel */}
+                  <div className="flex-1 p-2.5 flex flex-col justify-center gap-1.5">
+                    <div className="h-2 w-16 bg-base-100 rounded" />
+                    <div className="h-4 bg-base-100 rounded" />
+                    <div className="h-4 bg-base-100 rounded" />
+                    <div className="h-4 bg-primary-500/70 rounded mt-0.5" />
                   </div>
-                  <div className="flex-1 p-1.5 space-y-1">
-                    <div className="grid grid-cols-2 gap-1">
-                      <div className="h-5 bg-base-100 rounded" />
-                      <div className="h-5 bg-base-100 rounded" />
-                    </div>
-                    <div className="h-12 bg-base-100 rounded" />
-                  </div>
+                  <div className="w-16 bg-[#030712]" />
                 </div>
               </div>
             </div>
@@ -1012,10 +257,10 @@ export function CLP() {
           <div className="flex-1 space-y-3">
             <div>
               <h3 className="text-title-50 text-base font-semibold">CLP — Cartera de Crédito</h3>
-              <p className="text-text-100 text-sm mt-1">Prototipo navegable con 2 pantallas: Portafolio de obligaciones y Clientes. Incluye modal de carga de archivo.</p>
+              <p className="text-text-100 text-sm mt-1">Prototipo en reconstrucción. Por ahora solo el flujo de inicio de sesión; las demás pantallas se rearmarán desde el diseño nuevo.</p>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {['Portafolio', 'Clientes', 'Upload modal', 'KPI cards', 'Tabla paginada'].map(tag => (
+              {['Login', 'En construcción'].map(tag => (
                 <Badge key={tag} color="gray" size="sm">{tag}</Badge>
               ))}
             </div>
