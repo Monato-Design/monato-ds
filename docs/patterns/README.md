@@ -132,7 +132,7 @@ Atomic/molecular components. These are the building blocks patterns consume — 
 | Page | Node ID | Status |
 |---|---|---|
 | Banner | `9307:16687` | pending |
-| Checkout | `9324:28341` | pending |
+| Checkout | `9324:28341` | in-code — adaptado como "Payment Experience" en `src/PaymentLinks.tsx`, basado en nodos `428:7237`/`429:7867`/`429:8118`/`321:7333`/`321:7218` del archivo `CLP V1.0 (May 2026)` (fileKey `2OYrByr8jqGsErdGtAQLRT`), no de este node. TODO: spec `ecommerce/ECOM-CHECKOUT.md` |
 | E-Commerce Navbars | `9478:38074` | pending |
 | E-Commerce Headers Hero Area | `9478:38094` | pending |
 | E-Commerce Footers | `9478:38093` | pending |

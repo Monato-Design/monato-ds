@@ -28,6 +28,7 @@ import { DefaultSpinner } from './components/core/spinner/default';
 import { NativeSelect, NativeSelectOption } from './components/core/native-select';
 import { TableRoot, TableHeader, TableBody, TableHead, TableRow, TableCell } from './components/core/table';
 import { CLP } from './CLP';
+import { PaymentLinksPrototype } from './PaymentLinks';
 import { CrossBorderPrototype } from './CrossBorder';
 import { Demo1xbetPrototype } from './1xbet';
 import GiftcardsPrototype from './giftcards/Giftcards';
@@ -46,7 +47,7 @@ import { Docs, DocsLoader } from './docs';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'mandatos' | 'customer-platform' |
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'customer-platform' |
   'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
   'menubar' | 'blocks-sidebar';
 
@@ -111,11 +112,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Prototypes',
     items: [
-      { id: 'prototypes',  label: 'CLP v1.0',         icon: Rocket1 },
       { id: 'crossborder', label: 'CrossBorder v1.0', icon: Doller },
       { id: 'giftcards',   label: 'BillPay v1.0',     icon: Doller },
-      { id: 'mandatos',    label: 'Mandatos v1.0',    icon: Rocket1 },
       { id: 'customer-platform', label: 'Customer Platform v1.0', icon: Rocket1 },
+      { id: 'prototypes',  label: 'Orbis',            icon: Rocket1 },
     ],
   },
 ];
@@ -920,17 +920,19 @@ function GridPage() {
 }
 
 
-function PrototypesPage() {
+function OrbisSection() {
   return (
     <div className="space-y-4">
       <div className="mb-8 pb-6 border-b border-base-100">
         <div className="flex items-center gap-2 mb-1">
-          <h1 className="text-title-50 text-xl font-semibold">Prototypes</h1>
-          <Badge color="primary" size="sm">2 protos</Badge>
+          <h1 className="text-title-50 text-xl font-semibold">Orbis</h1>
+          <Badge color="primary" size="sm">3 protos</Badge>
         </div>
-        <p className="text-text-100 text-sm">Pantallas navegables construidas con componentes del DS.</p>
+        <p className="text-text-100 text-sm">Plataforma de cobranza — cartera de crédito, experiencia de pago y mandatos. Pantallas navegables construidas con componentes del DS.</p>
       </div>
       <CLP />
+      <PaymentLinksPrototype />
+      <MandatosPrototype />
     </div>
   );
 }
@@ -1160,10 +1162,9 @@ const PAGES: Record<TabId, React.FC> = {
   pagination: PaginationPage, icons: IconsPage,
   menubar: MenuBarPage,
   'blocks-sidebar': SidebarBlockPage,
-  prototypes: PrototypesPage,
+  prototypes: OrbisSection,
   crossborder: CrossBorderSection,
   giftcards: BillPaySection,
-  mandatos: () => <div className="space-y-6"><PageHeader title="Mandatos" sub="Flujo de aceptación de mandatos para débito automático (CLABE)" /><MandatosPrototype /></div>,
   'customer-platform': () => <div className="space-y-6"><PageHeader title="Customer Platform" sub="Portal de administración FINCOPAY — login, 2FA, dashboard y validación de contexto de sesión" /><CustomerPlatformPrototype /><GeolocalizacionPrototype /></div>,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
