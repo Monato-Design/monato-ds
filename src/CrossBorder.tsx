@@ -1165,7 +1165,7 @@ function AddAccountModal({ onClose, onSave }: {
   const handleSave = () => {
     setSubmitted(true);
     if (!canSave) return;
-    onSave({ holder: holder.trim(), clabe, bank, currency, type });
+    onSave({ holder: holder.trim(), clabe, bank, currency, type, balance: 0 });
   };
 
   return (
