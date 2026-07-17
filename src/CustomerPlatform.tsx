@@ -395,7 +395,7 @@ function SidebarOps({ active, onSelect, onLogout }: SidebarProps) {
 
 // ─── Account data ─────────────────────────────────────────────────────────────
 
-const CUENTAS = [
+const CUENTAS: CuentaData[] = [
   { cuenta: '529611080009',   clabe: '646180529611080009', banco: 'STP',       balance: '$0.00',      estatus: 'Activo', tipoCuenta: 'Centralizadora' as const,     personaTipo: 'PF' as const },
   { cuenta: '529600001772',   clabe: '646180529600001772', banco: 'Otro',      balance: '$0.00',      estatus: 'Activo', tipoCuenta: 'Centralizadora' as const,     personaTipo: 'PF' as const },
   { cuenta: '000000000055',   clabe: '734185000000000055', banco: 'Otro',      balance: '$971.50',    estatus: 'Activo', tipoCuenta: 'Centralizadora' as const,     personaTipo: 'PF' as const },
@@ -408,7 +408,15 @@ const CUENTAS = [
   { cuenta: '529600001206',   clabe: '646180529600001206', banco: 'Otro',      balance: '$21,018.04', estatus: 'Activo', tipoCuenta: 'Centralizadora' as const,     personaTipo: 'PF' as const },
 ];
 
-type CuentaData = typeof CUENTAS[number];
+type CuentaData = {
+  cuenta: string;
+  clabe: string;
+  banco: string;
+  balance: string;
+  estatus: string;
+  tipoCuenta: 'Centralizadora' | 'Unidad de Negocio';
+  personaTipo: 'PF' | 'PM';
+};
 
 function qualifiesForBeneficiarios(c: CuentaData): boolean {
   return c.tipoCuenta === 'Centralizadora' && c.personaTipo === 'PF';
