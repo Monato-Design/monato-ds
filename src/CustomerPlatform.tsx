@@ -408,7 +408,7 @@ const CUENTAS = [
   { cuenta: '529600001206',   clabe: '646180529600001206', banco: 'Otro',      balance: '$21,018.04', estatus: 'Activo', tipoCuenta: 'Centralizadora' as const,     personaTipo: 'PF' as const },
 ];
 
-type CuentaData = typeof CUENTAS[0];
+type CuentaData = typeof CUENTAS[number];
 
 function qualifiesForBeneficiarios(c: CuentaData): boolean {
   return c.tipoCuenta === 'Centralizadora' && c.personaTipo === 'PF';
