@@ -992,20 +992,20 @@ type VerificationStatus = 'verified' | 'unverified' | 'pending' | 'error';
 type RegisteredAccount = {
   id: string; holder: string; clabe: string; bank: string;
   currency: 'MXN' | 'USD' | 'EUR'; type: AccountType; status: VerificationStatus;
-  balance?: number; // solo poblado para centralizadoras
+  balance: number;
 };
 
 const REGISTERED_ACCOUNTS: RegisteredAccount[] = [
-  { id: '1', holder: 'Fernando Villa Acuña',  clabe: '734180999000000006', bank: 'Fincopay',   currency: 'MXN', type: 'receiving',    status: 'verified'   },
-  { id: '2', holder: 'Diego Rivera',          clabe: '012180012345678901', bank: 'BBVA',       currency: 'MXN', type: 'private',      status: 'unverified' },
-  { id: '3', holder: 'Lucia Morales',         clabe: '014180987654321098', bank: 'Santander',  currency: 'MXN', type: 'receiving',    status: 'unverified' },
-  { id: '4', holder: 'Monato Pay México',     clabe: '734180999000000123', bank: 'Fincopay',   currency: 'MXN', type: 'centralizing', status: 'verified', balance: 1284500.00 },
-  { id: '5', holder: 'Carlos Mendoza',        clabe: '021180456789012345', bank: 'HSBC',       currency: 'USD', type: 'receiving',    status: 'error'      },
-  { id: '6', holder: 'Jessica Contreras',     clabe: '036180111122223333', bank: 'Inbursa',    currency: 'MXN', type: 'private',      status: 'verified'   },
-  { id: '7', holder: 'Mateo Gonzalez',        clabe: '044180999988887777', bank: 'Scotiabank', currency: 'EUR', type: 'receiving',    status: 'unverified' },
-  { id: '8', holder: 'Operaciones Centrales', clabe: '734180999000000456', bank: 'Fincopay',   currency: 'USD', type: 'centralizing', status: 'verified', balance: 458200.00 },
-  { id: '9', holder: 'Sofía Ramírez',         clabe: '058180222233334444', bank: 'Banregio',   currency: 'USD', type: 'receiving',    status: 'verified'   },
-  { id: '10', holder: 'EU Operations Hub',    clabe: '062180555566667777', bank: 'Fincopay',   currency: 'EUR', type: 'centralizing', status: 'verified', balance: 92750.00 },
+  { id: '1', holder: 'Fernando Villa Acuña',  clabe: '734180999000000006', bank: 'Fincopay',   currency: 'MXN', type: 'receiving',    status: 'verified',   balance: 2350.75 },
+  { id: '2', holder: 'Diego Rivera',          clabe: '012180012345678901', bank: 'BBVA',       currency: 'MXN', type: 'private',      status: 'unverified', balance: 4120.00 },
+  { id: '3', holder: 'Lucia Morales',         clabe: '014180987654321098', bank: 'Santander',  currency: 'MXN', type: 'receiving',    status: 'unverified', balance: 980.50 },
+  { id: '4', holder: 'Monato Pay México',     clabe: '734180999000000123', bank: 'Fincopay',   currency: 'MXN', type: 'centralizing', status: 'verified',   balance: 1284500.00 },
+  { id: '5', holder: 'Carlos Mendoza',        clabe: '021180456789012345', bank: 'HSBC',       currency: 'USD', type: 'receiving',    status: 'error',      balance: 1250.25 },
+  { id: '6', holder: 'Jessica Contreras',     clabe: '036180111122223333', bank: 'Inbursa',    currency: 'MXN', type: 'private',      status: 'verified',   balance: 15300.00 },
+  { id: '7', holder: 'Mateo Gonzalez',        clabe: '044180999988887777', bank: 'Scotiabank', currency: 'EUR', type: 'receiving',    status: 'unverified', balance: 3600.00 },
+  { id: '8', holder: 'Operaciones Centrales', clabe: '734180999000000456', bank: 'Fincopay',   currency: 'USD', type: 'centralizing', status: 'verified',   balance: 458200.00 },
+  { id: '9', holder: 'Sofía Ramírez',         clabe: '058180222233334444', bank: 'Banregio',   currency: 'USD', type: 'receiving',    status: 'verified',   balance: 8750.90 },
+  { id: '10', holder: 'EU Operations Hub',    clabe: '062180555566667777', bank: 'Fincopay',   currency: 'EUR', type: 'centralizing', status: 'verified',   balance: 92750.00 },
 ];
 
 const TYPE_LABELS: Record<AccountType, string> = { private: 'Private', receiving: 'Receiving', centralizing: 'Centralizing' };
@@ -1015,6 +1015,29 @@ const STATUS_CFG: Record<VerificationStatus, { label: string; color: 'success' |
   pending:    { label: 'Pending',      color: 'primary' },
   error:      { label: 'Error',        color: 'error'   },
 };
+
+// Iniciales del titular (máx 2)
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+// Color de avatar por persona (hash estable del nombre)
+const AVATAR_COLORS = [
+  { bg: '#dde9ff', fg: '#3758f9' }, // brand
+  { bg: '#fdf2fa', fg: '#dd2590' }, // pink
+  { bg: '#fafde8', fg: '#636709' }, // yellow-accent
+  { bg: '#e9f9f0', fg: '#16894c' }, // green
+  { bg: '#e6f4fa', fg: '#0894c8' }, // skyblue
+  { bg: '#f3e8ff', fg: '#7e22ce' }, // purple
+  { bg: '#fff3e0', fg: '#c8701f' }, // brown/orange
+];
+function avatarColor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
 
 const ACCOUNTS_LIST_PER_PAGE = 5;
 
@@ -1049,18 +1072,6 @@ function detectBankFromClabe(clabe: string): string {
 
 function AccountStatusBadge({ status }: { status: VerificationStatus }) {
   const cfg = STATUS_CFG[status];
-  const icon =
-    status === 'verified' ? <CheckCircle1 size={12} /> :
-    status === 'pending'  ? (
-      <motion.span
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-        className="flex"
-      >
-        <RefreshCircle1Clockwise size={12} />
-      </motion.span>
-    ) :
-    <QuestionMarkCircle size={12} />;
   return (
     <motion.div
       key={status}
@@ -1069,7 +1080,16 @@ function AccountStatusBadge({ status }: { status: VerificationStatus }) {
       transition={{ type: 'spring', stiffness: 500, damping: 22 }}
       className="w-fit"
     >
-      <Badge color={cfg.color} size="sm"><span className="flex items-center gap-1">{icon}{cfg.label}</span></Badge>
+      <Badge color={cfg.color} size="sm">
+        {status === 'pending' ? (
+          <span className="flex items-center gap-1">
+            <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="flex">
+              <RefreshCircle1Clockwise size={12} />
+            </motion.span>
+            {cfg.label}
+          </span>
+        ) : cfg.label}
+      </Badge>
     </motion.div>
   );
 }
@@ -1335,38 +1355,45 @@ function AccountsView() {
 
   return (
     <div className="flex-1 overflow-y-auto px-10 py-8 bg-[#f8fafc]">
-      <div className="max-w-5xl mx-auto flex flex-col gap-6">
-        <div className="flex items-start justify-between gap-4">
+      <div className="max-w-6xl mx-auto flex flex-col gap-4">
+        {/* Título + Add account (arriba del card) */}
+        <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-[#151515] text-2xl font-semibold">Registered accounts</h1>
-            <p className="text-[#627d98] text-sm mt-1">View your registered private, receiving and centralizing accounts.</p>
+            <p className="text-[#829ab1] text-sm mt-1">View your registered private, receiving and centralizing accounts.</p>
           </div>
           <button
             onClick={() => setAddOpen(true)}
-            className="shrink-0 flex items-center gap-2 bg-primary-500 hover:bg-[#0787b6] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition whitespace-nowrap"
+            className="shrink-0 flex items-center gap-1 bg-primary-500 hover:bg-[#0787b6] text-white text-base font-medium px-4 py-2.5 rounded-lg transition whitespace-nowrap"
           >
-            <span className="text-base leading-none">+</span> Add account
+            <span className="text-lg leading-none">+</span>
+            <span className="px-1">Add Account</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="relative flex-1 min-w-[260px]">
-            <Search1 size={18} className="text-[#9fb3c8] absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
-              placeholder="Search by name or CLABE"
-              className="w-full h-10 pl-11 pr-4 rounded-lg border border-[#d9e2ec] bg-white text-sm text-[#334e68] placeholder:text-[#9fb3c8] focus:border-primary-500 focus:outline-none transition" />
+        {/* Card con filtros dentro + tabla */}
+        <div className="bg-white rounded-2xl border border-[#f0f4f8] overflow-hidden">
+          {/* Barra de búsqueda + filtros (dentro del card) */}
+          <div className="flex items-center justify-between gap-4 px-6 py-4">
+            <div className="relative flex-1 max-w-[573px]">
+              <Search1 size={20} className="text-[#9fb3c8] absolute left-4 top-1/2 -translate-y-1/2" />
+              <input value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
+                placeholder="Search by name or identifier"
+                className="w-full h-10 pl-11 pr-4 rounded-lg border border-[#f0f4f8] bg-white text-sm text-[#334e68] placeholder:text-[#9fb3c8] focus:border-primary-500 focus:outline-none transition" />
+            </div>
+            <div className="flex items-center gap-4">
+              <AccountsFilterDropdown value={typeFilter} options={['private', 'receiving', 'centralizing']} labels={TYPE_LABELS} allLabel="All types" onChange={v => { setTypeFilter(v); setPage(0); }} />
+              <AccountsFilterDropdown value={currencyFilter} options={['MXN', 'USD', 'EUR']} labels={{ MXN: 'MXN', USD: 'USD', EUR: 'EUR' }} allLabel="All currencies" onChange={v => { setCurrencyFilter(v); setPage(0); }} />
+            </div>
           </div>
-          <AccountsFilterDropdown value={typeFilter} options={['private', 'receiving', 'centralizing']} labels={TYPE_LABELS} allLabel="All types" onChange={v => { setTypeFilter(v); setPage(0); }} />
-          <AccountsFilterDropdown value={currencyFilter} options={['MXN', 'USD', 'EUR']} labels={{ MXN: 'MXN', USD: 'USD', EUR: 'EUR' }} allLabel="All currencies" onChange={v => { setCurrencyFilter(v); setPage(0); }} />
-        </div>
 
-        <div className="bg-white rounded-2xl border border-[#e8edf2] overflow-hidden">
-          {/* Orden: Holder · CLABE · Bank · Type · Status · Balance · Currency · Action */}
-          <div className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-3.5 border-b border-[#e8edf2] bg-[#f8fafc]">
-            {['Account holder', 'CLABE', 'Bank', 'Type', 'Status', 'Balance', 'Currency', ''].map((h, i) => (
-              <span key={i} className="text-[#627d98] text-xs font-medium uppercase tracking-wide">{h}</span>
+          {/* Header de columnas */}
+          <div className="grid grid-cols-[1.7fr_1.7fr_1fr_1fr_1fr_1fr_0.8fr_0.9fr] gap-4 px-6 py-3 border-y border-[#f0f4f8] bg-[#f8fafc]">
+            {['Account holder', 'Identifier', 'Bank', 'Type', 'Status', 'Balance', 'Currency', ''].map((h, i) => (
+              <span key={i} className={`text-[#829ab1] text-xs font-medium ${i === 4 ? 'text-center' : ''}`}>{h}</span>
             ))}
           </div>
+
           {visible.length === 0 ? (
             <div className="px-6 py-16 text-center text-[#9fb3c8] text-sm">No accounts match your search.</div>
           ) : (
@@ -1374,14 +1401,11 @@ function AccountsView() {
               key={`${typeFilter}-${currencyFilter}-${search}-${safePage}`}
               initial="hidden"
               animate="show"
-              variants={{
-                hidden: {},
-                show: { transition: { staggerChildren: 0.04 } },
-              }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
             >
               {visible.map(acc => {
-                // CTA verificar solo en receptoras MXN no verificadas (feedback Carlos)
                 const showVerifyCta = acc.type === 'receiving' && acc.currency === 'MXN' && acc.status === 'unverified';
+                const av = avatarColor(acc.holder);
                 return (
                   <motion.div
                     key={acc.id}
@@ -1389,18 +1413,35 @@ function AccountsView() {
                       hidden: { opacity: 0, y: 8 },
                       show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } },
                     }}
-                    className="grid grid-cols-[1.5fr_1.6fr_0.9fr_0.9fr_1fr_1.1fr_0.7fr_0.8fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition"
+                    className="grid grid-cols-[1.7fr_1.7fr_1fr_1fr_1fr_1fr_0.8fr_0.9fr] gap-4 px-6 py-4 border-b border-[#f0f4f8] items-center hover:bg-[#f8fafc] transition"
                   >
-                    <span className="text-[#334e68] text-sm font-medium truncate">{acc.holder}</span>
-                    <span className="text-[#486581] text-sm font-mono truncate">{acc.clabe}</span>
+                    {/* Holder con avatar */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-10 rounded-full shrink-0 flex items-center justify-center" style={{ backgroundColor: av.bg }}>
+                        <span className="text-xs font-semibold" style={{ color: av.fg }}>{getInitials(acc.holder)}</span>
+                      </div>
+                      <span className="text-[#486581] text-sm font-medium truncate">{acc.holder}</span>
+                    </div>
+                    {/* Identifier con copiar */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-[#486581] text-sm truncate">{acc.clabe}</span>
+                      <button
+                        onClick={() => navigator.clipboard?.writeText(acc.clabe)}
+                        className="shrink-0 text-[#9fb3c8] hover:text-primary-500 transition"
+                        title="Copy identifier"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                      </button>
+                    </div>
                     <span className="text-[#486581] text-sm">{acc.bank}</span>
                     <span className="text-[#486581] text-sm">{TYPE_LABELS[acc.type]}</span>
-                    <div><AccountStatusBadge status={acc.status} /></div>
-                    {/* Balance — solo centralizadoras, sin sufijo de moneda */}
-                    <span className="text-sm whitespace-nowrap">
-                      {acc.type === 'centralizing' && acc.balance != null
-                        ? <span className="text-[#334e68] font-semibold">${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                        : <span className="text-[#9fb3c8]">—</span>}
+                    <div className="flex justify-center"><AccountStatusBadge status={acc.status} /></div>
+                    {/* Balance — número plano, todas las filas */}
+                    <span className="text-[#486581] text-sm whitespace-nowrap">
+                      {acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                     <span className="text-[#486581] text-sm">{acc.currency}</span>
                     {/* Action — CTA verificar condicional */}
@@ -1408,7 +1449,7 @@ function AccountsView() {
                       {showVerifyCta && (
                         <button
                           onClick={() => setVerifyTarget(acc)}
-                          className="text-xs font-medium text-primary-500 border border-[#8dcee6] bg-[#e6f4fa] hover:bg-[#b2deee] rounded-lg px-3 py-1.5 transition whitespace-nowrap"
+                          className="text-sm font-medium text-[#334e68] border border-[#d9e2ec] bg-white hover:bg-[#f8fafc] rounded-lg px-3.5 py-2 transition whitespace-nowrap"
                         >
                           Verify
                         </button>
@@ -1419,25 +1460,32 @@ function AccountsView() {
               })}
             </motion.div>
           )}
-          {filtered.length > 0 && (
-            <div className="flex items-center justify-between px-6 py-3.5">
-              <span className="text-[#627d98] text-sm">
-                Showing {safePage * ACCOUNTS_LIST_PER_PAGE + 1}–{Math.min((safePage + 1) * ACCOUNTS_LIST_PER_PAGE, filtered.length)} of {filtered.length}
-              </span>
-              <div className="flex items-center gap-4">
-                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={safePage === 0}
-                  className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
-                  <ChevronDown size={16} className="text-[#627d98] rotate-90" />
-                </button>
-                <span className="text-[#486581] text-sm font-medium">Page {safePage + 1} of {totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={safePage === totalPages - 1}
-                  className="size-9 flex items-center justify-center rounded-lg border border-[#d9e2ec] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
-                  <ChevronDown size={16} className="text-[#627d98] -rotate-90" />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Paginación con números, centrada */}
+        {filtered.length > 0 && (
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={safePage === 0}
+              className="size-10 flex items-center justify-center rounded-lg border border-[#f0f4f8] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
+              <span className="text-[#334e68] text-lg leading-none">←</span>
+            </button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className={`size-10 flex items-center justify-center rounded-lg text-sm font-medium transition ${
+                  i === safePage ? 'bg-[#f4f4f5] text-[#1e1e22]' : 'bg-white text-[#334e68] hover:bg-[#f8fafc]'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={safePage === totalPages - 1}
+              className="size-10 flex items-center justify-center rounded-lg border border-[#f0f4f8] bg-white disabled:opacity-40 hover:bg-[#f8fafc] transition">
+              <span className="text-[#334e68] text-lg leading-none">→</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Modal de alta de cuenta (CB-99) */}
