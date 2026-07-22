@@ -1,0 +1,9 @@
+/* Avatar — la mayoría del estilo va vía clases de Tailwind en index.tsx.
+   Este archivo queda para casos que Tailwind no cubre directo (p.ej.
+   estados o transiciones específicas), siguiendo la convención de
+   archivo por componente del DS. Hoy no hace falta override, se deja
+   vacío a propósito. */
+
+.ds-avatar {
+  line-height: 1;
+}
