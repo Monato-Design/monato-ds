@@ -11,7 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from '@tailgrids/icons';
-import LogoDefault from '@/assets/logo-default.png';
 import LogoSymbol from '@/assets/Symbol.png';
 import { AGENTE_ACTUAL } from './data';
 import type { KoraModule } from './types';
