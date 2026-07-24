@@ -36,6 +36,7 @@ import { BillpayMainPrototype } from './billpay';
 import { MandatosPrototype } from './Mandatos';
 import { CustomerPlatformPrototype } from './CustomerPlatform';
 import { GeolocalizacionPrototype } from './Geolocalizacion';
+import { KoraApp } from './kora';
 import { MenuBar } from './components/core/menu-bar';
 import { Sidebar } from './blocks/Sidebar';
 // Logo — using PNG for correct rendering on light backgrounds
@@ -47,7 +48,7 @@ import { Docs, DocsLoader } from './docs';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'overview' | 'buttons' | 'badges' | 'inputs' | 'alerts' |
   'avatars' | 'controls' | 'feedback' | 'tabs' | 'accordion' |
-  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'customer-platform' |
+  'toast' | 'modal' | 'pagination' | 'icons' | 'prototypes' | 'crossborder' | 'giftcards' | 'customer-platform' | 'kora' |
   'colors' | 'typography' | 'shadows' | 'spacing' | 'border-radius' | 'grid' |
   'menubar' | 'blocks-sidebar';
 
@@ -115,6 +116,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'crossborder', label: 'CrossBorder v1.0', icon: Doller },
       { id: 'giftcards',   label: 'BillPay v1.0',     icon: Doller },
       { id: 'customer-platform', label: 'Customer Platform v1.0', icon: Rocket1 },
+      { id: 'kora',        label: 'Kora - Central Desk', icon: Rocket1 },
       { id: 'prototypes',  label: 'Orbis',            icon: Rocket1 },
     ],
   },
@@ -1166,6 +1168,7 @@ const PAGES: Record<TabId, React.FC> = {
   crossborder: CrossBorderSection,
   giftcards: BillPaySection,
   'customer-platform': () => <div className="space-y-6"><PageHeader title="Customer Platform" sub="Portal de administración FINCOPAY — login, 2FA, dashboard y validación de contexto de sesión" /><CustomerPlatformPrototype /><GeolocalizacionPrototype /></div>,
+  kora: () => <div className="space-y-6"><PageHeader title="Kora - Central Desk" sub="Backoffice interno de Monato — atención al cliente, operación de productos, onboarding, compliance y auditoría" /><KoraApp /></div>,
   colors: ColorsPage, typography: TypographyPage,
   shadows: ShadowsPage, spacing: SpacingPage,
   'border-radius': BorderRadiusPage, grid: GridPage,
